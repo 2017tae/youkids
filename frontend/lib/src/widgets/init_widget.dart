@@ -37,7 +37,13 @@ class _InitWidgetState extends State<InitWidget> {
           'YouKids',
           style: TextStyle(
             fontSize: 22,
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
           ),
+        ),
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(
+          color: Colors.black,
         ),
         actions: [
           IconButton(

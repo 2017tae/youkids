@@ -27,30 +27,29 @@ import lombok.Setter;
 @Builder
 public class User extends BaseTimeEntity {
 
-	@Id
-	@GeneratedValue(generator = "uuid")
-	@GenericGenerator(name="uuid", strategy = "uuid")
-	@Column(columnDefinition = "BINARY(16)")
-	private UUID userId;
+    @Id
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid")
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID userId;
 
-	@Column
-	private String channelId;
+    @Column
+    private String channelId;
 
-	@Column
-	private String nickname;
+    @Column
+    private String nickname;
 
-	@Column
-	private String email;
+    @Column
+    private String email;
 
-	@Column
-	private String role;
+    @Column
+    private String role;
 
-	@Column
-	private String profileImage;
+    @Column
+    private String profileImage;
 
-	@Column
-	private boolean isCar;
-
+    @Column
+    private boolean isCar;
 
 
 }

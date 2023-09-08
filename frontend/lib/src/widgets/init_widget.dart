@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:youkids/src/screens/capsule/capsule_screen.dart';
 import 'package:youkids/src/screens/course/course_screen.dart';
 import 'package:youkids/src/screens/home/home_screen.dart';
@@ -34,7 +33,7 @@ class _InitWidgetState extends State<InitWidget> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'YouKids',
+          '有키즈',
           style: TextStyle(
             fontSize: 22,
             color: Colors.black,

@@ -33,8 +33,29 @@ class _InitWidgetState extends State<InitWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('YouKids'),
+        title: const Text(
+          'YouKids',
+          style: TextStyle(
+            fontSize: 22,
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(
+          color: Colors.black,
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.notifications_outlined,
+              size: 28,
+            ),
+          ),
+        ],
       ),
+      drawer: const Drawer(),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),

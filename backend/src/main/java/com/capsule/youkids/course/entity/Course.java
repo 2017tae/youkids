@@ -25,6 +25,7 @@ public class Course extends BaseTimeEntity {
     @Column
     private String courseName;
 
+    // false인 경우 글 등록 상태, true인 경우 글 삭제 상태
     @Column(columnDefinition = "BOOLEAN default false")
     private Boolean flag;
 

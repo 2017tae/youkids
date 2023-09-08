@@ -18,7 +18,7 @@ class HomeScreen extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 10),
             child: Text(
-              '아이 맞춤형 장소',
+              '아이 맞춤 형 장소',
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -32,7 +32,7 @@ class HomeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(7),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         begin: Alignment.bottomRight,
@@ -68,7 +68,7 @@ class HomeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(7),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         begin: Alignment.bottomRight,
@@ -97,6 +97,106 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  '이번 주 추천 장소',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: const Text(
+                    '더보기',
+                    style: TextStyle(
+                      color: Color(0xffFF7E76),
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Column(
+            children: [
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  color: const Color(0xffF5EEEC),
+                ),
+              ),
+              Row(
+                children: [
+                  Container(
+                    color: const Color(0xffF5EEEC),
+                    width: 100,
+                    height: 100,
+                  ),
+                  Container(
+                    color: const Color(0xffF5EEEC),
+                    width: 100,
+                    height: 100,
+                  ),
+                ],
+              )
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  '저번 주 리뷰 많은 장소',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: const Text(
+                    '더보기',
+                    style: TextStyle(
+                      color: Color(0xffFF7E76),
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  '실내 장소',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: const Text(
+                    '더보기',
+                    style: TextStyle(
+                      color: Color(0xffFF7E76),
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

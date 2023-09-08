@@ -132,17 +132,40 @@ class HomeScreen extends StatelessWidget {
                   color: const Color(0xffF5EEEC),
                 ),
               ),
+              const SizedBox(
+                height: 10,
+              ),
               Row(
                 children: [
-                  Container(
-                    color: const Color(0xffF5EEEC),
-                    width: 100,
-                    height: 100,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 5,
+                    ),
+                    child: Expanded(
+                      child: AspectRatio(
+                        aspectRatio: 1 / 1,
+                        child: Container(
+                          color: const Color(0xffF5EEEC),
+                          width: 100,
+                          height: 100,
+                        ),
+                      ),
+                    ),
                   ),
-                  Container(
-                    color: const Color(0xffF5EEEC),
-                    width: 100,
-                    height: 100,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 5,
+                    ),
+                    child: Expanded(
+                      child: AspectRatio(
+                        aspectRatio: 1 / 1,
+                        child: Container(
+                          color: const Color(0xffF5EEEC),
+                          width: 100,
+                          height: 100,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               )

@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:youkids/src/screens/capsule/capsule_screen.dart';
 import 'package:youkids/src/screens/course/course_screen.dart';
 import 'package:youkids/src/screens/home/home_screen.dart';
+import 'package:youkids/src/screens/login/login_screen.dart';
 import 'package:youkids/src/screens/mypage/mypage_screen.dart';
 import 'package:youkids/src/screens/posting/posting_screen.dart';
 
@@ -50,6 +51,18 @@ class _InitWidgetState extends State<InitWidget> {
             onPressed: () {},
             icon: const Icon(
               Icons.notifications_outlined,
+              size: 28,
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context)=> LoginScreen()),
+              );
+            },
+            icon: const Icon(
+              Icons.account_circle_rounded,
               size: 28,
             ),
           ),

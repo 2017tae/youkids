@@ -2,11 +2,7 @@ package com.capsule.youkids.user.entity;
 
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -34,7 +30,9 @@ public class User extends BaseTimeEntity {
     private UUID userId;
 
     @Column
-    private String channelId;
+    private String provider;
+    @Column
+    private String providerId;
 
     @Column
     private String nickname;
@@ -43,7 +41,8 @@ public class User extends BaseTimeEntity {
     private String email;
 
     @Column
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Column
     private String profileImage;

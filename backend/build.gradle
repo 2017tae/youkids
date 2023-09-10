@@ -33,7 +33,16 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+	//spring security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 
+	// jwt token
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+
+	// oauth2-client 라이브러리
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
 }
 

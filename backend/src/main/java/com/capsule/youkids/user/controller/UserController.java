@@ -6,20 +6,26 @@
  import com.capsule.youkids.user.dto.RequestDto.checkPartnerRequestDto;
  import com.capsule.youkids.user.dto.ResponseDto.GetMyInfoResponseDto;
  import com.capsule.youkids.user.entity.Role;
+ import com.capsule.youkids.user.entity.Token;
  import com.capsule.youkids.user.entity.User;
+ import com.capsule.youkids.user.repository.TokenRepository;
  import com.capsule.youkids.user.repository.UserRepository;
+ import com.capsule.youkids.user.service.JwtUtil;
  import com.capsule.youkids.user.service.PrincipalService;
  import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
  import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
  import com.google.api.client.http.javanet.NetHttpTransport;
  import com.google.api.client.json.jackson2.JacksonFactory;
+ import com.nimbusds.oauth2.sdk.TokenRequest;
  import java.io.IOException;
  import java.security.GeneralSecurityException;
  import java.util.Collections;
  import java.util.Optional;
  import java.util.UUID;
+ import javax.servlet.http.HttpServletResponse;
  import org.springframework.beans.factory.annotation.Value;
  import org.springframework.http.HttpStatus;
+ import org.springframework.http.ResponseCookie;
  import org.springframework.http.ResponseEntity;
  import org.springframework.web.bind.annotation.DeleteMapping;
  import org.springframework.web.bind.annotation.GetMapping;
@@ -45,6 +51,9 @@ public class UserController {
   private final UserService userService;
 
   private final UserRepository userRepository;
+  private final JwtUtil jwtUtil;
+  private final TokenRepository tokenRepository;
+
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String googleClientId;
@@ -52,7 +61,7 @@ public class UserController {
     private final PrincipalService principalService;
 
     @PostMapping("/verify-token")
-    public ResponseEntity<?> verifyToken(@RequestHeader("Authorization") String payloads, @RequestHeader("Provider") String provider) throws GeneralSecurityException, IOException {
+    public ResponseEntity<?> verifyToken(@RequestHeader("Authorization") String payloads, @RequestHeader("Provider") String provider, HttpServletResponse httpServletResponse) throws GeneralSecurityException, IOException {
 
         System.out.println(payloads);
 
@@ -80,7 +89,27 @@ public class UserController {
             if (optionalUser.isPresent()) {
                 user = optionalUser.get();
                 System.out.println("already user");
-                return ResponseEntity.ok(user);
+                Token token = jwtUtil.generateToken(user);
+
+                user.changeToken(token);
+//                tokenRepository.save(token);
+                userRepository.save(user);
+
+                ResponseCookie cookie = ResponseCookie.from("accessToken", token.getAccessToken())
+                        .maxAge(300000)
+                        .path("/")
+                        .sameSite("None")
+                        .httpOnly(true)
+                        .build();
+
+                httpServletResponse.addHeader("Set-Cookie", cookie.toString());
+
+                //CORS
+                httpServletResponse.setHeader("Acess-Control-Allow-origin","*");
+                httpServletResponse.setHeader("Access-Control-Allow-Credentials","true");
+                httpServletResponse.setHeader("Access-Control-Allow-Methods","POST,GET,PUT,DELETE");
+
+                return new ResponseEntity<>(HttpStatus.OK);
             } else {
 
                 user = User.builder()

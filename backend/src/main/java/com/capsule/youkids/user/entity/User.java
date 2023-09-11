@@ -2,6 +2,7 @@ package com.capsule.youkids.user.entity;
 
 import com.capsule.youkids.user.dto.RequestDto.ModifyMyInfoRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.UUID;
 
 import javax.persistence.*;
@@ -55,6 +56,14 @@ public class User extends BaseTimeEntity {
 
     @Column
     private UUID partnerId;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name="token_id")
+    private Token token;
+
+    public void changeToken(Token token){
+        this.token = token;
+    }
 
     public void addInfoToUser(addUserInfoRequestDto request){
         this.nickname = request.getNickname();

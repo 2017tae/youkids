@@ -7,7 +7,6 @@ import javax.persistence.*;
 @Entity
 @Table
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,5 +23,7 @@ public class Token {
     @Column
     private String accessToken;
 
+    @OneToOne(mappedBy = "token")
+    private User user;
 
 }

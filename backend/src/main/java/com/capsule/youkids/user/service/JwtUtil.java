@@ -2,12 +2,16 @@ package com.capsule.youkids.user.service;
 
 
 import com.capsule.youkids.user.entity.Token;
+import com.capsule.youkids.user.entity.User;
 import io.jsonwebtoken.*;
+import java.util.Collections;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -41,10 +45,14 @@ public class JwtUtil {
     }
 
     // 로그인 시 accessToken과 refreshToken을 생성해준다.
-    public Token generateToken(Authentication authentication){
+    public Token generateToken(User user){
+
+        Authentication authentication = authenticateSocialLogin(user);
 
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
+
+        System.out.println(authentication.getPrincipal());
 
         //accessToken 관리
         String accessToken = Jwts.builder()
@@ -106,6 +114,22 @@ public class JwtUtil {
 
 
     }
+
+    public Authentication authenticateSocialLogin(User user) {
+        // 여기서 authorities는 사용자의 권한을 나타냅니다.
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().value()));
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                user.getEmail(),
+                null,
+                authorities
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return authentication;
+    }
+
 
 
 }

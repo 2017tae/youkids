@@ -24,4 +24,8 @@ public class CourseController {
         courseService.save(courseRegistRequestDto);
     }
 
+    @GetMapping("/{userId}")
+    public List<Course> getCourse(@PathVariable("userId") UUID userId) throws Exception {
+        return courseService.getCourseIdsByUserId(userId);
+    }
 }

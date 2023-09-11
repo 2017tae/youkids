@@ -49,4 +49,13 @@ public class CourseService {
         courseRepository.save(course);
     }
 
+    public List<Course> getCourseIdsByUserId(UUID userId) throws Exception {
+        List<Course> courses = courseRepository.findAllByUser_UserId(userId);
+
+        if (courses.isEmpty()) {
+            throw new Exception("No courses found for the given user");
+        }
+
+        return courses;
+    }
 }

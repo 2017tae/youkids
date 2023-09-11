@@ -1,7 +1,7 @@
  package com.capsule.youkids.user.service;
 
  import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
- import com.capsule.youkids.user.dto.RequestDto.checkPartnerDto;
+ import com.capsule.youkids.user.dto.RequestDto.checkPartnerRequestDto;
  import com.capsule.youkids.user.entity.User;
  import java.util.Objects;
  import org.springframework.stereotype.Service;
@@ -34,16 +34,16 @@
      }
 
      @Override
-     public boolean checkPartner(checkPartnerDto request) {
+     public boolean checkPartner(checkPartnerRequestDto request) {
 
          User user = userRepository.findByEmail(request.getPartnerEmail());
 
-         if(Objects.isNull(user)){
+         if(Objects.isNull(user.getPartnerId())){
 
-             return true;
+             return false;
          }
 
-         return false;
+         return true;
 
      }
  }

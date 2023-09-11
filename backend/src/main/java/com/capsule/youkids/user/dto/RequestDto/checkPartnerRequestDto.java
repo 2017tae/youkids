@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class checkPartnerDto {
+public class checkPartnerRequestDto {
 
     private String partnerEmail;
 

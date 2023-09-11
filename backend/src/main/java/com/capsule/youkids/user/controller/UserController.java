@@ -1,7 +1,7 @@
  package com.capsule.youkids.user.controller;
 
  import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
- import com.capsule.youkids.user.dto.RequestDto.checkPartnerDto;
+ import com.capsule.youkids.user.dto.RequestDto.checkPartnerRequestDto;
  import com.capsule.youkids.user.entity.Role;
  import com.capsule.youkids.user.entity.User;
  import com.capsule.youkids.user.repository.UserRepository;
@@ -13,12 +13,13 @@
  import java.io.IOException;
  import java.security.GeneralSecurityException;
  import java.util.Collections;
- import java.util.Map;
  import java.util.Optional;
  import java.util.UUID;
  import org.springframework.beans.factory.annotation.Value;
  import org.springframework.http.HttpStatus;
  import org.springframework.http.ResponseEntity;
+ import org.springframework.web.bind.annotation.GetMapping;
+ import org.springframework.web.bind.annotation.PathVariable;
  import org.springframework.web.bind.annotation.PostMapping;
  import org.springframework.web.bind.annotation.RequestBody;
  import org.springframework.web.bind.annotation.RequestHeader;
@@ -103,13 +104,22 @@ public class UserController {
     }
 
     @PostMapping("/checkpartner")
-    public ResponseEntity<?> checkPartner(@RequestBody checkPartnerDto request){
+    public ResponseEntity<?> checkPartner(@RequestBody checkPartnerRequestDto request){
 
         boolean check = userService.checkPartner(request);
 
+        //여기서 id가 없으면, partnerId 보내줘야 할수도 있음!
         if(check) return new ResponseEntity<>(HttpStatus.OK);
         else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+
+//    @GetMapping("/mypage/{userId}")
+//    public ResponseEntity<?> GetMyInfo(@PathVariable UUID userId){
+//
+//
+//
+//
+//    }
 
 
 }

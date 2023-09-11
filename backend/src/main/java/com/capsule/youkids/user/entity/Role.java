@@ -6,9 +6,11 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Role {
-    TYPE1("ROLE_USER"),
-    TYPE2("ROLE_ADMIN"),
-    TYPE3("ROLE_DELETED");
+    USER("ROLE_USER"),
+    ADMIN("ROLE_ADMIN"),
+    DELETED("ROLE_DELETED");
+
+
 
     String role;
 

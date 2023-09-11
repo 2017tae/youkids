@@ -4,7 +4,6 @@ import com.capsule.youkids.user.entity.User;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.ArrayList;
@@ -39,9 +38,17 @@ public class PrincipalDetails implements OAuth2User {
         return role;
     }
 
+    public PrincipalDetails(User user, Map<String, Object> attributes){
+        this.user = user; this.attributes = attributes;
+    }
 
     @Override
     public String getName() {
         return (String) attributes.get("name");
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
     }
 }

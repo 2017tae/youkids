@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -24,13 +25,14 @@ public class PrincipalService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
 
     @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest){
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
+        System.out.println("oAuth2User.getAttributes() = "+ oAuth2User.getAttributes());
+
         String provider = userRequest.getClientRegistration().getClientId();
         String providerId = oAuth2User.getAttribute("sub");
-        String username = oAuth2User.getAttribute("name");
         String email = oAuth2User.getAttribute("email");
         String role = "ROLE_USER";
 
@@ -40,12 +42,16 @@ public class PrincipalService extends DefaultOAuth2UserService {
 
             userEntity = User.builder()
                     .userId(UUID.randomUUID())
-                    .
-
+                    .email(email)
+                    .providerId(providerId)
+                    .provider(provider)
                     .build();
+
+            userRepository.save(userEntity);
 
         }
 
+        return new PrincipalDetails(userEntity, oAuth2User.getAttributes());
 
 
 

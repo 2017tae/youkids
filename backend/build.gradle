@@ -44,6 +44,10 @@ dependencies {
 	// oauth2-client 라이브러리
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
+	// https://mvnrepository.com/artifact/com.google.api-client/google-api-client
+	implementation group: 'com.google.api-client', name: 'google-api-client', version: '2.2.0'
+	implementation group: 'com.google.http-client', name: 'google-http-client-jackson2', version: '1.11.0-beta'
+
 }
 
 tasks.named('test') {

@@ -1,5 +1,6 @@
 package com.capsule.youkids.user.entity;
 
+import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
 import java.util.UUID;
 
 import javax.persistence.*;
@@ -17,14 +18,12 @@ import lombok.Setter;
 @Entity
 @Table
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class User extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid")
     @Column(columnDefinition = "BINARY(16)")
     private UUID userId;
@@ -50,5 +49,20 @@ public class User extends BaseTimeEntity {
     @Column
     private boolean isCar;
 
+    @Column(columnDefinition = "boolean default false")
+    private boolean leader;
+
+    @Column
+    private String description;
+
+    @Column
+    private UUID partnerId;
+
+    public void updateUser(addUserInfoRequestDto request){
+        this.nickname = request.getNickname();
+        this.isCar = request.isCar();
+        this.description=request.getDescription();
+
+    }
 
 }

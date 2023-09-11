@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:youkids/src/screens/home/home_screen.dart';
+import 'package:youkids/src/widgets/initial_widget.dart';
 
 void main() {
   runApp(const YouKids());
@@ -10,12 +10,9 @@ class YouKids extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'YouKids',
-      theme: ThemeData(
-        fontFamily: "Pretendard",
-      ),
-      home: const HomeScreen(),
+      home: InitialWidget(),
     );
   }
 }

@@ -2,8 +2,11 @@
 
  import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
  import com.capsule.youkids.user.dto.RequestDto.checkPartnerRequestDto;
+ import com.capsule.youkids.user.dto.ResponseDto.GetMyInfoResponseDto;
  import com.capsule.youkids.user.entity.User;
  import java.util.Objects;
+ import java.util.UUID;
+ import java.util.stream.Collectors;
  import org.springframework.stereotype.Service;
 
  import com.capsule.youkids.user.repository.UserRepository;
@@ -45,5 +48,13 @@
 
          return true;
 
+     }
+
+     @Override
+     public GetMyInfoResponseDto getMyInfo(UUID userId) {
+
+         User user = userRepository.findById(userId).orElseThrow(()-> new IllegalArgumentException());
+
+         return new GetMyInfoResponseDto(user);
      }
  }

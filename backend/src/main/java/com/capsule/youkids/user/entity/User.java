@@ -1,6 +1,7 @@
 package com.capsule.youkids.user.entity;
 
 import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
+import com.capsule.youkids.user.dto.ResponseDto.GetMyInfoResponseDto;
 import java.util.UUID;
 
 import javax.persistence.*;
@@ -64,5 +65,6 @@ public class User extends BaseTimeEntity {
         this.description=request.getDescription();
 
     }
+
 
 }

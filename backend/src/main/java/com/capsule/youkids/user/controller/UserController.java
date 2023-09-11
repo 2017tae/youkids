@@ -2,6 +2,7 @@
 
  import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
  import com.capsule.youkids.user.dto.RequestDto.checkPartnerRequestDto;
+ import com.capsule.youkids.user.dto.ResponseDto.GetMyInfoResponseDto;
  import com.capsule.youkids.user.entity.Role;
  import com.capsule.youkids.user.entity.User;
  import com.capsule.youkids.user.repository.UserRepository;
@@ -113,13 +114,14 @@ public class UserController {
         else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-//    @GetMapping("/mypage/{userId}")
-//    public ResponseEntity<?> GetMyInfo(@PathVariable UUID userId){
-//
-//
-//
-//
-//    }
+    @GetMapping("/mypage/{userId}")
+    public ResponseEntity<?> GetMyInfo(@PathVariable UUID userId){
+
+        GetMyInfoResponseDto getMyInfoResponseDto = userService.getMyInfo(userId);
+
+        return new ResponseEntity<>(getMyInfoResponseDto, HttpStatus.OK);
+
+    }
 
 
 }

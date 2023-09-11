@@ -1,5 +1,6 @@
  package com.capsule.youkids.user.controller;
 
+ import com.capsule.youkids.user.dto.RequestDto.DeleteMyInfoRequestDto;
  import com.capsule.youkids.user.dto.RequestDto.ModifyMyInfoRequestDto;
  import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
  import com.capsule.youkids.user.dto.RequestDto.checkPartnerRequestDto;
@@ -20,6 +21,7 @@
  import org.springframework.beans.factory.annotation.Value;
  import org.springframework.http.HttpStatus;
  import org.springframework.http.ResponseEntity;
+ import org.springframework.web.bind.annotation.DeleteMapping;
  import org.springframework.web.bind.annotation.GetMapping;
  import org.springframework.web.bind.annotation.PathVariable;
  import org.springframework.web.bind.annotation.PostMapping;
@@ -127,14 +129,24 @@ public class UserController {
 
     }
 
-    @PutMapping("/user")
+    @PutMapping("")
     public ResponseEntity<?> ModifyMyInfo(@RequestPart(value = "dto") ModifyMyInfoRequestDto request, @RequestPart(value="files", required = false)
             MultipartFile file){
 
-
         boolean check = userService.modifyMyInfo(request, file);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        if(check) return new ResponseEntity<>(HttpStatus.OK);
+        else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    }
+
+    @DeleteMapping("")
+    public ResponseEntity<?> DeleteMyInfo(@RequestBody DeleteMyInfoRequestDto request){
+
+        boolean check = userService.deleteMyInfo(request);
+
+        if(check) return new ResponseEntity<>(HttpStatus.OK);
+        else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 

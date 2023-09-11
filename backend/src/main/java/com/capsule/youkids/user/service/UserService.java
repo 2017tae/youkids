@@ -1,5 +1,6 @@
  package com.capsule.youkids.user.service;
 
+ import com.capsule.youkids.user.dto.RequestDto.DeleteMyInfoRequestDto;
  import com.capsule.youkids.user.dto.RequestDto.ModifyMyInfoRequestDto;
  import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
  import com.capsule.youkids.user.dto.RequestDto.checkPartnerRequestDto;
@@ -17,4 +18,5 @@
 
   boolean modifyMyInfo(ModifyMyInfoRequestDto request, MultipartFile file);
 
+  boolean deleteMyInfo(DeleteMyInfoRequestDto request);
  }

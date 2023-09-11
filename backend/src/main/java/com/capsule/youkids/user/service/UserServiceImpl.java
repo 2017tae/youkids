@@ -1,5 +1,6 @@
  package com.capsule.youkids.user.service;
 
+ import com.capsule.youkids.user.dto.RequestDto.DeleteMyInfoRequestDto;
  import com.capsule.youkids.user.dto.RequestDto.ModifyMyInfoRequestDto;
  import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
  import com.capsule.youkids.user.dto.RequestDto.checkPartnerRequestDto;
@@ -79,6 +80,18 @@
 
          }
 
+
+         return true;
+     }
+
+     @Override
+     public boolean deleteMyInfo(DeleteMyInfoRequestDto request) {
+
+         User user = userRepository.findById(request.getUserId()).orElseThrow(()-> new IllegalArgumentException());
+
+         user.changeToDeleted(user);
+
+         userRepository.save(user);
 
          return true;
      }

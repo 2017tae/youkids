@@ -72,4 +72,14 @@ public class User extends BaseTimeEntity {
 
     }
 
+    //일단 두 방향 다 가능하도록 설정함(한 방향이 맞는듯...)
+    public void changeToDeleted(User user){
+        if(user.role == Role.USER){
+            user.role = Role.DELETED;
+        }
+        else if(user.role == Role.DELETED){
+            user.role = Role.USER;
+        }
+    }
+
 }

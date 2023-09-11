@@ -1,5 +1,6 @@
  package com.capsule.youkids.user.controller;
 
+ import com.capsule.youkids.user.dto.RequestDto.ModifyMyInfoRequestDto;
  import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
  import com.capsule.youkids.user.dto.RequestDto.checkPartnerRequestDto;
  import com.capsule.youkids.user.dto.ResponseDto.GetMyInfoResponseDto;
@@ -22,16 +23,19 @@
  import org.springframework.web.bind.annotation.GetMapping;
  import org.springframework.web.bind.annotation.PathVariable;
  import org.springframework.web.bind.annotation.PostMapping;
+ import org.springframework.web.bind.annotation.PutMapping;
  import org.springframework.web.bind.annotation.RequestBody;
  import org.springframework.web.bind.annotation.RequestHeader;
  import org.springframework.web.bind.annotation.RequestMapping;
+ import org.springframework.web.bind.annotation.RequestPart;
  import org.springframework.web.bind.annotation.RestController;
 
  import com.capsule.youkids.user.service.UserService;
 
  import lombok.RequiredArgsConstructor;
+ import org.springframework.web.multipart.MultipartFile;
 
-@RestController
+ @RestController
 @RequestMapping(value = "/user")
 @RequiredArgsConstructor
 public class UserController {
@@ -121,6 +125,16 @@ public class UserController {
 
         return new ResponseEntity<>(getMyInfoResponseDto, HttpStatus.OK);
 
+    }
+
+    @PutMapping("/user")
+    public ResponseEntity<?> ModifyMyInfo(@RequestPart(value = "dto") ModifyMyInfoRequestDto request, @RequestPart(value="files", required = false)
+            MultipartFile file){
+
+
+        boolean check = userService.modifyMyInfo(request, file);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 

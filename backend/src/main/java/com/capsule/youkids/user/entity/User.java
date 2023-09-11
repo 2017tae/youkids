@@ -1,12 +1,10 @@
 package com.capsule.youkids.user.entity;
 
+import com.capsule.youkids.user.dto.RequestDto.ModifyMyInfoRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
-import com.capsule.youkids.user.dto.ResponseDto.GetMyInfoResponseDto;
 import java.util.UUID;
 
 import javax.persistence.*;
-
-import org.hibernate.annotations.GenericGenerator;
 
 import com.capsule.youkids.global.time.BaseTimeEntity;
 
@@ -14,7 +12,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table
@@ -25,7 +22,7 @@ import lombok.Setter;
 public class User extends BaseTimeEntity {
 
     @Id
-    @GenericGenerator(name = "uuid", strategy = "uuid")
+//    @GenericGenerator(name = "uuid", strategy = "uuid")
     @Column(columnDefinition = "BINARY(16)")
     private UUID userId;
 
@@ -59,12 +56,20 @@ public class User extends BaseTimeEntity {
     @Column
     private UUID partnerId;
 
-    public void updateUser(addUserInfoRequestDto request){
+    public void addInfoToUser(addUserInfoRequestDto request){
         this.nickname = request.getNickname();
         this.isCar = request.isCar();
         this.description=request.getDescription();
-
     }
 
+    public void modifyUser (ModifyMyInfoRequestDto request){
+        this.nickname = request.getNickname();
+    }
+
+    // 서로 맞팔이 되면 partnerId 등록
+    public void modifyUserPartner(UUID partnerId){
+        this.partnerId = partnerId;
+
+    }
 
 }

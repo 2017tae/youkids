@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 @RequiredArgsConstructor
 public class ChildrenServiceImpl implements ChildrenService {
+
     private final UserRepository userRepository;
     private final ChildrenRepository childrenRepository;
 
@@ -61,7 +62,7 @@ public class ChildrenServiceImpl implements ChildrenService {
             } catch (Exception e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "unknown");
             }
-        // 부모가 없으면
+            // 부모가 없으면
         } else {
             // 에러를 만드세요
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no parent id");
@@ -84,7 +85,7 @@ public class ChildrenServiceImpl implements ChildrenService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "unknown");
             }
 
-        // 애기 없으면 에러~
+            // 애기 없으면 에러~
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no children id");
         }

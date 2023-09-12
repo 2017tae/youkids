@@ -32,9 +32,9 @@ public class Children {
     // 애기 고유 id
     private long childrenId;
 
-    @Column
+//    @Column
     @ManyToOne
-    @JoinColumn(name = "USER_ID")
+    @JoinColumn(name = "user_id")
     // 부모
     // 애기 -> 부모 조회
     // 부모 -> 애기 조회는 List<Children>으로 User에서 해줭

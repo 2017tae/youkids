@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/api/children")
 @RequiredArgsConstructor
 public class ChildrenController {
+
     private final ChildrenService childrenService;
 
     @GetMapping("/parent/{id}")
@@ -50,7 +51,8 @@ public class ChildrenController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 부모 id"),
             @ApiResponse(responseCode = "400", description = "알 수 없음"),
     })
-    public ResponseEntity<?> registChildren(@RequestBody ChildrenRequest childrenRequest) throws Exception {
+    public ResponseEntity<?> registChildren(@RequestBody ChildrenRequest childrenRequest)
+            throws Exception {
         Children child = childrenService.registChildren(childrenRequest);
         return new ResponseEntity<>(child, HttpStatus.OK);
     }
@@ -61,7 +63,8 @@ public class ChildrenController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 아이 id"),
             @ApiResponse(responseCode = "400", description = "알 수 없음"),
     })
-    public ResponseEntity<?> updateChildren(@RequestBody ChildrenRequest childrenRequest) throws Exception {
+    public ResponseEntity<?> updateChildren(@RequestBody ChildrenRequest childrenRequest)
+            throws Exception {
         Children child = childrenService.updateChildren(childrenRequest);
         return new ResponseEntity<>(child, HttpStatus.OK);
     }

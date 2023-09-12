@@ -7,8 +7,6 @@ import javax.persistence.*;
 @Entity
 @Table
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class Token {
 
@@ -26,4 +24,11 @@ public class Token {
     @OneToOne(mappedBy = "token")
     private User user;
 
+    @Builder
+    public Token(Long tokenIndex, String tokenType, String accessToken, User user) {
+        this.tokenIndex = tokenIndex;
+        this.tokenType = tokenType;
+        this.accessToken = accessToken;
+        this.user = user;
+    }
 }

@@ -18,7 +18,6 @@ import lombok.NoArgsConstructor;
 @Table
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class User extends BaseTimeEntity {
 
@@ -60,6 +59,24 @@ public class User extends BaseTimeEntity {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "token_id")
     private Token token;
+
+    // Builder 부분
+    @Builder
+    public User(UUID userId, String provider, String providerId, String nickname, String email,
+            Role role) {
+        this.userId = userId;
+        this.provider = provider;
+        this.providerId = providerId;
+        this.nickname = null;
+        this.email = email;
+        this.role = role;
+        this.profileImage = null;
+        this.isCar = false;
+        this.leader = true;
+        this.description = null;
+        this.partnerId = null;
+        this.token = null;
+    }
 
     public void changeToken(Token token) {
         this.token = token;

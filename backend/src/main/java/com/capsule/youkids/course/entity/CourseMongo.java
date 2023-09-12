@@ -31,6 +31,7 @@ public class CourseMongo {
         this.places = places;
     }
 
+
     @Getter
     @NoArgsConstructor
     public static class PlaceItem {

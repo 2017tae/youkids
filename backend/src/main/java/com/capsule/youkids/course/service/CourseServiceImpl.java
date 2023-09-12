@@ -84,10 +84,15 @@ public class CourseServiceImpl implements CourseService {
             if (course.getFlag() == true) {
                 continue;
             }
-            UUID courseId = course.getCourseId();
 
-            CourseResponseDto courseResponseDto = courseMongoRepository.findByCourseId(courseId)
+            CourseMongo courseMongo = courseMongoRepository.findByCourseId(course.getCourseId())
                     .get();
+
+            CourseResponseDto courseResponseDto = CourseResponseDto.builder()
+                    .courseId(courseMongo.getCourseId())
+                    .courseName(courseMongo.getCourseName())
+                    .places(courseMongo.getPlaces())
+                    .build();
             courseResponseDtos.add(courseResponseDto);
         }
         return courseResponseDtos;

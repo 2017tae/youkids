@@ -35,10 +35,10 @@ public class Course extends BaseTimeEntity {
 
 
     @Builder
-    public Course(CourseRegistRequestDto courseRegistRequestDto, UUID courseId){
+    public Course(UUID courseId, String courseName, Boolean flag, User user){
         this.courseId=courseId;
-        this.courseName=courseRegistRequestDto.getCourseName();
-        this.flag=false;
-        this.user = new User(courseRegistRequestDto.getUserId());
+        this.courseName=courseName;
+        this.flag=flag;
+        this.user = user;
     }
 }

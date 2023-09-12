@@ -18,7 +18,7 @@ public class CourseMongo {
 
     @Id
     @Column(columnDefinition = "BINARY(16)")
-    private UUID course_id;
+    private UUID courseId;
 
     private String courseName;
 
@@ -26,8 +26,8 @@ public class CourseMongo {
     private List<PlaceDto> places;
 
     @Builder
-    public CourseMongo(UUID course_id, String courseName, List<PlaceDto> places){
-        this.course_id = course_id;
+    public CourseMongo(UUID courseId, String courseName, List<PlaceDto> places){
+        this.courseId = courseId;
         this.courseName=courseName;
         this.places=places;
     }

@@ -31,4 +31,14 @@ public class PlaceController {
             return new ResponseEntity<DetailPlaceResponseDto>(response, HttpStatus.OK);
         }
     }
+
+    @PostMapping("/bookmark")
+    public ResponseEntity<?> doBookmark(@RequestBody BookmarkRequestDto bookmarkRequestDto) {
+        String result = placeService.doBookmark(bookmarkRequestDto);
+        if (result.equals("success")) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }

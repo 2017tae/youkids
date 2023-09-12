@@ -9,4 +9,7 @@ public interface PlaceService {
 
     // 장소 상세보기
     public DetailPlaceResponseDto viewPlace(UUID userId, int placeId);
+
+    // 찜 하기 / 취소하기
+    public String doBookmark(BookmarkRequestDto bookmarkRequestDto);
 }

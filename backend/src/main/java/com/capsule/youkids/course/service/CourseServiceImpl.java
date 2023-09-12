@@ -1,6 +1,6 @@
 package com.capsule.youkids.course.service;
 
-import com.capsule.youkids.course.dto.CoursePlaceRegistRequestDto;
+import com.capsule.youkids.course.dto.CoursePlaceRequestDto;
 import com.capsule.youkids.course.dto.CourseRegistRequestDto;
 import com.capsule.youkids.course.dto.CourseResponseDto;
 import com.capsule.youkids.course.dto.CourseUpdateRequestDto;
@@ -34,10 +34,11 @@ public class CourseServiceImpl implements CourseService {
 
         UUID courseId = UUID.randomUUID();
 
-        List<CoursePlaceRegistRequestDto> placeDtos = courseRegistRequestDto.getPlaces();
-        List<PlaceDto> list = new ArrayList<>();
-        for (int i = 0; i < placeDtos.size(); i++) {
-            Optional<Place> place = placeRepository.findById(placeDtos.get(i).getPlaceId());
+        List<CoursePlaceRequestDto> placeRequestDtos = courseRegistRequestDto.getPlaces();
+        List<PlaceDto> placeDtos = new ArrayList<>();
+        int i = 0;
+        for (CoursePlaceRequestDto placeRequestDto : placeRequestDtos) {
+            Optional<Place> place = placeRepository.findById(placeRequestDto.getPlaceId());
             Place place1 = place.get();
             PlaceDto place2 = PlaceDto.builder()
                     .placeId(place1.getPlaceId())
@@ -48,12 +49,13 @@ public class CourseServiceImpl implements CourseService {
                     .category(place1.getCategory())
                     .order(i + 1)
                     .build();
-            list.add(place2);
+            placeDtos.add(place2);
+            i++;
         }
         CourseMongo mongo = CourseMongo.builder()
                 .courseId(courseId)
                 .courseName(courseRegistRequestDto.getCourseName())
-                .places(list)
+                .places(placeDtos)
                 .build();
         courseMongoRepository.save(mongo);
 
@@ -83,6 +85,34 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional
     public void update(CourseUpdateRequestDto courseUpdateRequestDto) {
+        UUID courseId = courseUpdateRequestDto.getCourseId();
 
+        CourseResponseDto courseResponseDto = courseMongoRepository.findByCourseId(courseId).get();
+
+        List<CoursePlaceRequestDto> placeRequestDtos = courseUpdateRequestDto.getPlaces();
+        List<PlaceDto> placeDtos = new ArrayList<>();
+        int i = 0;
+        for (CoursePlaceRequestDto placeRequestDto : placeRequestDtos) {
+            Optional<Place> place = placeRepository.findById(placeRequestDto.getPlaceId());
+            Place place1 = place.get();
+            PlaceDto placeDto = PlaceDto.builder()
+                    .placeId(place1.getPlaceId())
+                    .name(place1.getName())
+                    .address(place1.getAddress())
+                    .category(place1.getCategory())
+                    .latitude(place1.getLatitude())
+                    .longitude(place1.getLongitude())
+                    .order(i + 1)
+                    .build();
+            i++;
+            placeDtos.add(placeDto);
+        }
+        CourseMongo courseMongo = CourseMongo.builder()
+                .courseId(courseId)
+                .courseName(courseResponseDto.getCourseName())
+                .places(placeDtos)
+                .build();
+
+        courseMongoRepository.save(courseMongo);
     }
 }

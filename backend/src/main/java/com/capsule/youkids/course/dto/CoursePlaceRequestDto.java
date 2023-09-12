@@ -6,13 +6,13 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class CoursePlaceRegistRequestDto {
+public class CoursePlaceRequestDto {
 
     private Integer placeId;
     private Integer order;
 
     @Builder
-    public CoursePlaceRegistRequestDto(Integer placeId, Integer order) {
+    public CoursePlaceRequestDto(Integer placeId, Integer order) {
         this.placeId = placeId;
         this.order = order;
     }

@@ -18,7 +18,6 @@ import lombok.NoArgsConstructor;
 @Table
 @Getter
 @NoArgsConstructor
-@Builder
 public class User extends BaseTimeEntity {
 
     @Id
@@ -62,8 +61,7 @@ public class User extends BaseTimeEntity {
 
     // Builder 부분
     @Builder
-    public User(UUID userId, String provider, String providerId, String nickname, String email,
-            Role role) {
+    public User(UUID userId, String provider, String providerId, String email, Role role) {
         this.userId = userId;
         this.provider = provider;
         this.providerId = providerId;

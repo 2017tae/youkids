@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
         Optional<User> optionalUser = userRepository.findByProviderId(providerId);
 
-        if(Objects.isNull(optionalUser)){
+        if(optionalUser.isEmpty()){
             return null;
         }else{
             return optionalUser.get();

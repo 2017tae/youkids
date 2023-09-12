@@ -92,4 +92,24 @@ public class PlaceServiceImpl implements PlaceService {
             return "error";
         }
     }
+
+    // 유저의 찜 리스트 조회하기
+    public BookmarkListResponseDto getBookmarkList(UUID userId) {
+        // response용 DTO
+        BookmarkListResponseDto response = null;
+
+        // 1차로, 찜한 장소의 placeId 조회
+        List<Integer> placeIds = bookmarkRepository.findPlaceIdsByUserId(userId);
+
+        // 찜한 리스트가 있는 경우만 취급
+        if (!placeIds.isEmpty()) {
+            List<BookmarkListItemDto> list = placeRepository.getbookmarkPlaceInfos(placeIds);
+
+            // placeIds에 담긴 id들이 place 테이블에 있는 경우만 취급
+            if (!list.isEmpty()) {
+                response = new BookmarkListResponseDto(list);
+            }
+        }
+        return response;
+    }
 }

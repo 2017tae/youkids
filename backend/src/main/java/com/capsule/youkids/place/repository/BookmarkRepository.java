@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, Integer> {
+    @Query("select b.placeId from Bookmark b where b.userId = :userId")
+    List<Integer> findPlaceIdsByUserId(@Param("userId") UUID userId);
 }

@@ -22,6 +22,7 @@ public class PlaceController {
 
     private final PlaceService placeService;
 
+    // 장소 상세보기
     @GetMapping("/{userId}/{placeId}")
     public ResponseEntity<?> viewDetailPlace(@PathVariable UUID userId, @PathVariable int placeId) {
         DetailPlaceResponseDto response = placeService.viewPlace(userId, placeId);
@@ -32,6 +33,7 @@ public class PlaceController {
         }
     }
 
+    // 찜하기 / 취소하기
     @PostMapping("/bookmark")
     public ResponseEntity<?> doBookmark(@RequestBody BookmarkRequestDto bookmarkRequestDto) {
         String result = placeService.doBookmark(bookmarkRequestDto);
@@ -39,6 +41,17 @@ public class PlaceController {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // 찜한 장소 리스트 조회하기
+    @GetMapping("/bookmark/{userId}")
+    public ResponseEntity<?> getBookmarkList(@PathVariable UUID userId) {
+        BookmarkListResponseDto response = placeService.getBookmarkList(userId);
+        if (response == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<BookmarkListResponseDto>(response, HttpStatus.OK);
         }
     }
 }

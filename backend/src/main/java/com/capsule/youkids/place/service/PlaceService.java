@@ -12,4 +12,7 @@ public interface PlaceService {
 
     // 찜 하기 / 취소하기
     public String doBookmark(BookmarkRequestDto bookmarkRequestDto);
+
+    // 유저의 찜 리스트 조회하기
+    public BookmarkListResponseDto getBookmarkList(UUID userId);
 }

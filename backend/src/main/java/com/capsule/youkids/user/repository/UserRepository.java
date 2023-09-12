@@ -9,8 +9,8 @@ import com.capsule.youkids.user.entity.User;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
 
-    User findByEmail(String email);
+    Optional<User> findByEmail(String email);
 
-    User findByProviderId(String providerId);
+    Optional<User> findByProviderId(String providerId);
 
 }

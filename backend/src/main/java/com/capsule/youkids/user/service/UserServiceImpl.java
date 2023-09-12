@@ -61,9 +61,14 @@ public class UserServiceImpl implements UserService {
         GoogleIdToken.Payload payload = idToken.getPayload();
         String providerId = payload.getSubject();
 
-        User optionalUser = userRepository.findByProviderId(providerId);
+        Optional<User> optionalUser = userRepository.findByProviderId(providerId);
 
-        return optionalUser;
+        if(Objects.isNull(optionalUser)){
+            return null;
+        }else{
+            return optionalUser.get();
+        }
+
     }
 
     // JWT 발행한다.
@@ -123,9 +128,9 @@ public class UserServiceImpl implements UserService {
     public boolean checkPartner(checkPartnerRequestDto request) {
 
         // partner로 선택한 유저 유무 파악
-        User user = userRepository.findByEmail(request.getPartnerEmail());
+        Optional<User> user = userRepository.findByEmail(request.getPartnerEmail());
 
-        if (Objects.isNull(user.getPartnerId())) {
+        if (Objects.isNull(user)) {
 
             return false;
         }

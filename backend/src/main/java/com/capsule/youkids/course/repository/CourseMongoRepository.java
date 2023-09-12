@@ -9,4 +9,8 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface CourseMongoRepository extends MongoRepository<CourseMongo, Integer> {
 
     Optional<CourseResponseDto> findByCourseId(UUID courseId);
+
+    Optional<CourseMongo> findCourseMongoByCourseId(UUID courseId);
+
+    void deleteByCourseId(UUID courseId);
 }

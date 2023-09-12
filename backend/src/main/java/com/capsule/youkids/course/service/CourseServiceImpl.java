@@ -1,5 +1,6 @@
 package com.capsule.youkids.course.service;
 
+import com.capsule.youkids.course.dto.CourseDeleteDto;
 import com.capsule.youkids.course.dto.CoursePlaceRequestDto;
 import com.capsule.youkids.course.dto.CourseRegistRequestDto;
 import com.capsule.youkids.course.dto.CourseResponseDto;
@@ -28,6 +29,8 @@ public class CourseServiceImpl implements CourseService {
     private final CourseMongoRepository courseMongoRepository;
     private final PlaceRepository placeRepository;
 
+
+    // 코스 저장하기
     @Override
     @Transactional
     public void save(CourseRegistRequestDto courseRegistRequestDto) {
@@ -68,13 +71,19 @@ public class CourseServiceImpl implements CourseService {
         courseRepository.save(course);
     }
 
+
+    // 유저의 코스 불러오기
     @Override
     public List<CourseResponseDto> getCourseIdsByUserId(UUID userId) {
         List<Course> courses = courseRepository.findAllByUser_UserId(userId);
         List<CourseResponseDto> courseResponseDtos = new ArrayList<>();
 
         for (Course course : courses) {
+            if (course.getFlag() == true) {
+                continue;
+            }
             UUID courseId = course.getCourseId();
+
             CourseResponseDto courseResponseDto = courseMongoRepository.findByCourseId(courseId)
                     .get();
             courseResponseDtos.add(courseResponseDto);
@@ -82,12 +91,16 @@ public class CourseServiceImpl implements CourseService {
         return courseResponseDtos;
     }
 
+
+    // 코스 수정하기
     @Override
     @Transactional
     public void update(CourseUpdateRequestDto courseUpdateRequestDto) {
         UUID courseId = courseUpdateRequestDto.getCourseId();
 
-        CourseResponseDto courseResponseDto = courseMongoRepository.findByCourseId(courseId).get();
+        Course course = courseRepository.findByCourseId(courseId).get();
+
+        CourseMongo courseMongo = courseMongoRepository.findCourseMongoByCourseId(courseId).get();
 
         List<CoursePlaceRequestDto> placeRequestDtos = courseUpdateRequestDto.getPlaces();
         List<PlaceDto> placeDtos = new ArrayList<>();
@@ -107,12 +120,23 @@ public class CourseServiceImpl implements CourseService {
             i++;
             placeDtos.add(placeDto);
         }
-        CourseMongo courseMongo = CourseMongo.builder()
+        CourseMongo courseMongoUpdate = CourseMongo.builder()
                 .courseId(courseId)
-                .courseName(courseResponseDto.getCourseName())
+                .courseName(courseUpdateRequestDto.getCourseName())
                 .places(placeDtos)
                 .build();
+        courseMongoRepository.save(courseMongoUpdate);
+        course.updateCourse(courseUpdateRequestDto.getCourseName(), course.getFlag());
+    }
 
-        courseMongoRepository.save(courseMongo);
+
+    // 코스 삭제하기
+    @Override
+    @Transactional
+    public void delete(CourseDeleteDto courseDeleteDto) {
+        Course course = courseRepository.findByCourseId(courseDeleteDto.getCourseId()).get();
+
+        courseMongoRepository.deleteByCourseId(courseDeleteDto.getCourseId());
+        course.updateCourse(course.getCourseName(), true);
     }
 }

@@ -40,4 +40,10 @@ public class Course extends BaseTimeEntity {
         this.flag = flag;
         this.user = user;
     }
+
+    @Builder(builderMethodName = "updateCourseBuilder")
+    public void updateCourse(String courseName, Boolean flag) {
+        this.courseName = courseName;
+        this.flag = flag;
+    }
 }

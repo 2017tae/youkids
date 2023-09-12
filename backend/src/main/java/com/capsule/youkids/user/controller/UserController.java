@@ -5,25 +5,16 @@
  import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
  import com.capsule.youkids.user.dto.RequestDto.checkPartnerRequestDto;
  import com.capsule.youkids.user.dto.ResponseDto.GetMyInfoResponseDto;
- import com.capsule.youkids.user.entity.Role;
  import com.capsule.youkids.user.entity.Token;
  import com.capsule.youkids.user.entity.User;
  import com.capsule.youkids.user.repository.TokenRepository;
- import com.capsule.youkids.user.repository.UserRepository;
- import com.capsule.youkids.user.service.JwtUtil;
  import com.capsule.youkids.user.service.PrincipalService;
  import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
- import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
- import com.google.api.client.http.javanet.NetHttpTransport;
- import com.google.api.client.json.jackson2.JacksonFactory;
- import com.nimbusds.oauth2.sdk.TokenRequest;
  import java.io.IOException;
  import java.security.GeneralSecurityException;
- import java.util.Collections;
- import java.util.Optional;
+ import java.util.Objects;
  import java.util.UUID;
  import javax.servlet.http.HttpServletResponse;
- import org.springframework.beans.factory.annotation.Value;
  import org.springframework.http.HttpStatus;
  import org.springframework.http.ResponseCookie;
  import org.springframework.http.ResponseEntity;
@@ -50,53 +41,27 @@ public class UserController {
 
   private final UserService userService;
 
-  private final UserRepository userRepository;
-  private final JwtUtil jwtUtil;
-  private final TokenRepository tokenRepository;
-
-
-    @Value("${spring.security.oauth2.client.registration.google.client-id}")
-    private String googleClientId;
-
-    private final PrincipalService principalService;
-
     @PostMapping("/verify-token")
     public ResponseEntity<?> verifyToken(@RequestHeader("Authorization") String payloads, @RequestHeader("Provider") String provider, HttpServletResponse httpServletResponse) throws GeneralSecurityException, IOException {
 
         System.out.println(payloads);
 
-//        String idTokenString = (String) payloads.get("idToken");
+        GoogleIdToken idToken =  userService.verifyToken(payloads, provider);
 
-        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new JacksonFactory())
-                .setAudience(Collections.singletonList(googleClientId))
-                .build();
-
-//        GoogleIdToken idToken = verifier.verify(idTokenString);
-        GoogleIdToken idToken = verifier.verify(payloads.substring(7));
 
         if (idToken != null) {
-            GoogleIdToken.Payload payload = idToken.getPayload();
-            String userId = payload.getSubject();
-            String email = payload.getEmail();
 
+            User user =  userService.verifyUser(idToken);
+            if(Objects.isNull(user)) System.out.println("good");
 
-            //            String name = (String) payload.get("name");
+            if (!Objects.isNull(user)) {
 
-            System.out.println(payload);
+                Token token = userService.getToken(user);
 
-            Optional<User> optionalUser = userRepository.findByProviderId(userId);
-            User user;
-            if (optionalUser.isPresent()) {
-                user = optionalUser.get();
-                System.out.println("already user");
-                Token token = jwtUtil.generateToken(user);
-
-                user.changeToken(token);
-//                tokenRepository.save(token);
-                userRepository.save(user);
-
+                // token 쿠키에 담아서 보내기(https 의 경우, secure(true)로)
                 ResponseCookie cookie = ResponseCookie.from("accessToken", token.getAccessToken())
                         .maxAge(300000)
+//                        .secure(true)
                         .path("/")
                         .sameSite("None")
                         .httpOnly(true)
@@ -111,31 +76,52 @@ public class UserController {
 
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {
+                
+                // 회원가입 루트
+                boolean check = userService.newUser(idToken, provider);
 
-                user = User.builder()
-                        .userId(UUID.randomUUID())
-                        .email(email)
-                        .providerId(userId)
-                        .role(Role.USER)
-                        .provider(provider)
-                        .build();
-
-                userRepository.save(user);
+                if(check){
+                    return new ResponseEntity<>("new_user", HttpStatus.OK);
+                }
             }
-            System.out.println("new user!!");
-            return ResponseEntity.ok("new_user");
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is invalid");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Social Token is invalid");
         }
     }
 
+
     @PostMapping("/addInfo")
-    public ResponseEntity<?> addInfoUser(@RequestBody addUserInfoRequestDto request){
+    public ResponseEntity<?> addInfoUser(@RequestBody addUserInfoRequestDto request, HttpServletResponse httpServletResponse){
 
-        boolean check = userService.addInfoUser(request);
+        User user = userService.addInfoUser(request);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        // 이 때, jwt 같이 보내줘야 함!
+        if(!Objects.isNull(user)){
 
+            Token token = userService.getToken(user);
+
+            // token 쿠키에 담아서 보내기(https 의 경우, secure(true)로)
+            ResponseCookie cookie = ResponseCookie.from("accessToken", token.getAccessToken())
+                    .maxAge(300000)
+//                        .secure(true)
+                    .path("/")
+                    .sameSite("None")
+                    .httpOnly(true)
+                    .build();
+
+            httpServletResponse.addHeader("Set-Cookie", cookie.toString());
+
+            //CORS
+            httpServletResponse.setHeader("Acess-Control-Allow-origin","*");
+            httpServletResponse.setHeader("Access-Control-Allow-Credentials","true");
+            httpServletResponse.setHeader("Access-Control-Allow-Methods","POST,GET,PUT,DELETE");
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        else return new ResponseEntity<>(HttpStatus.CREATED);
 
     }
 

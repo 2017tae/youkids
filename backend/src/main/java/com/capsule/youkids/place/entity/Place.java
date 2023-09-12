@@ -1,5 +1,7 @@
 package com.capsule.youkids.place.entity;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.*;
 
 import javax.persistence.*;
@@ -9,49 +11,55 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Place {
 
-	@Id
-	@Column
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int placeId;
+    @Id
+    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int placeId;
 
-	@Column
-	private String name;
+    @Column
+    private String name;
 
-	@Column
-	private double latitude;
+    @Column
+    private String address;
 
-	@Column
-	private double longitude;
+    @Column
+    private double latitude;
 
-	@Column
-	private String phoneNumber;
+    @Column
+    private double longitude;
 
-	@Column
-	private String category;
+    @Column
+    private String phoneNumber;
 
-	@Column
-	private String homepage;
+    @Column
+    private String category;
 
-	@Column
-	private String description;
+    @Column
+    private String homepage;
 
-	@Column(columnDefinition = "integer default 0")
-	private int reviewSum;
+    @Column
+    private String description;
 
-	@Column(columnDefinition = "integer default 0")
-	private int reviewNum;
+    @Column(columnDefinition = "integer default 0")
+    private int reviewSum;
 
-	@Column(columnDefinition = "boolean default false")
-	private boolean subwayFlag;
+    @Column(columnDefinition = "integer default 0")
+    private int reviewNum;
 
-	@Column
-	private String subwayName;
+    @Column(columnDefinition = "boolean default false")
+    private boolean subwayFlag;
 
-	@Column
-	private double subwayDistance;
+    @Column
+    private String subwayId;
 
+    @Column
+    private double subwayDistance;
+
+    @OneToMany(mappedBy = "place")
+    private List<PlaceImage> images = new ArrayList<>();
+
+    @OneToMany(mappedBy = "place")
+    private List<Review> reviews = new ArrayList<>();
 }

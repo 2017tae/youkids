@@ -26,9 +26,9 @@ public class CourseMongo {
     private List<PlaceDto> places;
 
     @Builder
-    public CourseMongo(UUID courseId, String courseName, List<PlaceDto> places){
+    public CourseMongo(UUID courseId, String courseName, List<PlaceDto> places) {
         this.courseId = courseId;
-        this.courseName=courseName;
-        this.places=places;
+        this.courseName = courseName;
+        this.places = places;
     }
 }

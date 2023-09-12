@@ -1,6 +1,5 @@
 package com.capsule.youkids.course.entity;
 
-import com.capsule.youkids.course.dto.CourseRegistRequestDto;
 import com.capsule.youkids.global.time.BaseTimeEntity;
 import com.capsule.youkids.user.entity.User;
 import java.util.UUID;
@@ -35,10 +34,10 @@ public class Course extends BaseTimeEntity {
 
 
     @Builder
-    public Course(UUID courseId, String courseName, Boolean flag, User user){
-        this.courseId=courseId;
-        this.courseName=courseName;
-        this.flag=flag;
+    public Course(UUID courseId, String courseName, Boolean flag, User user) {
+        this.courseId = courseId;
+        this.courseName = courseName;
+        this.flag = flag;
         this.user = user;
     }
 }

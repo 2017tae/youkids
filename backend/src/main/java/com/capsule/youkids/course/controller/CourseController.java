@@ -1,9 +1,10 @@
 package com.capsule.youkids.course.controller;
 
 import com.capsule.youkids.course.dto.CourseRegistRequestDto;
-import com.capsule.youkids.course.entity.Course;
+import com.capsule.youkids.course.dto.CourseResponseDto;
 import com.capsule.youkids.course.service.CourseServiceImpl;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,16 +20,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/course")
 @RequiredArgsConstructor
 public class CourseController {
+
     private final CourseServiceImpl courseService;
 
     @PostMapping("")
-    public ResponseEntity<String> save(@RequestBody CourseRegistRequestDto courseRegistRequestDto){
+    public ResponseEntity<String> save(@RequestBody CourseRegistRequestDto courseRegistRequestDto) {
         courseService.save(courseRegistRequestDto);
-        return new ResponseEntity<>("success",HttpStatus.OK);
+        return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<List<Course>> getCourse(@PathVariable("userId") UUID userId){
+    public ResponseEntity<Map<String, List<CourseResponseDto>>> getCourse(
+            @PathVariable("userId") UUID userId) {
         return new ResponseEntity<>(courseService.getCourseIdsByUserId(userId), HttpStatus.OK);
     }
 }

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class CourseRegistRequestDto {
+
     private String courseName;
     private UUID userId;
     private List<CoursePlaceRegistRequestDto> places;

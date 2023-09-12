@@ -58,35 +58,34 @@ public class User extends BaseTimeEntity {
     private UUID partnerId;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name="token_id")
+    @JoinColumn(name = "token_id")
     private Token token;
 
-    public void changeToken(Token token){
+    public void changeToken(Token token) {
         this.token = token;
     }
 
-    public void addInfoToUser(addUserInfoRequestDto request){
+    public void addInfoToUser(addUserInfoRequestDto request) {
         this.nickname = request.getNickname();
         this.isCar = request.isCar();
-        this.description=request.getDescription();
+        this.description = request.getDescription();
     }
 
-    public void modifyUser (ModifyMyInfoRequestDto request){
+    public void modifyUser(ModifyMyInfoRequestDto request) {
         this.nickname = request.getNickname();
     }
 
     // 서로 맞팔이 되면 partnerId 등록
-    public void modifyUserPartner(UUID partnerId){
+    public void modifyUserPartner(UUID partnerId) {
         this.partnerId = partnerId;
 
     }
 
     //일단 두 방향 다 가능하도록 설정함(한 방향이 맞는듯...)
-    public void changeToDeleted(User user){
-        if(user.role == Role.USER){
+    public void changeToDeleted(User user) {
+        if (user.role == Role.USER) {
             user.role = Role.DELETED;
-        }
-        else if(user.role == Role.DELETED){
+        } else if (user.role == Role.DELETED) {
             user.role = Role.USER;
         }
     }

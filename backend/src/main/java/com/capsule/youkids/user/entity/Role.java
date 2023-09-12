@@ -11,14 +11,13 @@ public enum Role {
     DELETED("ROLE_DELETED");
 
 
-
     String role;
 
-    Role(String role){
+    Role(String role) {
         this.role = role;
     }
 
-    public String value(){
+    public String value() {
         return role;
     }
 }

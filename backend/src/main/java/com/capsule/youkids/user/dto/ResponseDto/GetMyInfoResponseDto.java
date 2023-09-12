@@ -16,10 +16,10 @@ public class GetMyInfoResponseDto {
 
     private String profileImage;
 
-    public GetMyInfoResponseDto (User user){
-        this.email=user.getEmail();
-        this.nickname=user.getNickname();
-        this.profileImage=user.getProfileImage();
+    public GetMyInfoResponseDto(User user) {
+        this.email = user.getEmail();
+        this.nickname = user.getNickname();
+        this.profileImage = user.getProfileImage();
     }
 
 }

@@ -1,36 +1,46 @@
- package com.capsule.youkids.user.service;
+package com.capsule.youkids.user.service;
 
- import com.capsule.youkids.user.dto.RequestDto.DeleteMyInfoRequestDto;
- import com.capsule.youkids.user.dto.RequestDto.ModifyMyInfoRequestDto;
- import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
- import com.capsule.youkids.user.dto.RequestDto.checkPartnerRequestDto;
- import com.capsule.youkids.user.dto.ResponseDto.GetMyInfoResponseDto;
- import com.capsule.youkids.user.entity.Token;
- import com.capsule.youkids.user.entity.User;
- import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
- import java.io.IOException;
- import java.security.GeneralSecurityException;
- import java.util.UUID;
- import org.springframework.web.multipart.MultipartFile;
+import com.capsule.youkids.user.dto.RequestDto.DeleteMyInfoRequestDto;
+import com.capsule.youkids.user.dto.RequestDto.ModifyMyInfoRequestDto;
+import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
+import com.capsule.youkids.user.dto.RequestDto.checkPartnerRequestDto;
+import com.capsule.youkids.user.dto.ResponseDto.GetMyInfoResponseDto;
+import com.capsule.youkids.user.entity.Token;
+import com.capsule.youkids.user.entity.User;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.UUID;
+import org.springframework.web.multipart.MultipartFile;
 
- public interface UserService {
+public interface UserService {
 
-  User addInfoUser(addUserInfoRequestDto request);
+    // google auth token 유효 확인
+    GoogleIdToken verifyToken(String payloads, String provider)
+            throws GeneralSecurityException, IOException;
 
-  boolean checkPartner(checkPartnerRequestDto request);
+    // User가 이미 등록이 되어있는지 확인
+    User verifyUser(GoogleIdToken idToken);
 
-  GetMyInfoResponseDto getMyInfo(UUID userId);
+    // JWT를 발행 및 저장
+    Token getToken(User user);
 
-  boolean modifyMyInfo(ModifyMyInfoRequestDto request, MultipartFile file);
+    // 회원가입 루트(DB에 일정부분 등록 -> email, provider, provider_id)
+    boolean newUser(GoogleIdToken idToken, String provider);
 
-  boolean deleteMyInfo(DeleteMyInfoRequestDto request);
+    // 회원가입시 추가정보 입력
+    User addInfoUser(addUserInfoRequestDto request);
 
-  GoogleIdToken verifyToken(String payloads, String provider)
-          throws GeneralSecurityException, IOException;
+    // partner로 선택한 유저 유무 파악
+    boolean checkPartner(checkPartnerRequestDto request);
 
-  User verifyUser(GoogleIdToken idToken);
+    // 본인 회원 유저 정보 조회
+    GetMyInfoResponseDto getMyInfo(UUID userId);
 
-  Token getToken(User user);
+    // 본인 회원 유저 수정
+    boolean modifyMyInfo(ModifyMyInfoRequestDto request, MultipartFile file);
 
-  boolean newUser(GoogleIdToken idToken, String provider);
- }
+    // 본인 회원 휴면유저로 변경
+    boolean deleteMyInfo(DeleteMyInfoRequestDto request);
+
+}

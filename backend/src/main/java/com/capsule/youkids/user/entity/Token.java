@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class Token {
 
     @Id
-    @Column(name="token_id")
+    @Column(name = "token_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tokenIndex;
 

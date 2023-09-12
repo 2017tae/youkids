@@ -34,18 +34,15 @@ public class JwtUtil {
     @Value("${jwt.accessTokenExpirationTime.int}")
     private int accessTokenExpirationTime;
 
-//    @Value("${jwt.refreshTokenExpirationTime.int}")
-//    private int refreshTokenExpirationTime;
-
 
     // 객체 초기화, secreKey를 Base64로 인코딩한다.
     @PostConstruct
-    protected void init(){
+    protected void init() {
         key = Base64.getEncoder().encodeToString(key.getBytes());
     }
 
     // 로그인 시 accessToken과 refreshToken을 생성해준다.
-    public Token generateToken(User user){
+    public Token generateToken(User user) {
 
         Authentication authentication = authenticateSocialLogin(user);
 
@@ -57,10 +54,10 @@ public class JwtUtil {
         //accessToken 관리
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
-                .claim("role",authorities)
+                .claim("role", authorities)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+accessTokenExpirationTime))
-                .signWith(SignatureAlgorithm.HS256,key)
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpirationTime))
+                .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
 
         return Token.builder()
@@ -70,7 +67,7 @@ public class JwtUtil {
     }
 
     // JWT 토큰에서 인증 정보 조회
-    public Authentication getAuthentication(String token){
+    public Authentication getAuthentication(String token) {
 
         Claims claims = parseClaims(token);
 
@@ -79,45 +76,47 @@ public class JwtUtil {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-        UserDetails principal = new org.springframework.security.core.userdetails.User(claims.getSubject(),"", authorities);
+        UserDetails principal = new org.springframework.security.core.userdetails.User(
+                claims.getSubject(), "", authorities);
 
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-    public Claims parseClaims(String token){
+    // Token -> Claim
+    public Claims parseClaims(String token) {
 
-        try{
+        try {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-        }catch(ExpiredJwtException e){
+        } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
     }
 
-    public Boolean validateToken(String token){
+    //Token 유효 확인
+    public Boolean validateToken(String token) {
 
         try {
             Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
             return true;
-        } catch(SignatureException ex){
+        } catch (SignatureException ex) {
             System.out.println("Invalid JWT signautre");
-        } catch(MalformedJwtException ex){
+        } catch (MalformedJwtException ex) {
             System.out.println("Invalid JWT token");
-        } catch(ExpiredJwtException ex){
+        } catch (ExpiredJwtException ex) {
             System.out.println("Expired JWT token");
-        } catch(UnsupportedJwtException ex){
+        } catch (UnsupportedJwtException ex) {
             System.out.println("Unsupported JWT token");
-        } catch(IllegalArgumentException ex){
+        } catch (IllegalArgumentException ex) {
             System.out.println("JWT claims string is empty");
         }
         return false;
-
-
 
     }
 
     public Authentication authenticateSocialLogin(User user) {
         // 여기서 authorities는 사용자의 권한을 나타냅니다.
-        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().value()));
+        List<GrantedAuthority> authorities = Collections.singletonList(
+                new SimpleGrantedAuthority(user.getRole().value()));
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 user.getEmail(),
@@ -129,7 +128,6 @@ public class JwtUtil {
 
         return authentication;
     }
-
 
 
 }

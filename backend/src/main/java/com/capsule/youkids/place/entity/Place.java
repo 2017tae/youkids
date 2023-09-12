@@ -22,6 +22,9 @@ public class Place {
 	private String name;
 
 	@Column
+	private String address;
+
+	@Column
 	private double latitude;
 
 	@Column
@@ -49,7 +52,7 @@ public class Place {
 	private boolean subwayFlag;
 
 	@Column
-	private String subwayName;
+	private String subwayId;
 
 	@Column
 	private double subwayDistance;

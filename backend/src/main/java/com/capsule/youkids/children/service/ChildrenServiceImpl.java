@@ -75,12 +75,10 @@ public class ChildrenServiceImpl implements ChildrenService {
         // 애기가 있으면 고치고
         if (children.isPresent()) {
             try {
-                children.get().setName(childrenRequest.getName());
-                children.get().setBirthday(childrenRequest.getBirthday());
-                children.get().setChildrenImage(childrenRequest.getChildrenImage());
-                children.get().setGender(childrenRequest.getGender());
+                children.get().updateChildren(childrenRequest.getName(), childrenRequest.getGender(), childrenRequest.getBirthday(), childrenRequest.getChildrenImage());
                 childrenRepository.save(children.get());
-                return children.get();
+                Children newChild = childrenRepository.findById(childrenRequest.getChildrenId()).get();
+                return newChild;
             } catch (Exception e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "unknown");
             }

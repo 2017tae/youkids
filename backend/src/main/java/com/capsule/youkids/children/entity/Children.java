@@ -15,15 +15,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Table
-@Builder
+@NoArgsConstructor
 public class Children {
 
     @Id
@@ -33,7 +29,7 @@ public class Children {
     private long childrenId;
 
 //    @Column
-    @ManyToOne
+    @ManyToOne(targetEntity = User.class)
     @JoinColumn(name = "user_id")
     // 부모
     // 애기 -> 부모 조회
@@ -57,4 +53,20 @@ public class Children {
     private String childrenImage;
 
     // 애기 성향
+
+    @Builder
+    public Children(UUID parentId, String name, int gender, LocalDate birthday, String childrenImage) {
+        this.parentId = parentId;
+        this.name = name;
+        this.gender = gender;
+        this.birthday = birthday;
+        this.childrenImage = childrenImage;
+    }
+
+    public void updateChildren(String name, int gender, LocalDate birthday, String childrenImage) {
+        this.name = name;
+        this.gender = gender;
+        this.birthday = birthday;
+        this.childrenImage = childrenImage;
+    }
 }

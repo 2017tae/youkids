@@ -11,7 +11,7 @@ public interface CourseService {
 
     void save(CourseRegistRequestDto courseRegistRequestDto);
 
-    Map<String, List<CourseResponseDto>> getCourseIdsByUserId(UUID userID);
+    List<CourseResponseDto> getCourseIdsByUserId(UUID userID);
 
     void update(CourseUpdateRequestDto courseUpdateRequestDto);
 }

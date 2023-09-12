@@ -30,7 +30,7 @@ public class CourseController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<Map<String, List<CourseResponseDto>>> getCourse(
+    public ResponseEntity<List<CourseResponseDto>> getCourse(
             @PathVariable("userId") UUID userId) {
         return new ResponseEntity<>(courseService.getCourseIdsByUserId(userId), HttpStatus.OK);
     }

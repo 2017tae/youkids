@@ -13,9 +13,7 @@ import com.capsule.youkids.place.entity.Place;
 import com.capsule.youkids.place.repository.PlaceRepository;
 import com.capsule.youkids.user.entity.User;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -69,7 +67,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Map<String, List<CourseResponseDto>> getCourseIdsByUserId(UUID userId) {
+    public List<CourseResponseDto> getCourseIdsByUserId(UUID userId) {
         List<Course> courses = courseRepository.findAllByUser_UserId(userId);
         List<CourseResponseDto> courseResponseDtos = new ArrayList<>();
 
@@ -79,9 +77,7 @@ public class CourseServiceImpl implements CourseService {
                     .get();
             courseResponseDtos.add(courseResponseDto);
         }
-        Map<String, List<CourseResponseDto>> map = new HashMap<>();
-        map.put("courses", courseResponseDtos);
-        return map;
+        return courseResponseDtos;
     }
 
     @Override

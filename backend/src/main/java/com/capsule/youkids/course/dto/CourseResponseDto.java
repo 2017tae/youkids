@@ -1,5 +1,6 @@
 package com.capsule.youkids.course.dto;
 
+import com.capsule.youkids.course.entity.CourseMongo;
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
@@ -11,12 +12,7 @@ public class CourseResponseDto {
 
     private UUID courseId;
     private String courseName;
-    private List<PlaceDto> places;
+    private List<CourseMongo.PlaceItem> places;
 
-    public CourseResponseDto(UUID courseId, String courseName, List<PlaceDto> places) {
-        this.courseId = courseId;
-        this.courseName = courseName;
-        this.places = places;
-    }
 }
 

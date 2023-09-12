@@ -5,7 +5,6 @@ import com.capsule.youkids.course.dto.CoursePlaceRequestDto;
 import com.capsule.youkids.course.dto.CourseRegistRequestDto;
 import com.capsule.youkids.course.dto.CourseResponseDto;
 import com.capsule.youkids.course.dto.CourseUpdateRequestDto;
-import com.capsule.youkids.course.dto.PlaceDto;
 import com.capsule.youkids.course.entity.Course;
 import com.capsule.youkids.course.entity.CourseMongo;
 import com.capsule.youkids.course.repository.CourseMongoRepository;
@@ -13,6 +12,7 @@ import com.capsule.youkids.course.repository.CourseRepository;
 import com.capsule.youkids.place.entity.Place;
 import com.capsule.youkids.place.repository.PlaceRepository;
 import com.capsule.youkids.user.entity.User;
+import com.capsule.youkids.user.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +28,7 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final CourseMongoRepository courseMongoRepository;
     private final PlaceRepository placeRepository;
-
+    private final UserRepository userRepository;
 
     // 코스 저장하기
     @Override
@@ -38,12 +38,12 @@ public class CourseServiceImpl implements CourseService {
         UUID courseId = UUID.randomUUID();
 
         List<CoursePlaceRequestDto> placeRequestDtos = courseRegistRequestDto.getPlaces();
-        List<PlaceDto> placeDtos = new ArrayList<>();
+        List<CourseMongo.PlaceItem> placeDtos = new ArrayList<>();
         int i = 0;
         for (CoursePlaceRequestDto placeRequestDto : placeRequestDtos) {
             Optional<Place> place = placeRepository.findById(placeRequestDto.getPlaceId());
             Place place1 = place.get();
-            PlaceDto place2 = PlaceDto.builder()
+            CourseMongo.PlaceItem place2 = CourseMongo.PlaceItem.builder()
                     .placeId(place1.getPlaceId())
                     .name(place1.getName())
                     .latitude(place1.getLatitude())
@@ -62,11 +62,13 @@ public class CourseServiceImpl implements CourseService {
                 .build();
         courseMongoRepository.save(mongo);
 
+        User user = userRepository.findByUserId(courseRegistRequestDto.getUserId()).get();
+
         Course course = Course.builder()
                 .courseId(courseId)
                 .courseName(courseRegistRequestDto.getCourseName())
                 .flag(false)
-                .user(new User(courseRegistRequestDto.getUserId()))
+                .user(new User(user.getUserId(), user.getProvider(), user.getProviderId(), user.getEmail(), user.getRole()))
                 .build();
         courseRepository.save(course);
     }
@@ -103,12 +105,12 @@ public class CourseServiceImpl implements CourseService {
         CourseMongo courseMongo = courseMongoRepository.findCourseMongoByCourseId(courseId).get();
 
         List<CoursePlaceRequestDto> placeRequestDtos = courseUpdateRequestDto.getPlaces();
-        List<PlaceDto> placeDtos = new ArrayList<>();
+        List<CourseMongo.PlaceItem> placeDtos = new ArrayList<>();
         int i = 0;
         for (CoursePlaceRequestDto placeRequestDto : placeRequestDtos) {
             Optional<Place> place = placeRepository.findById(placeRequestDto.getPlaceId());
             Place place1 = place.get();
-            PlaceDto placeDto = PlaceDto.builder()
+            CourseMongo.PlaceItem placeDto = CourseMongo.PlaceItem.builder()
                     .placeId(place1.getPlaceId())
                     .name(place1.getName())
                     .address(place1.getAddress())

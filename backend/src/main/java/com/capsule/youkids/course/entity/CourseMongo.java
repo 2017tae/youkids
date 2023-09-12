@@ -1,6 +1,5 @@
 package com.capsule.youkids.course.entity;
 
-import com.capsule.youkids.course.dto.PlaceDto;
 import java.util.List;
 import java.util.UUID;
 import javax.persistence.Column;
@@ -23,12 +22,38 @@ public class CourseMongo {
     private String courseName;
 
     @Field("places")
-    private List<PlaceDto> places;
+    private List<PlaceItem> places;
 
     @Builder
-    public CourseMongo(UUID courseId, String courseName, List<PlaceDto> places) {
+    public CourseMongo(UUID courseId, String courseName, List<PlaceItem> places) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.places = places;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    public static class PlaceItem {
+
+        private Integer placeId;
+        private String name;
+        private String address;
+        private Double latitude;
+        private Double longitude;
+        private String category;
+        private Integer order;
+
+        @Builder
+        public PlaceItem(Integer placeId, String name, String address, Double latitude,
+                Double longitude,
+                String category, Integer order) {
+            this.placeId = placeId;
+            this.name = name;
+            this.address = address;
+            this.latitude = latitude;
+            this.longitude = longitude;
+            this.category = category;
+            this.order = order;
+        }
     }
 }

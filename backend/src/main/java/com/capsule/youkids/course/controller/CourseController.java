@@ -2,7 +2,7 @@ package com.capsule.youkids.course.controller;
 
 import com.capsule.youkids.course.dto.CourseRegistRequestDto;
 import com.capsule.youkids.course.entity.Course;
-import com.capsule.youkids.course.service.CourseService;
+import com.capsule.youkids.course.service.CourseServiceImpl;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/course")
 @RequiredArgsConstructor
 public class CourseController {
-    private final CourseService courseService;
+    private final CourseServiceImpl courseService;
 
     @PostMapping("")
     public void save(@RequestBody CourseRegistRequestDto courseRegistRequestDto){

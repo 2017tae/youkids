@@ -1,23 +1,23 @@
 package com.capsule.youkids.course.service;
 
-import com.capsule.youkids.course.dto.CourseDeleteDto;
-import com.capsule.youkids.course.dto.CourseRegistRequestDto;
-import com.capsule.youkids.course.dto.CourseResponseDto;
-import com.capsule.youkids.course.dto.CourseUpdateRequestDto;
+import com.capsule.youkids.course.dto.DeleteCourseRequestDto;
+import com.capsule.youkids.course.dto.CourseRequestDto;
+import com.capsule.youkids.course.dto.DetailCourseResponseDto;
+import com.capsule.youkids.course.dto.ModifyCourseRequestDto;
 import java.util.List;
 import java.util.UUID;
 
 public interface CourseService {
 
     // 코스 저장
-    void save(CourseRegistRequestDto courseRegistRequestDto);
+    boolean save(CourseRequestDto courseRequestDto);
 
     // 유저의 코스 불러오기
-    List<CourseResponseDto> getCourseIdsByUserId(UUID userID);
+    List<DetailCourseResponseDto> getCourseIdsByUserId(UUID userId);
 
     // 코스 수정
-    void update(CourseUpdateRequestDto courseUpdateRequestDto);
+    boolean update(ModifyCourseRequestDto modifyCourseRequestDto);
 
     // 코스 삭제
-    void delete(CourseDeleteDto courseDeleteDto);
+    boolean delete(DeleteCourseRequestDto deleteCourseRequestDto);
 }

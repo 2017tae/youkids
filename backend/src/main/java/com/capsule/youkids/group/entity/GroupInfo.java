@@ -25,7 +25,7 @@ public class GroupInfo {
     private long groupId;
 
     @Column
-    private User groupLeader;
+    private User leader;
 
     @Column(nullable = true)
     private String groupImg;
@@ -34,8 +34,8 @@ public class GroupInfo {
     private List<User> groupUsers;
 
     @Builder
-    public GroupInfo(User groupLeader, String groupImg) {
-        this.groupLeader = groupLeader;
+    public GroupInfo(User leader, String groupImg) {
+        this.leader = leader;
         this.groupImg = groupImg;
     }
 

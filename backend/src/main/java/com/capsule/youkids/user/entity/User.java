@@ -59,6 +59,9 @@ public class User extends BaseTimeEntity {
     @JoinColumn(name = "token_id")
     private Token token;
 
+    @Column(columnDefinition = "int default 0")
+    private int courseCount;
+
     // Builder 부분
     @Builder
     public User(UUID userId, String provider, String providerId, String email, Role role) {
@@ -103,6 +106,11 @@ public class User extends BaseTimeEntity {
         } else if (user.role == Role.DELETED) {
             user.role = Role.USER;
         }
+    }
+
+    // 코스를 생성하면 코스 개수가 증가
+    public void changeCourseCount(int i) {
+        this.courseCount += i;
     }
 
 }

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,13 +29,11 @@ public class Children {
     // 애기 고유 id
     private long childrenId;
 
-//    @Column
-    @ManyToOne(targetEntity = User.class)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    // 부모
-    // 애기 -> 부모 조회
-    // 부모 -> 애기 조회는 List<Children>으로 User에서 해줭
-    private UUID parentId;
+    // 애기 다 - 부모 일
+    // 유저 엔티티에 mappedby해서 애기 리스트 넣을지
+    private User parent;
 
     @Column
     // 애기 이름(글자 수 제한?)
@@ -55,8 +54,8 @@ public class Children {
     // 애기 성향
 
     @Builder
-    public Children(UUID parentId, String name, int gender, LocalDate birthday, String childrenImage) {
-        this.parentId = parentId;
+    public Children(User parent, String name, int gender, LocalDate birthday, String childrenImage) {
+        this.parent = parent;
         this.name = name;
         this.gender = gender;
         this.birthday = birthday;

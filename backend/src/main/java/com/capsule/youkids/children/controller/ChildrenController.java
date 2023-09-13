@@ -1,6 +1,7 @@
 package com.capsule.youkids.children.controller;
 
 import com.capsule.youkids.children.dto.request.ChildrenRequest;
+import com.capsule.youkids.children.dto.response.ChildrenResponse;
 import com.capsule.youkids.children.entity.Children;
 import com.capsule.youkids.children.service.ChildrenService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -31,7 +32,7 @@ public class ChildrenController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 부모 id"),
     })
     public ResponseEntity<?> getParentsChildren(@PathVariable("id") UUID id) throws Exception {
-        List<Children> children = childrenService.getParentsChildren(id);
+        List<ChildrenResponse> children = childrenService.getParentsChildren(id);
         return new ResponseEntity<>(children, HttpStatus.OK);
     }
 
@@ -41,7 +42,7 @@ public class ChildrenController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 아이 id"),
     })
     public ResponseEntity<?> findChildren(@PathVariable("id") long id) throws Exception {
-        Children child = childrenService.findChildren(id);
+        ChildrenResponse child = childrenService.findChildren(id);
         return new ResponseEntity<>(child, HttpStatus.OK);
     }
 
@@ -53,8 +54,8 @@ public class ChildrenController {
     })
     public ResponseEntity<?> registChildren(@RequestBody ChildrenRequest childrenRequest)
             throws Exception {
-        Children child = childrenService.registChildren(childrenRequest);
-        return new ResponseEntity<>(child, HttpStatus.OK);
+        childrenService.registChildren(childrenRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping()
@@ -65,7 +66,7 @@ public class ChildrenController {
     })
     public ResponseEntity<?> updateChildren(@RequestBody ChildrenRequest childrenRequest)
             throws Exception {
-        Children child = childrenService.updateChildren(childrenRequest);
-        return new ResponseEntity<>(child, HttpStatus.OK);
+        childrenService.updateChildren(childrenRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

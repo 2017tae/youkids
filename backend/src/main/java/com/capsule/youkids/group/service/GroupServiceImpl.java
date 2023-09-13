@@ -4,8 +4,9 @@ import com.capsule.youkids.group.dto.request.GroupUserRequest;
 import com.capsule.youkids.group.dto.request.UpdateGroupRequest;
 import com.capsule.youkids.group.dto.response.GroupResponse;
 import com.capsule.youkids.group.entity.GroupInfo;
-import com.capsule.youkids.group.entity.GroupPK;
-import com.capsule.youkids.group.entity.Group;
+import com.capsule.youkids.group.entity.GroupJoin;
+import com.capsule.youkids.group.entity.GroupPk;
+import com.capsule.youkids.group.entity.GroupJoin;
 import com.capsule.youkids.group.repository.GroupInfoRepository;
 import com.capsule.youkids.group.repository.GroupRepository;
 import com.capsule.youkids.user.entity.User;
@@ -16,7 +17,6 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -38,17 +38,17 @@ public class GroupServiceImpl implements GroupService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no user exists");
         }
         // 리더가 그룹이 없으면 에러~
-        Optional<GroupInfo> groupInfo = groupInfoRepository.findByLeader(leader.get());
+        Optional<GroupInfo> groupInfo = groupInfoRepository.findByLeaderId(groupUserRequest.getUserId());
         if (groupInfo.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no group exists");
         }
-        Optional<Group> group = groupRepository.findById(new GroupPK(groupInfo.get(), user.get()));
+        Optional<GroupJoin> group = groupRepository.findByGroupInfoAndUser(groupInfo.get(), user.get());;
         // 이미 추가되어 있으면 에러~
         if (group.isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "already exists");
         }
         // 일단은 소속 관계 엔티티 저장하고 그룹 이름은 나중에 설정~
-        Group newGroup = Group.builder().groupInfo(groupInfo.get()).build();
+        GroupJoin newGroup = GroupJoin.builder().groupInfo(groupInfo.get()).build();
         groupRepository.save(newGroup);
     }
 
@@ -61,17 +61,17 @@ public class GroupServiceImpl implements GroupService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no user exists");
         }
         // 리더가 그룹이 없으면 에러~
-        Optional<GroupInfo> groupInfo = groupInfoRepository.findByLeader(leader.get());
+        Optional<GroupInfo> groupInfo = groupInfoRepository.findByLeaderId(groupUserRequest.getUserId());
         if (groupInfo.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no group exists");
         }
-        Optional<Group> group = groupRepository.findById(new GroupPK(groupInfo.get(), user.get()));
+        Optional<GroupJoin> group = groupRepository.findByGroupInfoAndUser(groupInfo.get(), user.get());
         // 이미 없으면 에러~
         if (group.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "already not in the group");
         }
         // 삭제
-        groupRepository.deleteById(new GroupPK(groupInfo.get(), user.get()));
+        groupRepository.deleteByGroupInfoAndUser(groupInfo.get(), user.get());
     }
 
     @Override
@@ -79,15 +79,15 @@ public class GroupServiceImpl implements GroupService {
         Optional<User> user = userRepository.findById(userId);
         // 유저가 있으면 그룹에 속한 정보를 모두 불러와서
         if (user.isPresent()) {
-            List<Group> groupList = groupRepository.getAllJoinedGroup(user.get());
+            List<GroupJoin> groupList = groupRepository.findByUser(user.get());
             List<GroupResponse> groupResponseList = new ArrayList<>();
             // 그룹 정보를 추출해낸다~
-            for (Group g : groupList) {
+            for (GroupJoin g : groupList) {
                 GroupResponse gr = GroupResponse.builder().
-                        groupId(g.getGroupPK().getGroupInfo().getGroupId()).
-                        leaderId(g.getGroupPK().getGroupInfo().getLeader().getUserId()).
+                        groupId(g.getGroupInfo().getGroupId()).
+                        leaderId(g.getGroupInfo().getLeaderId()).
                         groupName(g.getGroupName()).
-                        groupImg(g.getGroupPK().getGroupInfo().getGroupImg()).
+                        groupImg(g.getGroupInfo().getGroupImg()).
                         build();
                 groupResponseList.add(gr);
             }
@@ -104,7 +104,7 @@ public class GroupServiceImpl implements GroupService {
         if (user.isEmpty() || groupInfo.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no user or group");
         }
-        Optional<Group> group = groupRepository.findById(GroupPK.builder().groupInfo(groupInfo.get()).user(user.get()).build());
+        Optional<GroupJoin> group = groupRepository.findByGroupInfoAndUser(groupInfo.get(), user.get());
         // 둘 다 있지만 속하지 않은 경우
         if (group.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "not in the group");

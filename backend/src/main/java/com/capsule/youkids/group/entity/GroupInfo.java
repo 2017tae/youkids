@@ -2,12 +2,15 @@ package com.capsule.youkids.group.entity;
 
 import com.capsule.youkids.user.entity.User;
 import java.util.List;
+import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,18 +27,16 @@ public class GroupInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long groupId;
 
-    @Column
-    private User leader;
+    private UUID leaderId;
 
-    @Column(nullable = true)
     private String groupImg;
 
-    @OneToMany(mappedBy = "user")
-    private List<Group> groupJoinedList;
+//    @OneToMany(mappedBy = "user")
+//    private List<Group> groupJoinedList;
 
     @Builder
-    public GroupInfo(User leader, String groupImg) {
-        this.leader = leader;
+    public GroupInfo(UUID leaderId, String groupImg) {
+        this.leaderId = leaderId;
         this.groupImg = groupImg;
     }
 

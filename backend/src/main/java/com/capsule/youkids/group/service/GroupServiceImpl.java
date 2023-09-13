@@ -75,18 +75,23 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public GroupResponse getAllJoinedGroup(UUID userId) {
+    public List<GroupResponse> getAllJoinedGroup(UUID userId) {
         Optional<User> user = userRepository.findById(userId);
         // 유저가 있으면 그룹에 속한 정보를 모두 불러와서
         if (user.isPresent()) {
             List<Group> groupList = groupRepository.getAllJoinedGroup(user.get());
-            List<GroupInfo> groupInfoList = new ArrayList<>();
+            List<GroupResponse> groupResponseList = new ArrayList<>();
             // 그룹 정보를 추출해낸다~
             for (Group g : groupList) {
-                groupInfoList.add(g.getGroupPK().getGroupInfo());
+                GroupResponse gr = GroupResponse.builder().
+                        groupId(g.getGroupPK().getGroupInfo().getGroupId()).
+                        leaderId(g.getGroupPK().getGroupInfo().getLeader().getUserId()).
+                        groupName(g.getGroupName()).
+                        groupImg(g.getGroupPK().getGroupInfo().getGroupImg()).
+                        build();
+                groupResponseList.add(gr);
             }
-            GroupResponse groupResponse = GroupResponse.builder().groupInfoList(groupInfoList).build();
-            return groupResponse;
+            return groupResponseList;
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no user");
     }

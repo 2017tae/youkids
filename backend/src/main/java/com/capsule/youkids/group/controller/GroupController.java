@@ -67,8 +67,8 @@ public class GroupController {
             @ApiResponse(responseCode = "404", description = "정보가 존재하지 않음"),
     })
     public ResponseEntity<?> getAllJoinedGroup(@PathVariable("id") UUID id) {
-        GroupResponse groupResponse = groupService.getAllJoinedGroup(id);
-        return new ResponseEntity<>(groupResponse, HttpStatus.OK);
+        List<GroupResponse> groupResponseList = groupService.getAllJoinedGroup(id);
+        return new ResponseEntity<>(groupResponseList, HttpStatus.OK);
     }
 
 }

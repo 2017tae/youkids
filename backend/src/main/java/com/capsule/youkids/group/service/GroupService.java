@@ -16,7 +16,7 @@ public interface GroupService {
     public void deleteUserFromGroup(GroupUserRequest groupUserRequest);
 
     // 유저가 속한 모든 그룹 불러오기
-    public GroupResponse getAllJoinedGroup(UUID userId);
+    public List<GroupResponse> getAllJoinedGroup(UUID userId);
 
     // 유저가 자기가 속한 그룹 이름 바꾸기
     public void updateGroupName(UpdateGroupRequest updateGroupRequest);

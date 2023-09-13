@@ -42,4 +42,6 @@ public class Capsule {
 
     @OneToMany(mappedBy = "capsule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Memory> memories = new ArrayList<>();
+
+
 }

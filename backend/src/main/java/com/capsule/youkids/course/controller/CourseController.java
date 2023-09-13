@@ -4,7 +4,7 @@ import com.capsule.youkids.course.dto.CourseDeleteDto;
 import com.capsule.youkids.course.dto.CourseRegistRequestDto;
 import com.capsule.youkids.course.dto.CourseResponseDto;
 import com.capsule.youkids.course.dto.CourseUpdateRequestDto;
-import com.capsule.youkids.course.service.CourseServiceImpl;
+import com.capsule.youkids.course.service.CourseService;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CourseController {
 
-    private final CourseServiceImpl courseService;
+    private final CourseService courseService;
 
     @PostMapping("")
     public ResponseEntity<String> saveCourse(

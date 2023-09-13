@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class CourseDeleteDto {
+public class DeleteCourseRequestDto {
 
     private UUID courseId;
 }

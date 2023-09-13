@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class CourseUpdateRequestDto {
+public class CourseRequestDto {
 
-    private UUID courseId;
     private String courseName;
+    private UUID userId;
     private List<CoursePlaceRequestDto> places;
 
 }

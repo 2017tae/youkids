@@ -1,5 +1,6 @@
 package com.capsule.youkids.children.service;
 
+import com.capsule.youkids.children.dto.request.ChildrenRegistRequest;
 import com.capsule.youkids.children.dto.request.ChildrenRequest;
 import com.capsule.youkids.children.dto.response.ChildrenResponse;
 import com.capsule.youkids.children.entity.Children;
@@ -15,7 +16,7 @@ public interface ChildrenService {
     public List<ChildrenResponse> getParentsChildren(UUID id) throws Exception;
 
     // 애기 등록하기
-    public void registChildren(ChildrenRequest childrenRequest) throws Exception;
+    public void registChildren(ChildrenRegistRequest childrenRegistRequest) throws Exception;
 
     // 애기 수정하기
     public void updateChildren(ChildrenRequest childrenRequest) throws Exception;

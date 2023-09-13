@@ -1,5 +1,6 @@
 package com.capsule.youkids.children.service;
 
+import com.capsule.youkids.children.dto.request.ChildrenRegistRequest;
 import com.capsule.youkids.children.dto.request.ChildrenRequest;
 import com.capsule.youkids.children.dto.response.ChildrenResponse;
 import com.capsule.youkids.children.entity.Children;
@@ -66,19 +67,19 @@ public class ChildrenServiceImpl implements ChildrenService {
     }
 
     @Override
-    public void registChildren(ChildrenRequest childrenRequest) throws Exception {
+    public void registChildren(ChildrenRegistRequest childrenRegistRequest) throws Exception {
         // 부모 찾기
-        Optional<User> user = userRepository.findById(childrenRequest.getParentId());
+        Optional<User> user = userRepository.findById(childrenRegistRequest.getParentId());
         // 부모가 있으면
         if (user.isPresent()) {
             try {
                 // 애기를 만들어서 repository에 등록하세요
                 Children children = Children.builder().
                         parent(user.get()).
-                        name(childrenRequest.getName()).
-                        gender(childrenRequest.getGender()).
-                        birthday(childrenRequest.getBirthday()).
-                        childrenImage(childrenRequest.getChildrenImage()).
+                        name(childrenRegistRequest.getName()).
+                        gender(childrenRegistRequest.getGender()).
+                        birthday(childrenRegistRequest.getBirthday()).
+                        childrenImage(childrenRegistRequest.getChildrenImage()).
                         build();
                 childrenRepository.save(children);
                 // 등록된 애기에서 애기 아이디 받는 법을 모름;

@@ -26,7 +26,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 //아랫줄 대체
                 //화이트 리스트의 모든 url패스.
-                .antMatchers("/user/**").permitAll()
+                .antMatchers("/user/**", "/children/**").permitAll()
                 // .antMatchers("/swagger/**","/swagger-resources/**","/health","/v3/api-docs/**","/swagger-ui/**","/api/boardfile/**","/api/user/logout","/api/user/login/**", "/api/user/new/**","/api/board/**","/api/shop/**").permitAll() // 해당 api에서는 모든 요청을 허가한다는 설정
                 .antMatchers().access("hasRole('ADMIN')") // ADMIN일때 실행
                 .anyRequest().authenticated(); // 이 밖에 모든 요청에 대해서 인증을 필요로 한다는 설정

@@ -1,5 +1,6 @@
 package com.capsule.youkids.children.controller;
 
+import com.capsule.youkids.children.dto.request.ChildrenRegistRequest;
 import com.capsule.youkids.children.dto.request.ChildrenRequest;
 import com.capsule.youkids.children.dto.response.ChildrenResponse;
 import com.capsule.youkids.children.entity.Children;
@@ -11,6 +12,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +21,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@CrossOrigin
 @RestController
-@RequestMapping(value = "/api/children")
+@RequestMapping(value = "/children")
 @RequiredArgsConstructor
 public class ChildrenController {
 
@@ -46,15 +49,15 @@ public class ChildrenController {
         return new ResponseEntity<>(child, HttpStatus.OK);
     }
 
-    @PostMapping()
+    @PostMapping("")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "아이 등록 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 부모 id"),
             @ApiResponse(responseCode = "400", description = "알 수 없음"),
     })
-    public ResponseEntity<?> registChildren(@RequestBody ChildrenRequest childrenRequest)
+    public ResponseEntity<?> registChildren(@RequestBody ChildrenRegistRequest childrenRegistRequest)
             throws Exception {
-        childrenService.registChildren(childrenRequest);
+        childrenService.registChildren(childrenRegistRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

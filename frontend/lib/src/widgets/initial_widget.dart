@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:youkids/src/screens/capsule/capsule_screen.dart';
 import 'package:youkids/src/screens/course/course_screen.dart';
 import 'package:youkids/src/screens/home/home_screen.dart';
@@ -33,7 +34,7 @@ class _InitialWidgetState extends State<InitialWidget> {
       drawer: const Drawer(),
       appBar: AppBar(
         title: const Text(
-          '有키즈',
+          '有키즈1',
           style: TextStyle(
             fontSize: 22,
             color: Colors.black,
@@ -47,61 +48,85 @@ class _InitialWidgetState extends State<InitialWidget> {
         actions: [
           IconButton(
             onPressed: () {},
-            icon: const Icon(
-              Icons.notifications_outlined,
-              size: 28,
-            ),
+            icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
+                height: 24),
           ),
         ],
       ),
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: Container(
+        height: 75.0,
         decoration: const BoxDecoration(
-          border: Border(
-            top: BorderSide(
-              color: Color(0xffEBEBEB),
-              width: 3.0,
-            ),
-          ),
-        ),
-        child: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          onTap: _onItemTapped,
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Image.asset('lib/src/assets/icons/home.png'),
-              activeIcon: Image.asset('lib/src/assets/icons/home_selected.png'),
-              label: '홈',
-            ),
-            BottomNavigationBarItem(
-              icon: Image.asset('lib/src/assets/icons/course.png'),
-              activeIcon:
-                  Image.asset('lib/src/assets/icons/course_selected.png'),
-              label: '코스',
-            ),
-            BottomNavigationBarItem(
-              icon: Image.asset('lib/src/assets/icons/posting.png'),
-              activeIcon:
-                  Image.asset('lib/src/assets/icons/posting_selected.png'),
-              label: '등록',
-            ),
-            BottomNavigationBarItem(
-              icon: Image.asset('lib/src/assets/icons/capsule.png'),
-              activeIcon:
-                  Image.asset('lib/src/assets/icons/capsule_selected.png'),
-              label: '캡슐',
-            ),
-            BottomNavigationBarItem(
-              icon: Image.asset('lib/src/assets/icons/mypage.png'),
-              activeIcon:
-                  Image.asset('lib/src/assets/icons/mypage_selected.png'),
-              label: 'MY',
-            ),
+          borderRadius: BorderRadius.only(
+              topRight: Radius.circular(30), topLeft: Radius.circular(30)),
+          boxShadow: [
+            BoxShadow(
+                color: Color.fromRGBO(0, 0, 0, 0.16),
+                spreadRadius: 0,
+                blurRadius: 12,
+                blurStyle: BlurStyle.outer),
           ],
-          selectedItemColor: const Color(0xffFFA49E),
-          selectedFontSize: 13,
-          unselectedFontSize: 13,
-          currentIndex: _selectedIndex,
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+          ),
+          child: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            onTap: _onItemTapped,
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: SvgPicture.asset(
+                  'lib/src/assets/icons/home_white.svg',
+                ),
+                activeIcon: SvgPicture.asset(
+                  'lib/src/assets/icons/home_color.svg',
+                ),
+                label: '홈',
+              ),
+              BottomNavigationBarItem(
+                icon: SvgPicture.asset(
+                  'lib/src/assets/icons/course_white.svg',
+                ),
+                activeIcon: SvgPicture.asset(
+                  'lib/src/assets/icons/course_color.svg',
+                ),
+                label: '코스',
+              ),
+              BottomNavigationBarItem(
+                icon: SvgPicture.asset(
+                  'lib/src/assets/icons/add_white.svg',
+                ),
+                activeIcon: SvgPicture.asset(
+                  'lib/src/assets/icons/add_color.svg',
+                ),
+                label: '등록',
+              ),
+              BottomNavigationBarItem(
+                icon: SvgPicture.asset(
+                  'lib/src/assets/icons/capsule_white.svg',
+                ),
+                activeIcon: SvgPicture.asset(
+                  'lib/src/assets/icons/capsule_color.svg',
+                ),
+                label: '캡슐',
+              ),
+              BottomNavigationBarItem(
+                icon: SvgPicture.asset(
+                  'lib/src/assets/icons/my_white.svg',
+                ),
+                activeIcon: SvgPicture.asset(
+                  'lib/src/assets/icons/my_color.svg',
+                ),
+                label: 'MY',
+              ),
+            ],
+            selectedItemColor: const Color(0xffFFA49E),
+            selectedFontSize: 13,
+            unselectedFontSize: 13,
+            currentIndex: _selectedIndex,
+          ),
         ),
       ),
     );

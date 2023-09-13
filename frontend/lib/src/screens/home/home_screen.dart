@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:youkids/src/screens/home/indoor_recom_list_screen.dart';
 import 'package:youkids/src/screens/home/review_recom_list_screen.dart';
 import 'package:youkids/src/screens/home/week_recom_list_screen.dart';
+import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
 import 'package:youkids/src/widgets/home_widgets/card_frame_widget.dart';
 import 'package:youkids/src/widgets/home_widgets/child_icon_widget.dart';
 
@@ -32,17 +33,47 @@ class HomeScreen extends StatelessWidget {
               '이번 주 추천 장소',
               const WeekRecomListScreen(),
             ),
-            const Column(
+            Column(
               children: [
-                CardFrame21Widget(),
-                SizedBox(
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ShopDetailScreen(),
+                      ),
+                    );
+                  },
+                  child: const CardFrame21Widget(),
+                ),
+                const SizedBox(
                   height: 10,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    CardFrame11Widget(),
-                    CardFrame11Widget(),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ShopDetailScreen(),
+                          ),
+                        );
+                      },
+                      child: const CardFrame11Widget(),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ShopDetailScreen(),
+                          ),
+                        );
+                      },
+                      child: const CardFrame11Widget(),
+                    ),
                   ],
                 ),
               ],
@@ -52,17 +83,47 @@ class HomeScreen extends StatelessWidget {
               '저번 주 리뷰 많은 장소',
               const ReviewRecomlistScreen(),
             ),
-            const Column(
+            Column(
               children: [
-                CardFrame21Widget(),
-                SizedBox(
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ShopDetailScreen(),
+                      ),
+                    );
+                  },
+                  child: const CardFrame21Widget(),
+                ),
+                const SizedBox(
                   height: 10,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    CardFrame11Widget(),
-                    CardFrame11Widget(),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ShopDetailScreen(),
+                          ),
+                        );
+                      },
+                      child: const CardFrame11Widget(),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ShopDetailScreen(),
+                          ),
+                        );
+                      },
+                      child: const CardFrame11Widget(),
+                    ),
                   ],
                 ),
               ],
@@ -72,17 +133,47 @@ class HomeScreen extends StatelessWidget {
               '실내 장소',
               const IndoorRecomlistScreen(),
             ),
-            const Column(
+            Column(
               children: [
-                CardFrame21Widget(),
-                SizedBox(
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ShopDetailScreen(),
+                      ),
+                    );
+                  },
+                  child: const CardFrame21Widget(),
+                ),
+                const SizedBox(
                   height: 10,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    CardFrame11Widget(),
-                    CardFrame11Widget(),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ShopDetailScreen(),
+                          ),
+                        );
+                      },
+                      child: const CardFrame11Widget(),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ShopDetailScreen(),
+                          ),
+                        );
+                      },
+                      child: const CardFrame11Widget(),
+                    ),
                   ],
                 ),
               ],

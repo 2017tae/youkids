@@ -25,10 +25,13 @@ class CardFrame21Widget extends StatelessWidget {
           right: 0,
           child: Container(
             padding: const EdgeInsets.all(10),
-            child: const Icon(
-              Icons.favorite_border_outlined,
-              color: Color(0xffF6766E),
-              size: 30,
+            child: IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.favorite_border_outlined,
+                size: 30,
+                color: Color(0xffF6766E),
+              ),
             ),
           ),
         ),
@@ -57,10 +60,13 @@ class CardFrame11Widget extends StatelessWidget {
           right: 0,
           child: Container(
             padding: const EdgeInsets.all(10),
-            child: const Icon(
-              Icons.favorite_border_outlined,
-              color: Color(0xffF6766E),
-              size: 30,
+            child: IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.favorite_border_outlined,
+                size: 30,
+                color: Color(0xffF6766E),
+              ),
             ),
           ),
         ),

@@ -42,8 +42,12 @@ public class Course extends BaseTimeEntity {
     }
 
     @Builder(builderMethodName = "updateCourseBuilder")
-    public void updateCourse(String courseName, Boolean flag) {
+    public void updateCourse(String courseName) {
         this.courseName = courseName;
-        this.flag = flag;
+    }
+
+    @Builder(builderMethodName = "deleteCourseBuilder")
+    public void deleteCourse() {
+        this.flag = true;
     }
 }

@@ -30,8 +30,8 @@ public class GroupInfo {
     @Column(nullable = true)
     private String groupImg;
 
-//    @OneToMany(mappedBy = "user")
-//    private List<User> groupUsers;
+    @OneToMany(mappedBy = "user")
+    private List<Group> groupJoinedList;
 
     @Builder
     public GroupInfo(User leader, String groupImg) {

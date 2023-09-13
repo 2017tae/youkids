@@ -11,7 +11,11 @@ import lombok.Data;
 @Data
 @Embeddable
 public class GroupPK implements Serializable {
+
+    @ManyToOne
+    @JoinColumn(name = "group_id")
     private GroupInfo groupInfo;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

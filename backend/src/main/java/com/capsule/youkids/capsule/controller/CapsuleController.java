@@ -26,4 +26,9 @@ public class CapsuleController {
 
         return new ResponseEntity<>(capsuleListResponseDto, HttpStatus.OK);
     }
+
+    @GetMapping("/images/{capsuleId}")
+    public ResponseEntity<?> getAllMemoryByCapsule(@PathVariable int capsuleId){
+        return null;
+    }
 }

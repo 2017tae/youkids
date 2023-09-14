@@ -73,10 +73,12 @@ class _CreateShopReviewScreenState extends State<CreateShopReviewScreen> {
                     updateOnDrag: true,
                     itemPadding: const EdgeInsets.symmetric(horizontal: 3),
                     ratingWidget: RatingWidget(
-                      full: Image.asset('lib/src/assets/icons/heart.png'),
-                      half: Image.asset('lib/src/assets/icons/heart_half.png'),
-                      empty:
-                          Image.asset('lib/src/assets/icons/heart_border.png'),
+                      full: Image.asset(
+                          'lib/src/assets/icons/rating_full_lg.png'),
+                      half: Image.asset(
+                          'lib/src/assets/icons/rating_half_lg.png'),
+                      empty: Image.asset(
+                          'lib/src/assets/icons/rating_empty_lg.png'),
                     ),
                     onRatingUpdate: (value) {
                       setState(() {

@@ -10,14 +10,14 @@ import java.util.UUID;
 public interface CourseService {
 
     // 코스 저장
-    boolean save(CourseRequestDto courseRequestDto);
+    void save(CourseRequestDto courseRequestDto);
 
     // 유저의 코스 불러오기
     List<DetailCourseResponseDto> getCourseIdsByUserId(UUID userId);
 
     // 코스 수정
-    boolean update(ModifyCourseRequestDto modifyCourseRequestDto);
+    void update(ModifyCourseRequestDto modifyCourseRequestDto);
 
     // 코스 삭제
-    boolean delete(DeleteCourseRequestDto deleteCourseRequestDto);
+    void delete(DeleteCourseRequestDto deleteCourseRequestDto);
 }

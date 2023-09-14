@@ -29,9 +29,9 @@ public class PlaceImage {
     private Place place;
 
     @Builder
-    public PlaceImage(int placeImageId, String url, Place place) {
-        this.placeImageId = placeImageId;
+    public PlaceImage(String url, Place place) {
         this.url = url;
         this.place = place;
+        place.getImages().add(this);
     }
 }

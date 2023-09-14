@@ -22,16 +22,20 @@ public class ReviewImage {
     private int reviewImageId;
 
     @Column
-    private String reviewUrl;
+    private String imageUrl;
 
     @ManyToOne
     @JoinColumn(name = "review_id")
     private Review review;
 
+    @Column
+    private int placeId;
+
     @Builder
-    public ReviewImage(int reviewImageId, String reviewUrl, Review review) {
-        this.reviewImageId = reviewImageId;
-        this.reviewUrl = reviewUrl;
+    public ReviewImage(String imageUrl, Review review, int placeId) {
+        this.imageUrl = imageUrl;
         this.review = review;
+        this.placeId = placeId;
+        review.getImages().add(this);
     }
 }

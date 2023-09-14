@@ -1,17 +1,18 @@
 package com.capsule.youkids.place.dto;
 
-import com.capsule.youkids.place.entity.Place;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @NoArgsConstructor
 public class DetailPlaceResponseDto {
 
-    private Place place;
+    private PlaceInfoDto place;
     private boolean bookmarked;
 
     @Builder
-    public DetailPlaceResponseDto(Place place, boolean bookmarked) {
+    public DetailPlaceResponseDto(PlaceInfoDto place, boolean bookmarked) {
         this.place = place;
         this.bookmarked = bookmarked;
     }

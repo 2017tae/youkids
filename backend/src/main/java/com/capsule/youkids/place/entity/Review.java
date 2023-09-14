@@ -3,6 +3,7 @@ package com.capsule.youkids.place.entity;
 import com.capsule.youkids.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,7 +19,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Builder
 public class Review {
 
     @Id
@@ -44,12 +44,13 @@ public class Review {
     private List<ReviewImage> images = new ArrayList<>();
 
     @Builder
-    public Review(int reviewId, double score, String description, User user, Place place, List<ReviewImage> images) {
-        this.reviewId = reviewId;
+    public Review(double score, String description, User user, Place place) {
         this.score = score;
         this.description = description;
         this.user = user;
         this.place = place;
-        this.images = images;
+        place.getReviews().add(this);
+        place.upReviewNum();
+        place.addReviewSum(score);
     }
 }

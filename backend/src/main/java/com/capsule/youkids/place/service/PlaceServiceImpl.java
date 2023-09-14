@@ -1,21 +1,35 @@
 package com.capsule.youkids.place.service;
 
+import com.capsule.youkids.global.s3.service.AwsS3Service;
 import com.capsule.youkids.place.dto.BookmarkListItemDto;
 import com.capsule.youkids.place.dto.BookmarkListResponseDto;
 import com.capsule.youkids.place.dto.BookmarkRequestDto;
 import com.capsule.youkids.place.dto.DetailPlaceResponseDto;
+import com.capsule.youkids.place.dto.PlaceInfoDto;
+import com.capsule.youkids.place.dto.ReviewInfoDto;
+import com.capsule.youkids.place.dto.ReviewWriteRequestDto;
 import com.capsule.youkids.place.entity.Bookmark;
 import com.capsule.youkids.place.entity.BookmarkMongo;
 import com.capsule.youkids.place.entity.Place;
+import com.capsule.youkids.place.entity.PlaceImage;
+import com.capsule.youkids.place.entity.Review;
+import com.capsule.youkids.place.entity.ReviewImage;
 import com.capsule.youkids.place.repository.BookmarkMongoRepository;
 import com.capsule.youkids.place.repository.BookmarkRepository;
 import com.capsule.youkids.place.repository.PlaceRepository;
+import com.capsule.youkids.place.repository.ReviewImageRepository;
+import com.capsule.youkids.place.repository.ReviewRepository;
+import com.capsule.youkids.user.entity.User;
+import com.capsule.youkids.user.repository.UserRepository;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -25,8 +39,80 @@ public class PlaceServiceImpl implements PlaceService {
     private final PlaceRepository placeRepository;
     private final BookmarkRepository bookmarkRepository;
     private final BookmarkMongoRepository bookmarkMongoRepository;
+    private final ReviewRepository reviewRepository;
+    private final ReviewImageRepository reviewImageRepository;
+    private final UserRepository userRepository;
+    private final AwsS3Service awsS3Service;
+
+    // Review 엔티티의 내용을 ReviewInfoDto로 옮기는 작업
+    public ReviewInfoDto moveToReviewDto(Review review) {
+        // 리뷰 이미지 리스트를 꺼냄
+        List<ReviewImage> reviewImages = review.getImages();
+        
+        // 리뷰 url을 담을 리스트 생성
+        List<String> imageList = new ArrayList<>();
+        for(ReviewImage image : reviewImages) {
+            
+            // url 넣어줌
+            imageList.add(image.getImageUrl());
+        }
+        
+        // 데이터 옮겨 담기
+        return ReviewInfoDto.builder()
+                .reviewId(review.getReviewId())
+                .userId(review.getUser().getUserId())
+                .score(review.getScore())
+                .description(review.getDescription())
+                .images(imageList)
+                .build();
+    }
+
+    // Place 엔티티를 PlaceInfoDto로 옮기는 작업
+    public PlaceInfoDto moveToPlaceDto(Place place) {
+        // Review 리스트 꺼내기
+        List<Review> reviews = place.getReviews();
+        
+        // 리뷰를 저장할 리스트 생성
+        List<ReviewInfoDto> reviewList = new ArrayList<>();
+
+        // 리뷰 옮겨 담기
+        for(Review review : reviews) {
+            System.out.println(review);
+            // 위에 만든 메서드로 Dto를 리스트에 저장
+            reviewList.add(moveToReviewDto(review));
+        }
+
+        // image 리스트 생성
+        List<String> images = new ArrayList<>();
+        for(PlaceImage image : place.getImages()) {
+            
+            // 이미지 url을 리스트에 저장
+            images.add(image.getUrl());
+        }
+
+        // 데이터 옮기기
+        return PlaceInfoDto.builder()
+                .placeId(place.getPlaceId())
+                .name(place.getName())
+                .address(place.getAddress())
+                .latitude(place.getLatitude())
+                .longitude(place.getLongitude())
+                .phoneNumber(place.getPhoneNumber())
+                .category(place.getCategory())
+                .homepage(place.getHomepage())
+                .description(place.getDescription())
+                .reviewSum(place.getReviewSum())
+                .reviewNum(place.getReviewNum())
+                .subwayFlag(place.isSubwayFlag())
+                .subwayId(place.getSubwayId())
+                .subwayDistance(place.getSubwayDistance())
+                .images(images)
+                .reviews(reviewList)
+                .build();
+    }
 
     // 장소 상세보기
+    @Override
     public DetailPlaceResponseDto viewPlace(UUID userId, int placeId) {
         // 컨트롤러에서 null 확인을 위해 null로 초기화
         DetailPlaceResponseDto response = null;
@@ -53,13 +139,17 @@ public class PlaceServiceImpl implements PlaceService {
                 // MongoDB에 값이 있다면 그 값을 삽입
                 bookmarkResult = bookmarkCheck.get().isBookmarked();
             }
-            response = new DetailPlaceResponseDto(result.get(), bookmarkResult);
+
+            response = DetailPlaceResponseDto.builder()
+                    .place(moveToPlaceDto(place))
+                    .bookmarked(bookmarkResult).build();
         }
         return response;
     }
 
     // 찜 하기 / 취소하기
     @Transactional
+    @Override
     public String doBookmark(BookmarkRequestDto bookmarkRequestDto) {
         UUID userId = bookmarkRequestDto.getUserId();
         int placeId = bookmarkRequestDto.getPlaceId();
@@ -69,10 +159,16 @@ public class PlaceServiceImpl implements PlaceService {
         String id = userId.toString() + String.valueOf(placeId);
 
         // RDB용 객체 생성
-        Bookmark bookmark = new Bookmark(userId, placeId);
+        Bookmark bookmark = Bookmark.builder()
+                .userId(userId)
+                .placeId(placeId)
+                .build();
 
         // MongoDB용 객체 생성
-        BookmarkMongo bookmarkMongo = new BookmarkMongo(id, flag);
+        BookmarkMongo bookmarkMongo = BookmarkMongo.builder()
+                .id(id)
+                .isBookmarked(flag)
+                .build();
 
         try {
             if (flag) {
@@ -94,6 +190,7 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     // 유저의 찜 리스트 조회하기
+    @Override
     public BookmarkListResponseDto getBookmarkList(UUID userId) {
         // response용 DTO
         BookmarkListResponseDto response = null;
@@ -107,9 +204,60 @@ public class PlaceServiceImpl implements PlaceService {
 
             // placeIds에 담긴 id들이 place 테이블에 있는 경우만 취급
             if (!list.isEmpty()) {
-                response = new BookmarkListResponseDto(list);
+                response = BookmarkListResponseDto.builder().bookmarks(list).build();
             }
         }
         return response;
+    }
+
+    // 리뷰 작성하기
+    @Transactional
+    @Override
+    public String writeReview(ReviewWriteRequestDto reviewWriteRequestDto,
+            List<MultipartFile> files) {
+        // RequestDto에서 파라미터 빼오기
+        UUID userId = reviewWriteRequestDto.getUserId();
+        int placeId = reviewWriteRequestDto.getPlaceId();
+        double score = reviewWriteRequestDto.getScore();
+        String description = reviewWriteRequestDto.getDescription();
+
+        // User, Place 객체 가져오기
+        Optional<User> user = userRepository.findById(userId);
+        Optional<Place> place = placeRepository.findById(placeId);
+
+        if(!user.isPresent() || !place.isPresent())
+            return "error";
+
+        Review review = Review.builder()
+                .score(score)
+                .description(description)
+                .user(user.get())
+                .place(place.get())
+                .build();
+
+        if (!files.isEmpty()) {
+            // S3에 파일 업로드 및 이미지 리스트에 저장
+            try {
+                for (MultipartFile file : files) {
+                    ReviewImage image = ReviewImage.builder()
+                            .imageUrl(awsS3Service.uploadImg(file))
+                            .review(review)
+                            .placeId(placeId)
+                            .build();
+
+                    // ReviewImage Table에 삽입
+                    reviewImageRepository.save(image);
+                }
+            } catch (IOException e) {
+                return "error";
+            }
+        }
+
+        try {
+            reviewRepository.save(review);
+        } catch (Exception e) {
+            return "error";
+        }
+        return "success";
     }
 }

@@ -62,4 +62,12 @@ public class Place {
 
     @OneToMany(mappedBy = "place")
     private List<Review> reviews = new ArrayList<>();
+
+    public void upReviewNum() {
+        this.reviewNum++;
+    }
+
+    public void addReviewSum(double score) {
+        this.reviewSum += score;
+    }
 }

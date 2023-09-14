@@ -3,7 +3,9 @@ package com.capsule.youkids.place.controller;
 import com.capsule.youkids.place.dto.BookmarkListResponseDto;
 import com.capsule.youkids.place.dto.BookmarkRequestDto;
 import com.capsule.youkids.place.dto.DetailPlaceResponseDto;
+import com.capsule.youkids.place.dto.ReviewWriteRequestDto;
 import com.capsule.youkids.place.service.PlaceService;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,7 +15,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/place")
@@ -26,10 +30,11 @@ public class PlaceController {
     @GetMapping("/{userId}/{placeId}")
     public ResponseEntity<?> viewDetailPlace(@PathVariable UUID userId, @PathVariable int placeId) {
         DetailPlaceResponseDto response = placeService.viewPlace(userId, placeId);
+
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
-            return new ResponseEntity<DetailPlaceResponseDto>(response, HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
     }
 
@@ -53,5 +58,18 @@ public class PlaceController {
         } else {
             return new ResponseEntity<BookmarkListResponseDto>(response, HttpStatus.OK);
         }
+    }
+
+    // 리뷰 작성하기
+    @PostMapping("/review")
+    public ResponseEntity<?> writeReview(@RequestPart ReviewWriteRequestDto reviewWriteRequestDto, @RequestPart(required = false)
+    List<MultipartFile> files) {
+        String result = placeService.writeReview(reviewWriteRequestDto, files);
+        if(result.equals("success"))
+            return new ResponseEntity<>("리뷰 작성 성공", HttpStatus.CREATED);
+        else if(result.equals("empty"))
+            return new ResponseEntity<>("일치하는 장소 또는 유저 정보가 없습니다.", HttpStatus.BAD_REQUEST);
+        else
+            return new ResponseEntity<>("리뷰 작성 중 에러 발생", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

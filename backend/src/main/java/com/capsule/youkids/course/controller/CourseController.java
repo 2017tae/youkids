@@ -2,14 +2,12 @@ package com.capsule.youkids.course.controller;
 
 import com.capsule.youkids.course.dto.DeleteCourseRequestDto;
 import com.capsule.youkids.course.dto.CourseRequestDto;
-import com.capsule.youkids.course.dto.DetailCourseResponseDto;
 import com.capsule.youkids.course.dto.ModifyCourseRequestDto;
 import com.capsule.youkids.course.service.CourseService;
-import java.util.List;
+import com.capsule.youkids.global.common.constant.Code;
+import com.capsule.youkids.global.common.response.BaseResponse;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,51 +25,29 @@ public class CourseController {
     private final CourseService courseService;
 
     @PostMapping("")
-    public ResponseEntity<?> saveCourse(
+    public BaseResponse saveCourse(
             @RequestBody CourseRequestDto courseRequestDto) {
-        boolean check = courseService.save(courseRequestDto);
-
-        if (check) {
-            return new ResponseEntity<>("등록 성공", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("등록 실패", HttpStatus.BAD_REQUEST);
-        }
-
+        courseService.save(courseRequestDto);
+        return BaseResponse.success(Code.SUCCESS);
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<?> getCourse(
+    public BaseResponse getCourse(
             @PathVariable("userId") UUID userId) {
-        List<DetailCourseResponseDto> response = courseService.getCourseIdsByUserId(userId);
-
-        if (response.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
+        return BaseResponse.success(Code.SUCCESS, courseService.getCourseIdsByUserId(userId));
     }
 
     @PutMapping("")
-    public ResponseEntity<?> updateCourse(
+    public BaseResponse updateCourse(
             @RequestBody ModifyCourseRequestDto modifyCourseRequestDto) {
-        boolean check = courseService.update(modifyCourseRequestDto);
-
-        if (check) {
-            return new ResponseEntity<>("수정 성공", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("수정 실패", HttpStatus.BAD_REQUEST);
-        }
+        courseService.update(modifyCourseRequestDto);
+        return BaseResponse.success(Code.SUCCESS);
     }
 
     @DeleteMapping("")
-    public ResponseEntity<?> deleteCourse(
+    public BaseResponse deleteCourse(
             @RequestBody DeleteCourseRequestDto deleteCourseRequestDto) {
-        boolean check = courseService.delete(deleteCourseRequestDto);
-
-        if (check) {
-            return new ResponseEntity<>("삭제 성공", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("삭제 실패", HttpStatus.BAD_REQUEST);
-        }
+        courseService.delete(deleteCourseRequestDto);
+        return BaseResponse.success(Code.SUCCESS);
     }
 }

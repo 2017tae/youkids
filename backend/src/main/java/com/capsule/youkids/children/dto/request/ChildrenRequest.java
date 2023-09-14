@@ -1,0 +1,22 @@
+package com.capsule.youkids.children.dto.request;
+
+import java.time.LocalDate;
+import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+@Builder
+public class ChildrenRequest {
+
+    private Long childrenId;
+    private UUID parentId;
+    private String name;
+    private int gender;
+    private LocalDate birthday;
+    private String childrenImage;
+
+    // 애기 성향
+}

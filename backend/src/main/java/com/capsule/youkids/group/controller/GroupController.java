@@ -3,7 +3,7 @@ package com.capsule.youkids.group.controller;
 import com.capsule.youkids.group.dto.request.GroupUserRequest;
 import com.capsule.youkids.group.dto.request.UpdateGroupRequest;
 import com.capsule.youkids.group.dto.response.GroupResponse;
-import com.capsule.youkids.group.entity.GroupInfo;
+import com.capsule.youkids.group.dto.response.UserResponse;
 import com.capsule.youkids.group.service.GroupService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -34,7 +34,7 @@ public class GroupController {
             @ApiResponse(responseCode = "404", description = "정보가 존재하지 않음"),
             @ApiResponse(responseCode = "400", description = "이미 추가된 유저")
     })
-    public ResponseEntity<?> addUserInGroup(@RequestBody GroupUserRequest groupUserRequest) {
+    public ResponseEntity<?> addUserInGroup(@RequestBody GroupUserRequest groupUserRequest) throws Exception {
         groupService.addUserInGroup(groupUserRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -45,7 +45,7 @@ public class GroupController {
             @ApiResponse(responseCode = "404", description = "정보가 존재하지 않음"),
             @ApiResponse(responseCode = "400", description = "그룹에 속해있지 않음")
     })
-    public ResponseEntity<?> deleteUserFromGroup(@RequestBody GroupUserRequest groupUserRequest) {
+    public ResponseEntity<?> deleteUserFromGroup(@RequestBody GroupUserRequest groupUserRequest) throws Exception {
         groupService.deleteUserFromGroup(groupUserRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -56,19 +56,29 @@ public class GroupController {
             @ApiResponse(responseCode = "404", description = "정보가 존재하지 않음"),
             @ApiResponse(responseCode = "400", description = "그룹에 속해있지 않음")
     })
-    public ResponseEntity<?> updateGroupName(@RequestBody UpdateGroupRequest updateGroupRequest) {
+    public ResponseEntity<?> updateGroupName(@RequestBody UpdateGroupRequest updateGroupRequest) throws Exception {
         groupService.updateGroupName(updateGroupRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/mygroup/{id}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "그룹 불러오기 성공"),
             @ApiResponse(responseCode = "404", description = "정보가 존재하지 않음"),
     })
-    public ResponseEntity<?> getAllJoinedGroup(@PathVariable("id") UUID id) {
+    public ResponseEntity<?> getAllJoinedGroup(@PathVariable("id") UUID id) throws Exception {
         List<GroupResponse> groupResponseList = groupService.getAllJoinedGroup(id);
         return new ResponseEntity<>(groupResponseList, HttpStatus.OK);
+    }
+
+    @GetMapping("/member/{id}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "멤버 불러오기 성공"),
+            @ApiResponse(responseCode = "404", description = "그룹 정보가 존재하지 않음")
+    })
+    public ResponseEntity<?> getAllJoinedUser(@PathVariable("id") Long id) throws Exception {
+        List<UserResponse> userResponseList = groupService.getAllJoinedUser(id);
+        return new ResponseEntity<>(userResponseList, HttpStatus.OK);
     }
 
 }

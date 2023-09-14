@@ -6,12 +6,12 @@ import lombok.Getter;
 
 @Getter
 public class UpdateGroupRequest {
-    private long groupId;
+    private Long groupId;
     private UUID userId;
     private String groupName;
 
     @Builder
-    public UpdateGroupRequest(long groupId, UUID userId, String groupName) {
+    public UpdateGroupRequest(Long groupId, UUID userId, String groupName) {
         this.groupId = groupId;
         this.userId = userId;
         this.groupName = groupName;

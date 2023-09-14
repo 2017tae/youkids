@@ -52,27 +52,103 @@ class _CapsuleDetailScreenState extends State<CapsuleDetailScreen> {
       ),
       body: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 10,
+          Container(
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Color(0xff929292),
+                  width: 0.5,
+                ),
+              ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  '장소',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 16,
+                const Padding(
+                  padding: EdgeInsets.only(
+                    left: 20,
+                    bottom: 10,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '장소',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        '2022.12.31',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Text(
-                  '2020.12.31',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 16,
+                IconButton(
+                  icon: const Icon(
+                    Icons.more_vert_sharp,
+                    size: 30,
                   ),
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Container(
+                          height: MediaQuery.of(context).size.height * 0.25,
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[150],
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(30),
+                              topRight: Radius.circular(30),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.horizontal_rule_rounded,
+                                  size: 50,
+                                ),
+                                Card(
+                                  color: Colors.grey[200],
+                                  child: ListTile(
+                                    leading: Icon(
+                                      Icons.edit_document,
+                                      color: Colors.lightBlue[400],
+                                    ),
+                                    title: const Text('수정하기'),
+                                  ),
+                                ),
+                                // const SizedBox(
+                                //   height: 5,
+                                // ),
+                                Card(
+                                  color: Colors.grey[200],
+                                  child: ListTile(
+                                    leading: Icon(
+                                      Icons.delete_outline_rounded,
+                                      color: Colors.red[600],
+                                    ),
+                                    title: const Text('삭제하기'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
                 ),
               ],
             ),
@@ -90,28 +166,60 @@ class _CapsuleDetailScreenState extends State<CapsuleDetailScreen> {
               },
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center, // 동그라미들을 가로로 중앙에 정렬
-            children: [
-              ...images.asMap().entries.map(
-                (entry) {
-                  return GestureDetector(
-                    onTap: () => _controller.animateToPage(entry.key),
-                    child: Container(
-                      width: 12.0,
-                      height: 15.0,
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 4.0),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: const Color(0xffFF7E76)
-                            .withOpacity(_current == entry.key ? 1 : 0.3),
-                      ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 10,
+            ),
+            child: Stack(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: images.asMap().entries.map(
+                    (entry) {
+                      return GestureDetector(
+                        onTap: () => _controller.animateToPage(entry.key),
+                        child: Container(
+                          width: 12.0,
+                          height: 15.0,
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 4.0),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: const Color(0xffFF7E76)
+                                .withOpacity(_current == entry.key ? 1 : 0.3),
+                          ),
+                        ),
+                      );
+                    },
+                  ).toList(),
+                ),
+                Positioned(
+                  right: 0,
+                  child: IconButton(
+                    onPressed: () {
+                      // showModalBottomSheet(context: context, builder: builder)
+                    },
+                    icon: const Icon(
+                      Icons.bookmark_border_outlined,
+                      size: 40,
+                      color: Color(0xffF6766E),
                     ),
-                  );
-                },
-              ).toList(),
-            ],
+                  ),
+                ),
+                Positioned(
+                  left: 0,
+                  child: IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.account_circle,
+                      size: 40,
+                      color: Color(0xffF6766E),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

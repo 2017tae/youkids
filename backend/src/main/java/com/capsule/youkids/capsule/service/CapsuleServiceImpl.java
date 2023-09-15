@@ -3,7 +3,10 @@ package com.capsule.youkids.capsule.service;
 import com.capsule.youkids.capsule.dto.CapsuleDto;
 import com.capsule.youkids.capsule.dto.CapsuleListResponseDto;
 import com.capsule.youkids.capsule.dto.CapsuleResponseDto;
+import com.capsule.youkids.capsule.dto.MemoryListResponseDto;
+import com.capsule.youkids.capsule.dto.MemoryResponseDto;
 import com.capsule.youkids.capsule.entity.Capsule;
+import com.capsule.youkids.capsule.entity.Memory;
 import com.capsule.youkids.capsule.repository.CapsuleRepository;
 import com.capsule.youkids.capsule.repository.MemoryImageRepository;
 import com.capsule.youkids.capsule.repository.MemoryRepository;
@@ -97,5 +100,29 @@ public class CapsuleServiceImpl implements CapsuleService {
                 .build();
 
         return capsuleListResponseDto;
+    }
+
+    /**
+     * 캡슐 아이디를 통해서 캡슐 아이디에 해당하는 모든 메모리를 반환한다.
+     *
+     * @param capsuleId
+     * @return MemoryListResponseDto
+     */
+    @Override
+    public MemoryListResponseDto getMemoryList(int capsuleId) {
+
+        Optional<Capsule> capsule = capsuleRepository.findById(capsuleId);
+
+        MemoryListResponseDto memoryListResponseDto;
+
+        if(!capsule.isEmpty()){
+            for(Memory memory: capsule.get().getMemories()){
+                MemoryResponseDto.MemoryImageDto memoryImageDto;
+            }
+        } else{
+
+        }
+
+        return null;
     }
 }

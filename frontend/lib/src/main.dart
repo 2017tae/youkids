@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:youkids/src/widgets/initial_widget.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await NaverMapSdk.instance.initialize();
   runApp(const YouKids());
 }
 
@@ -14,6 +17,7 @@ class YouKids extends StatelessWidget {
       title: 'YouKids',
       theme: ThemeData(
         useMaterial3: true,
+        fontFamily: "Pretendard",
       ),
       home: const InitialWidget(),
     );

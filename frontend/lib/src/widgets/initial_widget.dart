@@ -5,6 +5,7 @@ import 'package:youkids/src/screens/course/course_screen.dart';
 import 'package:youkids/src/screens/home/home_screen.dart';
 import 'package:youkids/src/screens/mypage/mypage_screen.dart';
 import 'package:youkids/src/screens/posting/posting_screen.dart';
+import 'package:youkids/src/screens/login/login_screen.dart';
 
 class InitialWidget extends StatefulWidget {
   const InitialWidget({super.key});
@@ -50,6 +51,18 @@ class _InitialWidgetState extends State<InitialWidget> {
             onPressed: () {},
             icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
                 height: 24),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context)=> LoginScreen()),
+              );
+            },
+            icon: const Icon(
+              Icons.account_circle_rounded,
+              size: 28,
+            ),
           ),
         ],
       ),

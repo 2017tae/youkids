@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:youkids/src/widgets/initial_widget.dart';
+import 'package:youkids/src/screens/home/home_screen.dart';
+
 
 void main() {
   runApp(const YouKids());
@@ -15,7 +16,8 @@ class YouKids extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
-      home: const InitialWidget(),
+      // home: const InitialWidget(),
+      home: const HomeScreen(),
     );
   }
 }

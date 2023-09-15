@@ -99,7 +99,7 @@ class _CapsuleDetailScreenState extends State<CapsuleDetailScreen> {
                       context: context,
                       builder: (BuildContext context) {
                         return Container(
-                          height: MediaQuery.of(context).size.height * 0.25,
+                          height: MediaQuery.of(context).size.height * 0.3,
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
                             color: Colors.grey[150],
@@ -113,11 +113,10 @@ class _CapsuleDetailScreenState extends State<CapsuleDetailScreen> {
                               horizontal: 20,
                             ),
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Icon(
                                   Icons.horizontal_rule_rounded,
-                                  size: 50,
+                                  size: 70,
                                 ),
                                 Card(
                                   color: Colors.grey[200],
@@ -129,9 +128,9 @@ class _CapsuleDetailScreenState extends State<CapsuleDetailScreen> {
                                     title: const Text('수정하기'),
                                   ),
                                 ),
-                                // const SizedBox(
-                                //   height: 5,
-                                // ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
                                 Card(
                                   color: Colors.grey[200],
                                   child: ListTile(
@@ -197,9 +196,7 @@ class _CapsuleDetailScreenState extends State<CapsuleDetailScreen> {
                 Positioned(
                   right: 0,
                   child: IconButton(
-                    onPressed: () {
-                      // showModalBottomSheet(context: context, builder: builder)
-                    },
+                    onPressed: () {},
                     icon: const Icon(
                       Icons.bookmark_border_outlined,
                       size: 40,

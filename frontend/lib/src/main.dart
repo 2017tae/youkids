@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
-import 'package:youkids/src/widgets/initial_widget.dart';
+import 'package:youkids/src/screens/home/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +19,8 @@ class YouKids extends StatelessWidget {
         useMaterial3: true,
         fontFamily: "Pretendard",
       ),
-      home: const InitialWidget(),
+      // home: const InitialWidget(),
+      home: const HomeScreen(),
     );
   }
 }

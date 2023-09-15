@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:youkids/src/screens/shop/create_shop_review_screen.dart';
+import 'package:youkids/src/widgets/footer_widget.dart';
 
 class ShopDetailScreen extends StatelessWidget {
   const ShopDetailScreen({super.key});
@@ -7,13 +9,15 @@ class ShopDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const Drawer(),
       appBar: AppBar(
         title: const Text(
-          '이글이글 불곱창(가제)',
+          'YouKids',
           style: TextStyle(
-              fontSize: 22,
-              color: Color(0xff000000),
-              fontWeight: FontWeight.w500),
+            fontSize: 22,
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         backgroundColor: Colors.white,
         iconTheme: const IconThemeData(
@@ -22,11 +26,8 @@ class ShopDetailScreen extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {},
-            icon: const Icon(
-              Icons.favorite_border_outlined,
-              size: 28,
-              color: Color(0xffF6766E),
-            ),
+            icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
+                height: 24),
           ),
         ],
       ),
@@ -76,6 +77,9 @@ class ShopDetailScreen extends StatelessWidget {
             )
           ],
         ),
+      ),
+      bottomNavigationBar: const FooterWidget(
+        currentIndex: 0,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

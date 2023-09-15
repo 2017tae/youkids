@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:youkids/src/widgets/home_widgets/card_frame_widget.dart';
 import 'package:youkids/src/widgets/home_widgets/child_icon_widget.dart';
 
@@ -77,6 +78,9 @@ class IndoorRecomlistScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: const FooterWidget(
+        currentIndex: 0,
       ),
     );
   }

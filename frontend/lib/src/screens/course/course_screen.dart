@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:youkids/src/models/course_models/course_detail_model.dart';
 import 'package:youkids/src/providers/course_providers.dart';
 
@@ -56,6 +57,28 @@ class _CourseScreenState extends State<CourseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const Drawer(),
+      appBar: AppBar(
+        title: const Text(
+          'YouKids',
+          style: TextStyle(
+            fontSize: 22,
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(
+          color: Colors.black,
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
+                height: 24),
+          ),
+        ],
+      ),
       body: Stack(
         children: [
           NaverMap(
@@ -141,6 +164,9 @@ class _CourseScreenState extends State<CourseScreen> {
             },
           ),
         ],
+      ),
+      bottomNavigationBar: const FooterWidget(
+        currentIndex: 1,
       ),
     );
   }

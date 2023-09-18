@@ -14,10 +14,10 @@ public interface GroupJoinRepository extends JpaRepository<GroupJoin, GroupPk> {
 
     List<GroupJoin> findByUserId(UUID userId);
 
-    Optional<GroupJoin> findByGroupIdAndUserId(Long groupId, UUID userId);
+    Optional<GroupJoin> findByGroupIdAndUserId(UUID groupId, UUID userId);
 
-    List<GroupJoin> findByGroupId(Long groupId);
+    List<GroupJoin> findByGroupId(UUID groupId);
 
     @Transactional
-    void deleteByGroupIdAndUserId(Long groupId, UUID userId);
+    void deleteByGroupIdAndUserId(UUID groupId, UUID userId);
 }

@@ -17,7 +17,7 @@ import lombok.Setter;
 public class GroupPk implements Serializable {
 
     @EqualsAndHashCode.Include
-    private Long groupId;
+    private UUID groupId;
 
     @EqualsAndHashCode.Include
     private UUID userId;

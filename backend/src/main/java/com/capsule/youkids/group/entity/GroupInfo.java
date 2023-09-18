@@ -17,9 +17,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GroupInfo {
     @Id
-    @Column
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long groupId;
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID groupId;
 
     @Column(columnDefinition = "BINARY(16)")
     private UUID leaderId;
@@ -31,7 +30,8 @@ public class GroupInfo {
 //    private List<Group> groupJoinedList;
 
     @Builder
-    public GroupInfo(UUID leaderId, String groupImg) {
+    public GroupInfo(UUID groupId, UUID leaderId, String groupImg) {
+        this.groupId = groupId;
         this.leaderId = leaderId;
         this.groupImg = groupImg;
     }

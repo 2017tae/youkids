@@ -76,7 +76,7 @@ public class GroupController {
             @ApiResponse(responseCode = "200", description = "멤버 불러오기 성공"),
             @ApiResponse(responseCode = "404", description = "그룹 정보가 존재하지 않음")
     })
-    public ResponseEntity<?> getAllJoinedUser(@PathVariable("id") Long id) throws Exception {
+    public ResponseEntity<?> getAllJoinedUser(@PathVariable("id") UUID id) throws Exception {
         List<UserResponse> userResponseList = groupService.getAllJoinedUser(id);
         return new ResponseEntity<>(userResponseList, HttpStatus.OK);
     }

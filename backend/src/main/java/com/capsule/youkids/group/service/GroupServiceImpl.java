@@ -40,7 +40,7 @@ public class GroupServiceImpl implements GroupService {
         if (groupInfo.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no group exists");
         }
-        Long gid = groupInfo.get().getGroupId();
+        UUID gid = groupInfo.get().getGroupId();
         UUID uid = user.get().getUserId();
         Optional<GroupJoin> group = groupJoinRepository.findByGroupIdAndUserId(gid, uid);
         // 이미 추가되어 있으면 에러~
@@ -79,7 +79,7 @@ public class GroupServiceImpl implements GroupService {
         if (groupInfo.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no group exists");
         }
-        Long gid = groupInfo.get().getGroupId();
+        UUID gid = groupInfo.get().getGroupId();
         UUID uid = user.get().getUserId();
         Optional<GroupJoin> group = groupJoinRepository.findByGroupIdAndUserId(gid, uid);
         // 이미 없으면 에러~
@@ -116,7 +116,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<UserResponse> getAllJoinedUser(Long groupId) throws Exception {
+    public List<UserResponse> getAllJoinedUser(UUID groupId) throws Exception {
         Optional<GroupInfo> groupInfo = groupInfoRepository.findById(groupId);
         if (groupInfo.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "no group");
@@ -143,7 +143,7 @@ public class GroupServiceImpl implements GroupService {
         if (user.isEmpty() || groupInfo.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no user or group");
         }
-        Long gid = groupInfo.get().getGroupId();
+        UUID gid = groupInfo.get().getGroupId();
         UUID uid = user.get().getUserId();
         Optional<GroupJoin> group = groupJoinRepository.findByGroupIdAndUserId(gid, uid);
         // 둘 다 있지만 속하지 않은 경우

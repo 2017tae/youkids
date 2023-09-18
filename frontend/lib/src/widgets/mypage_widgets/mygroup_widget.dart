@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youkids/src/models/home_models/child_icon_model.dart';
+import 'package:youkids/src/screens/mypage/group_screen.dart';
 
 class MyGroup extends StatelessWidget {
   final String groupName;
@@ -16,7 +17,12 @@ class MyGroup extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () {
-              print('yaong');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => GroupScreen(groupName: groupName),
+                ),
+              );
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -109,10 +115,7 @@ class MyGroup extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {
-                    // 그룹에 사람 추가하기
-                    print('mungmung');
-                  },
+                  onTap: () {},
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(

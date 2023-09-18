@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youkids/src/models/home_models/child_icon_model.dart';
+import 'package:youkids/src/screens/mypage/children_screen.dart';
 
 class MyChildren extends StatelessWidget {
   const MyChildren({
@@ -13,9 +14,7 @@ class MyChildren extends StatelessWidget {
       child: Column(
         children: [
           GestureDetector(
-            onTap: () {
-              print('yaong');
-            },
+            onTap: () {},
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -37,50 +36,72 @@ class MyChildren extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 100,
-                        height: 100,
-                        padding: const EdgeInsets.all(7),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black12),
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              image: AssetImage(tmpChildStoryIcon[1].imgUrl),
-                              fit: BoxFit.cover),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const ChildrenScreen(childrenName: "은우"),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 100,
+                          height: 100,
+                          padding: const EdgeInsets.all(7),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black12),
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                                image: AssetImage(tmpChildStoryIcon[1].imgUrl),
+                                fit: BoxFit.cover),
+                          ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 3,
-                      ),
-                      const Text('은우 아빠'),
-                    ],
+                        const SizedBox(
+                          height: 3,
+                        ),
+                        const Text('은우'),
+                      ],
+                    ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 100,
-                        height: 100,
-                        padding: const EdgeInsets.all(7),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black12),
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              image: AssetImage(tmpChildStoryIcon[0].imgUrl),
-                              fit: BoxFit.cover),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const ChildrenScreen(childrenName: "금우"),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 100,
+                          height: 100,
+                          padding: const EdgeInsets.all(7),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black12),
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                                image: AssetImage(tmpChildStoryIcon[0].imgUrl),
+                                fit: BoxFit.cover),
+                          ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 3,
-                      ),
-                      const Text('은우 삼촌'),
-                    ],
+                        const SizedBox(
+                          height: 3,
+                        ),
+                        const Text('금우'),
+                      ],
+                    ),
                   ),
                 ),
                 GestureDetector(

@@ -19,7 +19,7 @@ public interface GroupService {
     public List<GroupResponse> getAllJoinedGroup(UUID userId) throws Exception;
 
     // 그룹에 속한 모든 유저 불러오기
-    public List<UserResponse> getAllJoinedUser(Long groupId) throws Exception;
+    public List<UserResponse> getAllJoinedUser(UUID groupId) throws Exception;
 
     // 유저가 자기가 속한 그룹 이름 바꾸기
     public void updateGroupName(UpdateGroupRequest updateGroupRequest) throws Exception;

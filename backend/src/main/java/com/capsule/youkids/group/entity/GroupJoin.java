@@ -22,8 +22,8 @@ public class GroupJoin {
 //    private GroupPk pk;
 
     @Id
-    @Column
-    private Long groupId;
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID groupId;
 
     @Id
     @Column(columnDefinition = "BINARY(16)")
@@ -34,7 +34,7 @@ public class GroupJoin {
     private String groupName;
 
     @Builder
-    public GroupJoin(Long groupId, UUID userId, String groupName) {
+    public GroupJoin(UUID groupId, UUID userId, String groupName) {
         this.groupId = groupId;
         this.userId = userId;
         this.groupName = groupName;

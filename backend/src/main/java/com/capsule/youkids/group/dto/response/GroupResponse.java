@@ -6,13 +6,13 @@ import lombok.Getter;
 
 @Getter
 public class GroupResponse {
-    private Long groupId;
+    private UUID groupId;
     private UUID leaderId;
     private String groupName;
     private String groupImg;
 
     @Builder
-    public GroupResponse(Long groupId, UUID leaderId, String groupName, String groupImg) {
+    public GroupResponse(UUID groupId, UUID leaderId, String groupName, String groupImg) {
         this.groupId = groupId;
         this.leaderId = leaderId;
         this.groupName = groupName;

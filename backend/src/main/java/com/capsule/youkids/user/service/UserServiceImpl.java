@@ -1,5 +1,9 @@
 package com.capsule.youkids.user.service;
 
+import com.capsule.youkids.group.entity.GroupInfo;
+import com.capsule.youkids.group.entity.GroupJoin;
+import com.capsule.youkids.group.repository.GroupInfoRepository;
+import com.capsule.youkids.group.repository.GroupJoinRepository;
 import com.capsule.youkids.user.dto.RequestDto.DeleteMyInfoRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.ModifyMyInfoRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
@@ -33,9 +37,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+    private final GroupInfoRepository groupInfoRepository;
+    private final GroupJoinRepository groupJoinRepository;
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String googleClientId;
+
 
     // Auth Token이 유효한지 확인
     @Transactional
@@ -115,6 +122,23 @@ public class UserServiceImpl implements UserService {
         user.addInfoToUser(request);
 
         userRepository.save(user);
+
+        // Group 만들기
+        GroupInfo groupInfo = GroupInfo.builder()
+                .groupId(request.getUserId())
+                .leaderId(request.getUserId())
+                .groupImg(null)
+                .build();
+
+        groupInfoRepository.save(groupInfo);
+
+        GroupJoin groupJoin = GroupJoin.builder()
+                .groupId(request.getUserId())
+                .userId(request.getUserId())
+                .groupName(null)
+                .build();
+
+        groupJoinRepository.save(groupJoin);
 
         //여기서 partner에 팔로우 보내야 함!--------------
 

@@ -3,6 +3,7 @@ package com.capsule.youkids.capsule.service;
 import com.capsule.youkids.capsule.dto.CapsuleDto;
 import com.capsule.youkids.capsule.dto.CapsuleListResponseDto;
 import com.capsule.youkids.capsule.dto.CapsuleResponseDto;
+import com.capsule.youkids.capsule.dto.CreateMemoryRequestDto;
 import com.capsule.youkids.capsule.dto.MemoryListResponseDto;
 import com.capsule.youkids.capsule.dto.MemoryResponseDto;
 import com.capsule.youkids.capsule.dto.MemoryResponseDto.MemoryImageDto;
@@ -22,6 +23,8 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -148,5 +151,21 @@ public class CapsuleServiceImpl implements CapsuleService {
         }
 
         return memoryListResponseDto;
+    }
+
+    /**
+     * 메모리를 생성한다.
+     *
+     * @param createMemoryRequestDto
+     * @param multipartFileList
+     * @return 생성이 잘 되었는지 안 됐는지
+     */
+    @Override
+    @Transactional
+    public boolean createMemory(CreateMemoryRequestDto createMemoryRequestDto,
+            List<MultipartFile> multipartFileList) {
+
+        // 이거 구현 해야함.
+        return false;
     }
 }

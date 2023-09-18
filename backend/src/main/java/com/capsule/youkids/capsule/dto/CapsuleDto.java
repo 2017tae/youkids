@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CapsuleDto {
 
-    int capsuleId;
-    int year;
-    String url;
+    private int capsuleId;
+    private int year;
+    private String url;
 
     @Builder
     public CapsuleDto(int capsuleId, int year, String url) {

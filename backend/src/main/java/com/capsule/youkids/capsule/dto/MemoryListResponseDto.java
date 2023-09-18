@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MemoryListResponseDto {
 
-    List<MemoryResponseDto> memoryResponseDtoList = new ArrayList<>();
+    private List<MemoryResponseDto> memoryResponseDtoList = new ArrayList<>();
 }

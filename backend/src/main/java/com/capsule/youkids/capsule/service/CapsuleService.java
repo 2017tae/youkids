@@ -1,8 +1,12 @@
 package com.capsule.youkids.capsule.service;
 
 import com.capsule.youkids.capsule.dto.CapsuleListResponseDto;
+import com.capsule.youkids.capsule.dto.CreateMemoryRequestDto;
 import com.capsule.youkids.capsule.dto.MemoryListResponseDto;
+import java.util.List;
 import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface CapsuleService {
 
@@ -21,4 +25,14 @@ public interface CapsuleService {
      * @return MemoryListResponseDto
      */
     public MemoryListResponseDto getMemoryList(int capsuleId);
+
+    /**
+     * 메모리를 생성한다.
+     *
+     * @param createMemoryRequestDto
+     * @param multipartFileList
+     * @return 생성이 잘 되었는지 안 됐는지
+     */
+    @Transactional
+    public boolean createMemory(CreateMemoryRequestDto createMemoryRequestDto, List<MultipartFile> multipartFileList);
 }

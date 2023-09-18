@@ -46,10 +46,10 @@ public class Memory {
     @Column
     private boolean flag;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "capsule_id")
     private Capsule capsule;
 
-    @OneToMany(mappedBy = "memory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<MemoryImage> memoryImages = new ArrayList<>();
+    @OneToMany(mappedBy = "memory", fetch = FetchType.LAZY)
+    private List<MemoryImage> memoryImages;
 }

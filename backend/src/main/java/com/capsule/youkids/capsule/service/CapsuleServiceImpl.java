@@ -5,8 +5,11 @@ import com.capsule.youkids.capsule.dto.CapsuleListResponseDto;
 import com.capsule.youkids.capsule.dto.CapsuleResponseDto;
 import com.capsule.youkids.capsule.dto.MemoryListResponseDto;
 import com.capsule.youkids.capsule.dto.MemoryResponseDto;
+import com.capsule.youkids.capsule.dto.MemoryResponseDto.MemoryImageDto;
 import com.capsule.youkids.capsule.entity.Capsule;
 import com.capsule.youkids.capsule.entity.Memory;
+import com.capsule.youkids.capsule.entity.MemoryChildren;
+import com.capsule.youkids.capsule.entity.MemoryImage;
 import com.capsule.youkids.capsule.repository.CapsuleRepository;
 import com.capsule.youkids.capsule.repository.MemoryImageRepository;
 import com.capsule.youkids.capsule.repository.MemoryRepository;
@@ -113,16 +116,37 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         Optional<Capsule> capsule = capsuleRepository.findById(capsuleId);
 
-        MemoryListResponseDto memoryListResponseDto;
+        MemoryListResponseDto memoryListResponseDto = new MemoryListResponseDto();
 
         if(!capsule.isEmpty()){
             for(Memory memory: capsule.get().getMemories()){
-                MemoryResponseDto.MemoryImageDto memoryImageDto;
+                List<MemoryImageDto> memoryImageDtoList = new ArrayList<>();
+                for(MemoryImage memoryImage : memory.getMemoryImages()){
+
+                    List<Integer> childrenList = new ArrayList<>();
+                    for(Children children : memoryImage.getChildren()){
+                        childrenList.add(children.getId());
+                    }
+                    MemoryImageDto memoryImageDto = MemoryImageDto.builder()
+                            .childrenList(childrenList)
+                            .url(memoryImage.getMemoryUrl())
+                            .build();
+
+                    memoryImageDtoList.add(memoryImageDto);
+                }
+
+                MemoryResponseDto memoryResponseDto = MemoryResponseDto.builder()
+                        .month(memory.getMonth())
+                        .day(memory.getDay())
+                        .memoryImageDtoList(memoryImageDtoList)
+                        .build();
+
+                memoryListResponseDto.getMemoryResponseDtoList().add(memoryResponseDto);
             }
         } else{
-
+            // 해당하는 캡슐이 없다는 오류를 보내주면 된다.
         }
 
-        return null;
+        return memoryListResponseDto;
     }
 }

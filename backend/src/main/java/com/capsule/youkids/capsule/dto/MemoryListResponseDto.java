@@ -1,5 +1,6 @@
 package com.capsule.youkids.capsule.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MemoryListResponseDto {
 
-    List<MemoryResponseDto> memoryResponseDtoList;
+    List<MemoryResponseDto> memoryResponseDtoList = new ArrayList<>();
 }

@@ -36,11 +36,11 @@ public class Capsule {
     @Column
     private String url;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "capsule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "capsule", fetch = FetchType.LAZY)
     private List<Memory> memories = new ArrayList<>();
 
 

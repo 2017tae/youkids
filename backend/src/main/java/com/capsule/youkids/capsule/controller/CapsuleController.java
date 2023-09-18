@@ -2,6 +2,7 @@ package com.capsule.youkids.capsule.controller;
 
 
 import com.capsule.youkids.capsule.dto.CapsuleListResponseDto;
+import com.capsule.youkids.capsule.dto.MemoryListResponseDto;
 import com.capsule.youkids.capsule.service.CapsuleService;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,10 @@ public class CapsuleController {
     }
 
     @GetMapping("/images/{capsuleId}")
-    public ResponseEntity<?> getAllMemoryByCapsule(@PathVariable int capsuleId){
-        return null;
+    public ResponseEntity<?> getAllMemoryByCapsule(@PathVariable int capsuleId) {
+
+        MemoryListResponseDto memoryListResponseDto = capsuleService.getMemoryList(capsuleId);
+
+        return new ResponseEntity<>(memoryListResponseDto, HttpStatus.OK);
     }
 }

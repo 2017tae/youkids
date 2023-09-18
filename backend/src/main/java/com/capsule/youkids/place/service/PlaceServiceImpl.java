@@ -260,4 +260,46 @@ public class PlaceServiceImpl implements PlaceService {
         }
         return "success";
     }
+
+    // 리뷰 삭제하기
+    @Transactional
+    @Override
+    public String deleteReview(ReviewDeleteRequestDto reviewDeleteRequestDto) {
+
+        // reviewId 빼내기
+        int reviewId = reviewDeleteRequestDto.getReviewId();
+
+        // reviewId를 이용해 Review 객체 조회
+        Optional<Review> result = reviewRepository.findById(reviewId);
+
+        // 해당 데이터가 존재한다면
+        if(result.isPresent()) {
+            Review review = result.get();
+
+            // place의 리뷰 수, 총점 갱신
+            review.getPlace().downReviewNum();
+            review.getPlace().subReviewSum(review.getScore());
+
+            // 이미지 리스트 가져오기
+            List<ReviewImage> images = review.getImages();
+
+            try {
+                // S3와 RDB에서 리뷰 이미지 삭제
+                for(ReviewImage image : images) {
+                    awsS3Service.deleteFile(image.getImageUrl());
+                    reviewImageRepository.delete(image);
+                }
+
+                // 리뷰 데이터 삭제
+                reviewRepository.delete(review);
+
+                return "delete success";
+            } catch (Exception e) {
+                return "error";
+            }
+        }
+        else {
+            return "bad request";
+        }
+    }
 }

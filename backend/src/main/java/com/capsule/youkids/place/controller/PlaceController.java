@@ -3,6 +3,7 @@ package com.capsule.youkids.place.controller;
 import com.capsule.youkids.place.dto.BookmarkListResponseDto;
 import com.capsule.youkids.place.dto.BookmarkRequestDto;
 import com.capsule.youkids.place.dto.DetailPlaceResponseDto;
+import com.capsule.youkids.place.dto.ReviewDeleteRequestDto;
 import com.capsule.youkids.place.dto.ReviewWriteRequestDto;
 import com.capsule.youkids.place.service.PlaceService;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -71,5 +73,17 @@ public class PlaceController {
             return new ResponseEntity<>("일치하는 장소 또는 유저 정보가 없습니다.", HttpStatus.BAD_REQUEST);
         else
             return new ResponseEntity<>("리뷰 작성 중 에러 발생", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    // 리뷰 삭제하기
+    @DeleteMapping("/review")
+    public ResponseEntity<?> deleteReview(@RequestBody ReviewDeleteRequestDto reviewDeleteRequestDto) {
+        String result = placeService.deleteReview(reviewDeleteRequestDto);
+        if(result.equals("bad request"))
+            return new ResponseEntity<>("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
+        else if(result.equals("error"))
+            return new ResponseEntity<>("삭제 과정 중 에러 발생", HttpStatus.INTERNAL_SERVER_ERROR);
+        else
+            return new ResponseEntity<>("삭제 성공", HttpStatus.OK);
     }
 }

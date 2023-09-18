@@ -67,7 +67,15 @@ public class Place {
         this.reviewNum++;
     }
 
+    public void downReviewNum() {
+        this.reviewNum--;
+    }
+
     public void addReviewSum(double score) {
         this.reviewSum += score;
+    }
+
+    public void subReviewSum(double score) {
+        this.reviewSum -= score;
     }
 }

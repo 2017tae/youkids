@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:youkids/src/models/home_models/child_icon_model.dart';
+import 'package:youkids/src/widgets/mypage_widgets/mychildren_widget.dart';
+import 'package:youkids/src/widgets/mypage_widgets/mygroup_widget.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 
 class MyPageScreen extends StatelessWidget {
@@ -40,11 +42,17 @@ class MyPageScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(10),
                   child: Column(
                     children: [
-                      const Row(
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Icon(
-                            Icons.settings,
+                          GestureDetector(
+                            onTap: () {
+                              // settings 페이지로
+                              print('settings');
+                            },
+                            child: const Icon(
+                              Icons.settings,
+                            ),
                           ),
                         ],
                       ),
@@ -65,9 +73,15 @@ class MyPageScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(
-                            width: 10,
+                            width: 20,
                           ),
-                          const Text("은우 엄마", style: TextStyle(fontSize: 25)),
+                          const Flexible(
+                            child: Text("은우 엄마",
+                                style: TextStyle(
+                                  fontSize: 25,
+                                  overflow: TextOverflow.ellipsis,
+                                )),
+                          ),
                         ],
                       ),
                       const SizedBox(
@@ -77,13 +91,17 @@ class MyPageScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              // 프로필 수정 페이지로
+                              print('update');
+                            },
                             style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    const Color.fromRGBO(242, 230, 230, 1),
-                                foregroundColor: Colors.black,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5))),
+                              backgroundColor:
+                                  const Color.fromRGBO(242, 230, 230, 1),
+                              foregroundColor: Colors.black,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5)),
+                            ),
                             child: const Text("프로필 수정"),
                           ),
                         ],
@@ -92,26 +110,19 @@ class MyPageScreen extends StatelessWidget {
                   ),
                 ),
                 const Divider(color: Colors.black26),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  child: const Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            "우리 아이 ",
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            size: 18,
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                )
+                const MyChildren(),
+                const SizedBox(
+                  height: 10,
+                ),
+                const MyGroup(
+                  groupName: 'mungmung',
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                const MyGroup(
+                  groupName: 'yaong',
+                ),
               ],
             )),
       ),

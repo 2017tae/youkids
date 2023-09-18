@@ -6,6 +6,8 @@ import com.capsule.youkids.place.dto.BookmarkListResponseDto;
 import com.capsule.youkids.place.dto.BookmarkRequestDto;
 import com.capsule.youkids.place.dto.DetailPlaceResponseDto;
 import com.capsule.youkids.place.dto.PlaceInfoDto;
+import com.capsule.youkids.place.dto.ReviewDeleteRequestDto;
+import com.capsule.youkids.place.dto.ReviewImageInfoDto;
 import com.capsule.youkids.place.dto.ReviewInfoDto;
 import com.capsule.youkids.place.dto.ReviewWriteRequestDto;
 import com.capsule.youkids.place.entity.Bookmark;
@@ -45,7 +47,7 @@ public class PlaceServiceImpl implements PlaceService {
     private final AwsS3Service awsS3Service;
 
     // Review 엔티티의 내용을 ReviewInfoDto로 옮기는 작업
-    public ReviewInfoDto moveToReviewDto(Review review) {
+    private ReviewInfoDto moveToReviewDto(Review review) {
         // 리뷰 이미지 리스트를 꺼냄
         List<ReviewImage> reviewImages = review.getImages();
         
@@ -68,19 +70,7 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     // Place 엔티티를 PlaceInfoDto로 옮기는 작업
-    public PlaceInfoDto moveToPlaceDto(Place place) {
-        // Review 리스트 꺼내기
-        List<Review> reviews = place.getReviews();
-        
-        // 리뷰를 저장할 리스트 생성
-        List<ReviewInfoDto> reviewList = new ArrayList<>();
-
-        // 리뷰 옮겨 담기
-        for(Review review : reviews) {
-            System.out.println(review);
-            // 위에 만든 메서드로 Dto를 리스트에 저장
-            reviewList.add(moveToReviewDto(review));
-        }
+    private PlaceInfoDto moveToPlaceDto(Place place) {
 
         // image 리스트 생성
         List<String> images = new ArrayList<>();
@@ -107,7 +97,6 @@ public class PlaceServiceImpl implements PlaceService {
                 .subwayId(place.getSubwayId())
                 .subwayDistance(place.getSubwayDistance())
                 .images(images)
-                .reviews(reviewList)
                 .build();
     }
 
@@ -128,8 +117,7 @@ public class PlaceServiceImpl implements PlaceService {
             // 장소 정보
             Place place = result.get();
 
-            // 찜 여부 넣기
-            // 1차로 Optional로 값을 받음
+            // 찜 여부 체크
             Optional<BookmarkMongo> bookmarkCheck = bookmarkMongoRepository.findById(mongoKey);
 
             // MongoDB에 값이 없는 경우 찜을 클릭한 기록이 없는 것이기 때문에 false
@@ -140,8 +128,21 @@ public class PlaceServiceImpl implements PlaceService {
                 bookmarkResult = bookmarkCheck.get().isBookmarked();
             }
 
+            // Review 리스트 꺼내기
+            List<Review> reviewList = place.getReviews();
+
+            // 리뷰를 저장할 리스트 생성
+            List<ReviewInfoDto> reviews = new ArrayList<>();
+
+            // 리뷰 옮겨 담기
+            for(Review review : reviewList) {
+                // 위에 만든 메서드로 Dto를 리스트에 저장
+                reviews.add(moveToReviewDto(review));
+            }
+
             response = DetailPlaceResponseDto.builder()
                     .place(moveToPlaceDto(place))
+                    .reviews(reviews)
                     .bookmarked(bookmarkResult).build();
         }
         return response;

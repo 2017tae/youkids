@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Index;
 
 @Getter
 @NoArgsConstructor
@@ -29,6 +30,7 @@ public class ReviewImage {
     private Review review;
 
     @Column
+    @Index(name = "idx_place_id")
     private int placeId;
 
     @Builder

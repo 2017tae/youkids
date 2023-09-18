@@ -32,13 +32,12 @@ public class PlaceInfoDto {
     private String subwayId;
     private double subwayDistance;
     private List<String> images;
-    private List<ReviewInfoDto> reviews;
 
     @Builder
     public PlaceInfoDto(int placeId, String name, String address, double latitude, double longitude,
             String phoneNumber, String category, String homepage, String description, int reviewSum,
             int reviewNum, boolean subwayFlag, String subwayId, double subwayDistance,
-            List<String> images, List<ReviewInfoDto> reviews) {
+            List<String> images) {
         this.placeId = placeId;
         this.name = name;
         this.address = address;
@@ -54,6 +53,5 @@ public class PlaceInfoDto {
         this.subwayId = subwayId;
         this.subwayDistance = subwayDistance;
         this.images = images;
-        this.reviews = reviews;
     }
 }

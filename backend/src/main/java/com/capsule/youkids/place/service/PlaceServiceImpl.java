@@ -100,6 +100,27 @@ public class PlaceServiceImpl implements PlaceService {
                 .build();
     }
 
+    public List<ReviewImageInfoDto> getRecentImages(int placeId, int num) {
+        // 해당 장소의 리뷰 이미지를 리스트로 조회
+        List<ReviewImage> reviewImages = reviewImageRepository.findByPlaceId(placeId);
+
+        // Dto의 리스트 생성
+        List<ReviewImageInfoDto> list = new ArrayList<>();
+
+        int end = reviewImages.size() - 1;
+        for(int i=end; i>=0; i--) {
+            if(list.size() == num) break;
+            ReviewImage reviewImage = reviewImages.get(i);
+            ReviewImageInfoDto temp = ReviewImageInfoDto.builder()
+                    .reviewImageId(reviewImage.getReviewImageId())
+                    .reviewId(reviewImage.getReview().getReviewId())
+                    .imageUrl(reviewImage.getImageUrl())
+                    .build();
+            list.add(temp);
+        }
+        return list;
+    }
+
     // 장소 상세보기
     @Override
     public DetailPlaceResponseDto viewPlace(UUID userId, int placeId) {
@@ -143,6 +164,7 @@ public class PlaceServiceImpl implements PlaceService {
             response = DetailPlaceResponseDto.builder()
                     .place(moveToPlaceDto(place))
                     .reviews(reviews)
+                    .recentImages(getRecentImages(placeId, 5))
                     .bookmarked(bookmarkResult).build();
         }
         return response;

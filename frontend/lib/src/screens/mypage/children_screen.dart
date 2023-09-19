@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:youkids/src/models/home_models/child_icon_model.dart';
-import 'package:youkids/src/widgets/mypage_widgets/mychildren_widget.dart';
-import 'package:youkids/src/widgets/mypage_widgets/mygroup_widget.dart';
+import 'package:youkids/src/screens/mypage/children_update_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 
 class ChildrenScreen extends StatelessWidget {
@@ -26,15 +24,17 @@ class ChildrenScreen extends StatelessWidget {
           color: Colors.black,
         ),
         actions: [
-          // IconButton(
-          //   onPressed: () {},
-          //   icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
-          //       height: 24),
-          // ),
           ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          ChildrenUpdateScreen(childrenName: childrenName),
+                    ));
+              },
               style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red.shade300,
+                  backgroundColor: const Color(0XFFF6766E),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5)),
                   padding: const EdgeInsets.all(2)),
@@ -86,11 +86,14 @@ class ChildrenScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             const Text("이름"),
+                            const SizedBox(
+                              height: 5,
+                            ),
                             Container(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 10),
                               alignment: Alignment.centerLeft,
-                              height: 40,
+                              height: 48,
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color: const Color(0XFFF6766E)),
@@ -111,11 +114,14 @@ class ChildrenScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             const Text("생년월일"),
+                            const SizedBox(
+                              height: 5,
+                            ),
                             Container(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 10),
                               alignment: Alignment.centerLeft,
-                              height: 40,
+                              height: 48,
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color: const Color(0XFFF6766E)),
@@ -132,11 +138,14 @@ class ChildrenScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             const Text("성별"),
+                            const SizedBox(
+                              height: 5,
+                            ),
                             Container(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 10),
                               alignment: Alignment.centerLeft,
-                              height: 40,
+                              height: 48,
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color: const Color(0XFFF6766E)),

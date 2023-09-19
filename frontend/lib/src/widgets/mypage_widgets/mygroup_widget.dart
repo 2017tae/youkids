@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:youkids/src/models/home_models/child_icon_model.dart';
 import 'package:youkids/src/screens/mypage/group_screen.dart';
+import 'package:youkids/src/widgets/mypage_widgets/smallmember_widget.dart';
 
 class MyGroup extends StatelessWidget {
   final String groupName;
@@ -45,77 +45,142 @@ class MyGroup extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 100,
-                        height: 100,
-                        padding: const EdgeInsets.all(7),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black12),
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              image: AssetImage(tmpChildStoryIcon[1].imgUrl),
-                              fit: BoxFit.cover),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 3,
-                      ),
-                      const Text('은우 아빠'),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 100,
-                        height: 100,
-                        padding: const EdgeInsets.all(7),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black12),
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              image: AssetImage(tmpChildStoryIcon[1].imgUrl),
-                              fit: BoxFit.cover),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 3,
-                      ),
-                      const Text('은우 이모'),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 100,
-                        height: 100,
-                        padding: const EdgeInsets.all(7),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black12),
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              image: AssetImage(tmpChildStoryIcon[0].imgUrl),
-                              fit: BoxFit.cover),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 3,
-                      ),
-                      const Text('은우 삼촌'),
-                    ],
-                  ),
-                ),
+                const SmallMemberWidget(memberName: "은우 이모"),
+                const SmallMemberWidget(memberName: "은우 삼촌"),
+                const SmallMemberWidget(memberName: "은우 할아버지"),
+                // 내 그룹이면
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return SimpleDialog(
+                          title: const Text(
+                            '그룹원 추가하기',
+                            textAlign: TextAlign.center,
+                          ),
+                          children: <Widget>[
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  labelText: "이메일",
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5.0)),
+                                    borderSide: BorderSide(
+                                        width: 1, color: Color(0XFFF6766E)),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5.0)),
+                                    borderSide: BorderSide(
+                                        width: 1, color: Color(0XFFF6766E)),
+                                  ),
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                  ),
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.never,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return SimpleDialog(
+                                                  title: const Text(
+                                                    "추가 요청을 보냈습니다",
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                  children: [
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Expanded(
+                                                          child:
+                                                              GestureDetector(
+                                                            onTap: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                            child: const Text(
+                                                              "확인",
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                            ),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  const Color(0XFFF6766E),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5)),
+                                              padding: const EdgeInsets.all(2)),
+                                          child: const Text(
+                                            "추가 요청 보내기",
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text("닫기"),
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
+
+                              // SimpleDialogOption(
+                              //   onPressed: () {
+                              //     Navigator.of(context).pop(); // 모달 닫기
+                              //   },
+                              //   child: const Text('닫기'),
+                              // ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(

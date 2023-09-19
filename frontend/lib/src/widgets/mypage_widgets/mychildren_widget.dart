@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youkids/src/models/home_models/child_icon_model.dart';
+import 'package:youkids/src/screens/mypage/children_create_screen.dart';
 import 'package:youkids/src/screens/mypage/children_screen.dart';
 
 class MyChildren extends StatelessWidget {
@@ -107,7 +108,11 @@ class MyChildren extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     // 내 애기 추가하기
-                    print('mungmung');
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ChildrenCreateScreen(),
+                        ));
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),

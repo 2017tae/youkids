@@ -75,12 +75,24 @@ class MyPageScreen extends StatelessWidget {
                           const SizedBox(
                             width: 20,
                           ),
-                          const Flexible(
-                            child: Text("은우 엄마",
-                                style: TextStyle(
-                                  fontSize: 25,
-                                  overflow: TextOverflow.ellipsis,
-                                )),
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("은우 엄마",
+                                    style: TextStyle(
+                                      fontSize: 25,
+                                      overflow: TextOverflow.ellipsis,
+                                    )),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text("3살 아기 은우 엄마입니다~ 서로 정보 공유해요~~^^",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                    ))
+                              ],
+                            ),
                           ),
                         ],
                       ),

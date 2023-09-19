@@ -12,10 +12,17 @@ import com.capsule.youkids.capsule.entity.Memory;
 import com.capsule.youkids.capsule.entity.MemoryChildren;
 import com.capsule.youkids.capsule.entity.MemoryImage;
 import com.capsule.youkids.capsule.repository.CapsuleRepository;
+import com.capsule.youkids.capsule.repository.MemoryChildrenRepository;
 import com.capsule.youkids.capsule.repository.MemoryImageRepository;
 import com.capsule.youkids.capsule.repository.MemoryRepository;
+import com.capsule.youkids.children.entity.Children;
+import com.capsule.youkids.children.repository.ChildrenRepository;
+import com.capsule.youkids.group.repository.GroupInfoRepository;
+import com.capsule.youkids.group.repository.GroupJoinRepository;
 import com.capsule.youkids.user.entity.User;
 import com.capsule.youkids.user.repository.UserRepository;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,9 +40,11 @@ public class CapsuleServiceImpl implements CapsuleService {
     private final CapsuleRepository capsuleRepository;
     private final MemoryRepository memoryRepository;
     private final MemoryImageRepository memoryImageRepository;
+    private final MemoryChildrenRepository memoryChildrenRepository;
     private final UserRepository userRepository;
-    //private final GroupRepository groupRepository;
-    //private final GroupInfoRepository groupInfoRepository;
+    private final GroupJoinRepository groupJoinRepository;
+    private final GroupInfoRepository groupInfoRepository;
+    private final ChildrenRepository childrenRepository;
 
     /**
      * 유저 아이디를 통해서 아이디가 가입된 모든 그룹을 확인하고, 모든 그룹들의 리스트를 가져온다.
@@ -121,14 +130,14 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         MemoryListResponseDto memoryListResponseDto = new MemoryListResponseDto();
 
-        if(!capsule.isEmpty()){
-            for(Memory memory: capsule.get().getMemories()){
+        if (!capsule.isEmpty()) {
+            for (Memory memory : capsule.get().getMemories()) {
                 List<MemoryImageDto> memoryImageDtoList = new ArrayList<>();
-                for(MemoryImage memoryImage : memory.getMemoryImages()){
+                for (MemoryImage memoryImage : memory.getMemoryImages()) {
 
-                    List<Integer> childrenList = new ArrayList<>();
-                    for(Children children : memoryImage.getChildren()){
-                        childrenList.add(children.getId());
+                    List<Long> childrenList = new ArrayList<>();
+                    for (MemoryChildren memoryChildren : memoryImage.getChildren()) {
+                        childrenList.add(memoryChildren.getChildren().getChildrenId());
                     }
                     MemoryImageDto memoryImageDto = MemoryImageDto.builder()
                             .childrenList(childrenList)
@@ -146,7 +155,7 @@ public class CapsuleServiceImpl implements CapsuleService {
 
                 memoryListResponseDto.getMemoryResponseDtoList().add(memoryResponseDto);
             }
-        } else{
+        } else {
             // 해당하는 캡슐이 없다는 오류를 보내주면 된다.
         }
 
@@ -165,7 +174,74 @@ public class CapsuleServiceImpl implements CapsuleService {
     public boolean createMemory(CreateMemoryRequestDto createMemoryRequestDto,
             List<MultipartFile> multipartFileList) {
 
-        // 이거 구현 해야함.
-        return false;
+        Memory memory = Memory.builder()
+                .date()
+                .description(createMemoryRequestDto.getDescription())
+                .location(createMemoryRequestDto.getLocation())
+                .build();
+
+        List<MemoryImage> memoryImages = new ArrayList<>();
+        for (MultipartFile multipartFile : multipartFileList) {
+            // S3를 사용해서 파일 저장 해야한다.
+            // 변경해줘야해.
+            String fileUrl = "";
+            MemoryImage memoryImage = MemoryImage.builder()
+                    .memoryUrl(fileUrl)
+                    .memory(memory)
+                    .build();
+
+            memoryImageRepository.save(memoryImage);
+            memoryImages.add(memoryImage);
+        }
+
+        List<List<Long>> childrenList = createMemoryRequestDto.getChildrenList();
+
+        if (childrenList != null && !childrenList.isEmpty()) {
+            for (int idx = 0; idx < childrenList.size(); ++idx) {
+                List<MemoryChildren> mcList = new ArrayList<>();
+                for (Long child : childrenList.get(idx)) {
+                    Children children = childrenRepository.findById(child).orElseThrow();
+
+                    MemoryChildren memoryChildren = MemoryChildren.builder()
+                            .memoryImage(memoryImages.get(idx))
+                            .children(children)
+                            .build();
+
+                    memoryChildrenRepository.save(memoryChildren);
+
+                    // children.add(memoryChildren) 해줘야한다.
+                    memoryImages.get(idx).getMemoryChildrenList().add(memoryChildren);
+                }
+            }
+        }
+
+        // 여기 유저 부분 변경해야된다.
+        // 변경점
+        Capsule capsule = capsuleRepository.findByUserAndYear(userRepository.findByUserId(
+                UUID.fromString("1")).get(), memory.getYear()).orElse(null);
+
+        if (capsule.equals(null)) {
+            // 유저 변경해야해.
+            capsule = createCapsule(new User(), memoryImages.get(0).getMemoryUrl());
+        }
+
+        capsule.getMemories().add(memory);
+
+        return memory.equals(memoryRepository.save(memory));
+    }
+
+    @Override
+    @Transactional
+    public Capsule createCapsule(User user, String url) {
+
+        int year = LocalDate.now().getYear();
+
+        Capsule capsule = Capsule.builder()
+                .url(url)
+                .year(year)
+                .user(user)
+                .build();
+
+        return capsuleRepository.save(capsule);
     }
 }

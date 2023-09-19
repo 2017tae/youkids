@@ -1,7 +1,6 @@
 package com.capsule.youkids.capsule.entity;
 
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,5 +32,15 @@ public class MemoryImage {
     private Memory memory;
 
     @OneToMany(mappedBy = "memoryImage", fetch = FetchType.LAZY)
-    private List<MemoryChildren> children;
+    private List<MemoryChildren> memoryChildrenList;
+
+    @Builder
+    public MemoryImage(String memoryUrl, Memory memory){
+        this.memoryUrl = memoryUrl;
+        this.memory =memory;
+    }
+
+    public void setChildren(List<MemoryChildren> memoryChildrenList) {
+        this.memoryChildrenList = memoryChildrenList;
+    }
 }

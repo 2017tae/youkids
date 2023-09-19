@@ -15,4 +15,6 @@ public interface CapsuleRepository extends JpaRepository<Capsule, Integer> {
      * @return List<Capsule> 검색하고자 하는 유저의 모든 캡슐을 가져온다.
      */
     List<Capsule> findAllByUser(User user);
+
+    Optional<Capsule> findByUserAndYear(User user, int year);
 }

@@ -43,5 +43,12 @@ public class Capsule {
     @OneToMany(mappedBy = "capsule", fetch = FetchType.LAZY)
     private List<Memory> memories = new ArrayList<>();
 
+    @Builder
+    public Capsule(int year, String url, User user){
+        this.year = year;
+        this.url = url;
+        this.user = user;
+    }
+
 
 }

@@ -21,10 +21,10 @@ public class MemoryResponseDto {
     public class MemoryImageDto {
 
         String url;
-        List<Integer> childrenList;
+        List<Long> childrenList;
 
         @Builder
-        public MemoryImageDto(String url, List<Integer> childrenList){
+        public MemoryImageDto(String url, List<Long> childrenList){
             this.url = url;
             this.childrenList = childrenList;
         }

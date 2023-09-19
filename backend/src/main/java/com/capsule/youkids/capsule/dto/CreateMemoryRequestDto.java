@@ -12,11 +12,11 @@ public class CreateMemoryRequestDto {
 
     private String description;
     private String location;
-    private List<List<Integer>> childrenList;
+    private List<List<Long>> childrenList;
 
     @Builder
     public CreateMemoryRequestDto(String description, String location,
-            List<List<Integer>> childrenList) {
+            List<List<Long>> childrenList) {
         this.description = description;
         this.location = location;
         this.childrenList = childrenList;

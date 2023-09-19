@@ -44,6 +44,9 @@ public class CapsuleController {
     @PostMapping("/upload")
     public ResponseEntity<?> createMemory(@RequestPart CreateMemoryRequestDto dto,
             @RequestPart(required = false) List<MultipartFile> fileList){
-        return null;
+
+        capsuleService.createMemory(dto, fileList);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

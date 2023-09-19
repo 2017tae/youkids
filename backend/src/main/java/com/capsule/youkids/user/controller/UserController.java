@@ -103,6 +103,9 @@ public class UserController {
     public ResponseEntity<?> addInfoUser(@RequestBody addUserInfoRequestDto request,
             HttpServletResponse httpServletResponse) {
 
+        System.out.println(request.isCar());
+        System.out.println(request.getUserId());
+
         User user = userService.addInfoUser(request);
 
         if (!Objects.isNull(user)) {

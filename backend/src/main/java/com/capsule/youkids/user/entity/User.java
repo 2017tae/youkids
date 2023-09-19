@@ -2,14 +2,12 @@ package com.capsule.youkids.user.entity;
 
 import com.capsule.youkids.user.dto.RequestDto.ModifyMyInfoRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.UUID;
 
 import javax.persistence.*;
 
 import com.capsule.youkids.global.time.BaseTimeEntity;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,8 +41,8 @@ public class User extends BaseTimeEntity {
     @Column
     private String profileImage;
 
-    @Column
-    private boolean isCar;
+    @Column(columnDefinition = "boolean default false")
+    private boolean Car;
 
     @Column(columnDefinition = "boolean default false")
     private boolean leader;
@@ -72,7 +70,7 @@ public class User extends BaseTimeEntity {
         this.email = email;
         this.role = role;
         this.profileImage = null;
-        this.isCar = false;
+        this.Car = false;
         this.leader = true;
         this.description = null;
         this.partnerId = null;
@@ -85,7 +83,7 @@ public class User extends BaseTimeEntity {
 
     public void addInfoToUser(addUserInfoRequestDto request) {
         this.nickname = request.getNickname();
-        this.isCar = request.isCar();
+        this.Car = request.isCar();
         this.description = request.getDescription();
     }
 

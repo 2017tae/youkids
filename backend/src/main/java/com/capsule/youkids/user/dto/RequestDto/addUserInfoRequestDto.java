@@ -12,7 +12,7 @@ public class addUserInfoRequestDto {
 
     private String nickname;
 
-    private boolean isCar;
+    private boolean car;
 
     private UUID partnerId;
 

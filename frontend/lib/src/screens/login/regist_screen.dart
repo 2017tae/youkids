@@ -1,9 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:youkids/src/screens/home/home_screen.dart';
 
 import '../../widgets/button_widgets/send_button_widget.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 
 
 class RegistScreen extends StatefulWidget {
@@ -15,25 +18,68 @@ class RegistScreen extends StatefulWidget {
   class _RegisterScreenState extends State<RegistScreen> {
     TextEditingController nicknameController = TextEditingController();
     TextEditingController partnerController = TextEditingController();
-    
+    TextEditingController descriptionController = TextEditingController();
+
+    Future<String?> readToken() async {
+      final storage = new FlutterSecureStorage();
+      String? token = await storage.read(key: 'jwt_token');
+      return token;
+    }
+    void saveToken(String token) async {
+      final storage = new FlutterSecureStorage();
+      await storage.write(key: 'jwt_token', value: token);
+    }
+
     void sendDataToServer() async{
       final String nickname = nicknameController.text;
       final String partner = partnerController.text;
-      
-      // final response = await http.post(
-      //   Uri.parse('http://10.0.2.2:8080/user/addInfo'),
-      //   headers: {'Content-Type':'application/json'},
-      //   body: jsonEncode({'userId':,'nickname': nickname,'isCar':,'parnerId':null})
-      // );
-      //
-      // if (response.statusCode == 200) {
-      //   print("Successfully sent data to server");
-      // } else {
-      //   print("Failed to send data to server");
-      // }
+      final String description = descriptionController.text;
+      bool isCar;
+
+      if(isCarValue == '예'){
+        isCar = true;
+      }
+      else{
+        isCar = false;
+      }
+
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:8080/user/addInfo'),
+        headers: {'Content-Type':'application/json'},
+        body: jsonEncode({'userId':"c982299d-0ef1-48fc-9d21-535e8e2d3ae5",'nickname': nickname,'car':isCar,'parnerId':null, "description":description})
+      );
+
+      if (response.statusCode == 200) {
+
+        //Cookie 파트
+        String? rawCookie = response.headers['set-cookie'];
+        int? index = rawCookie?.indexOf(';');
+        String? token = (index == -1) ? rawCookie : rawCookie?.substring(
+            0, index);
+
+        print("JWT Token : $token");
+
+        saveToken(token!);
+
+        String? token1 = await readToken();
+
+        print("답은!!");
+        print(token1);
+
+        print("Successfully sent data to server");
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+              (Route<dynamic> route) => false,
+        );
+      } else {
+        print("Failed to send data to server");
+      }
     }
-    
-    
+
+
+    String? isCarValue;
+
     @override
     Widget build(BuildContext context) {
       return Scaffold(
@@ -81,6 +127,7 @@ class RegistScreen extends StatefulWidget {
                     .size
                     .height / 100),
                 TextField(
+                    controller: nicknameController,
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5.0),
@@ -191,6 +238,7 @@ class RegistScreen extends StatefulWidget {
                           ),
                           onChanged: (String? newValue) {
                             dropdownValue.value = newValue!;
+                            isCarValue = newValue;
                           },
                           items: <String>['예', '아니오']
                               .map<DropdownMenuItem<String>>((String value) {
@@ -222,6 +270,7 @@ class RegistScreen extends StatefulWidget {
                     .size
                     .height / 100),
                 TextField(
+                  controller: descriptionController,
                   maxLines: 5,
                   decoration: InputDecoration(
                     filled: true,
@@ -248,6 +297,7 @@ class RegistScreen extends StatefulWidget {
                 SizedBox(height: 16),
                 SendButtonWidget(
                   onPressed: () {
+                    sendDataToServer();
                     // '등록하기' 버튼이 눌렸을 때 수행할 로직
                   },
                   text: '등록하기',

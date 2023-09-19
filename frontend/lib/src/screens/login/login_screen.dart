@@ -1,9 +1,98 @@
 import 'package:auth_buttons/auth_buttons.dart';
 import 'package:flutter/material.dart';
+import 'package:youkids/src/screens/home/home_screen.dart';
 import 'package:youkids/src/screens/login/regist_screen.dart';
+import 'package:http/http.dart' as http;
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+
+class LoginScreen extends StatefulWidget {
+
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email'],
+      serverClientId: '');
+
+  _login() async {
+    try {
+      print(_googleSignIn.signIn());
+      GoogleSignInAccount? account = await _googleSignIn.signIn();
+
+      final idToken = (await _googleSignIn.currentUser!.authentication).idToken;
+
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:8080/user/verify-token'),
+        headers: {
+          'Authorization': 'Bearer $idToken',
+          'Provider': 'Google'
+        },
+      );
+
+      if (response.statusCode == 200) {
+        if (response.body == "new_user") {
+          //새로운 user
+          print("new user!");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => RegistScreen()),
+          );
+        } else {
+          // 이미 회원가입한 유저
+          // print(response.headers['set-cookie']);
+
+          String? rawCookie = response.headers['set-cookie'];
+          int? index = rawCookie?.indexOf(';');
+          String? token = (index == -1) ? rawCookie : rawCookie?.substring(
+              0, index);
+
+          print("JWT Token : $token");
+
+          saveToken(token!);
+
+
+          String? token1 = await readToken();
+
+          print("답은!!");
+          print(token1);
+
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+                (Route<dynamic> route) => false,
+          );
+
+        }
+        print('Server verified the token successfully');
+      } else {
+        print('Failed to verify the token on server');
+      }
+
+      setState(() {});
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  _logout() {
+    _googleSignIn.signOut();
+    setState(() {});
+  }
+
+  void saveToken(String token) async {
+    final storage = new FlutterSecureStorage();
+    await storage.write(key: 'jwt_token', value: token);
+  }
+
+  Future<String?> readToken() async {
+    final storage = new FlutterSecureStorage();
+    String? token = await storage.read(key: 'jwt_token');
+    return token;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +104,7 @@ class LoginScreen extends StatelessWidget {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,  // 상단에 배치
+          mainAxisAlignment: MainAxisAlignment.start, // 상단에 배치
           children: [
             IconButton(
               onPressed: () {
@@ -30,27 +119,24 @@ class LoginScreen extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: MediaQuery.of(context).size.height /3.3),
+                height: MediaQuery
+                    .of(context)
+                    .size
+                    .height / 3.3),
             const Text(
               'YouKids',
               style: TextStyle(
-                fontSize: 48.0,  // 크기를 24로 설정
+                fontSize: 48.0, // 크기를 24로 설정
               ),
             ),
             SizedBox(
-              height: MediaQuery.of(context).size.height / 12),
+                height: MediaQuery
+                    .of(context)
+                    .size
+                    .height / 12),
             GoogleAuthButton(
-              onPressed: () {},
+              onPressed: _login,
             ),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     // 로그인 로직
-            //   },
-            //   child: Image.asset('lib/src/assets/icons/btn_google_signin_light_normal_web.png'), // 공식 로고 이미지
-            //   style: ElevatedButton.styleFrom(
-            //     primary: Colors.white, // 배경색
-            //   ),
-            // )
           ],
         ),
       ),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:youkids/src/models/course_models/course_detail_model.dart';
 import 'package:youkids/src/providers/course_providers.dart';
+import 'package:geolocator/geolocator.dart';
 
 class CourseScreen extends StatefulWidget {
   const CourseScreen({super.key});
@@ -13,15 +15,48 @@ class CourseScreen extends StatefulWidget {
 }
 
 class _CourseScreenState extends State<CourseScreen> {
+  NaverMapController? _controller;
   late ScrollController scrollController;
   List<Course_detail_model> courses = [];
   bool isMaxHeightReached = false;
-
+  double latitude = 0.0;
+  double longitude = 0.0;
   bool isLoading = true;
   CourseProviders courseProviders = CourseProviders();
 
   Future initCourses() async {
-    courses = await courseProviders.getCourse();
+    String api = dotenv.get("api_key"); // Nullable 변수
+    String userId = "";
+    Uri uri = Uri.parse(api + userId);
+    courses = await courseProviders.getCourse(uri);
+  }
+
+  Future<void> getCurrentLocation() async {
+    // 위치 권한 받음
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    try {
+      await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high)
+          .then((response) {
+        setState(() {
+          latitude = response.latitude;
+          longitude = response.longitude;
+        });
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> _initCurrentLocation() async {
+    await getCurrentLocation();
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -32,6 +67,8 @@ class _CourseScreenState extends State<CourseScreen> {
         isLoading = false;
       });
     });
+
+    _initCurrentLocation();
     scrollController = ScrollController();
     scrollController.addListener(() {
       // Check if max height is reached
@@ -82,9 +119,20 @@ class _CourseScreenState extends State<CourseScreen> {
       body: Stack(
         children: [
           NaverMap(
-            options: const NaverMapViewOptions(),
+            options: NaverMapViewOptions(
+              initialCameraPosition: NCameraPosition(
+                target: NLatLng(
+                  37.5110317,
+                  127.0602133,
+                ),
+                zoom: 15,
+              ),
+              locale: Locale('kr'),
+            ),
             onMapReady: (controller) {
-              print("네이버 맵 로딩됨!");
+              setState(() {
+                _controller = controller; // NaverMapController 초기화
+              });
             },
           ),
           DraggableScrollableSheet(
@@ -141,7 +189,6 @@ class _CourseScreenState extends State<CourseScreen> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(30.0),
                         ),
-
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -167,6 +214,33 @@ class _CourseScreenState extends State<CourseScreen> {
       ),
       bottomNavigationBar: const FooterWidget(
         currentIndex: 1,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          if (_controller != null) {
+            _controller!.updateCamera(
+              NCameraUpdate.fromCameraPosition(NCameraPosition(
+                target: NLatLng(latitude, longitude),
+                zoom: 15.0,
+              )),
+            );
+            final marker = NMarker(
+                icon: NOverlayImage.fromAssetImage(
+                    "lib/src/assets/icons/mapMark.png"),
+                size: NMarker.autoSize,
+                id: "curCoord",
+                position: NLatLng(latitude, longitude));
+            _controller!.addOverlay(marker);
+          }
+        },
+        backgroundColor: const Color(0xffF6766E),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: const Icon(
+          Icons.create,
+          color: Color(0xffFFFFFF),
+        ),
       ),
     );
   }

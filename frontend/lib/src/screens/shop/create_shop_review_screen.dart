@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:youkids/src/widgets/upload_img_widget.dart';
 
 class CreateShopReviewScreen extends StatefulWidget {
   const CreateShopReviewScreen({super.key});
@@ -9,12 +10,12 @@ class CreateShopReviewScreen extends StatefulWidget {
 }
 
 class _CreateShopReviewScreenState extends State<CreateShopReviewScreen> {
-  late double _currentRating;
+  List<String> uploadedImages = [];
 
-  @override
-  void initState() {
-    super.initState();
-    _currentRating = 0;
+  void onUploadedImgsPath(List<String> imagePaths) {
+    setState(() {
+      uploadedImages = imagePaths; // 업로드된 이미지 경로를 리스트에 추가
+    });
   }
 
   @override
@@ -81,12 +82,9 @@ class _CreateShopReviewScreenState extends State<CreateShopReviewScreen> {
                           'lib/src/assets/icons/rating_empty_lg.png'),
                     ),
                     onRatingUpdate: (value) {
-                      setState(() {
-                        _currentRating = value;
-                      });
+                      setState(() {});
                     },
                   ),
-                  Text('별점$_currentRating'),
                   const SizedBox(
                     height: 20,
                   ),
@@ -111,6 +109,9 @@ class _CreateShopReviewScreenState extends State<CreateShopReviewScreen> {
                       // 완료 버튼을 눌렀을 때 수행할 작업
                       FocusScope.of(context).unfocus(); // 키보드를 내립니다.
                     },
+                  ),
+                  UploadImgWidget(
+                    onUploadedImgsPath: onUploadedImgsPath,
                   ),
                 ],
               ),

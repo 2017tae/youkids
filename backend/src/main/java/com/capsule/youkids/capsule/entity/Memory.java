@@ -1,5 +1,6 @@
 package com.capsule.youkids.capsule.entity;
 
+import com.capsule.youkids.capsule.dto.MemoryUpdateRequestDto;
 import com.capsule.youkids.user.entity.User;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -57,7 +58,8 @@ public class Memory {
     private List<MemoryImage> memoryImages;
 
     @Builder
-    public Memory(String description, String location, Capsule capsule, List<MemoryImage> memoryImages){
+    public Memory(String description, String location, Capsule capsule,
+            List<MemoryImage> memoryImages) {
         LocalDate ld = LocalDate.now((ZoneId.of("Asia/Seoul")));
 
         this.year = ld.getYear();
@@ -71,6 +73,7 @@ public class Memory {
     }
 
     public static class MemoryBuilder {
+
         private int year;
         private int month;
         private int day;
@@ -89,5 +92,10 @@ public class Memory {
 
     public void setMemoryImages(List<MemoryImage> memoryImages) {
         this.memoryImages = memoryImages;
+    }
+
+    public void updateMemory(MemoryUpdateRequestDto dto) {
+        this.location = dto.getLocation();
+        this.description = dto.getDescription();
     }
 }

@@ -243,7 +243,7 @@ public class PlaceServiceImpl implements PlaceService {
         // S3에 파일 업로드 및 이미지 리스트에 저장
         for (MultipartFile file : files) {
             ReviewImage image = ReviewImage.builder()
-                    .imageUrl(awsS3Service.uploadFile(file, "img"))
+                    .imageUrl(awsS3Service.uploadFile(file))
                     .review(review)
                     .placeId(review.getPlace().getPlaceId())
                     .build();
@@ -318,7 +318,7 @@ public class PlaceServiceImpl implements PlaceService {
                 for (ReviewImage image : images) {
 
                     // S3에서 파일 삭제 
-                    awsS3Service.deleteFile(image.getImageUrl(), "img");
+                    awsS3Service.deleteFile(image.getImageUrl());
 
                     // RDB에서 파일 삭제
                     reviewImageRepository.delete(image);
@@ -362,7 +362,7 @@ public class PlaceServiceImpl implements PlaceService {
             for (ReviewImage image : deleteImages) {
 
                 // S3에서 파일 삭제
-                awsS3Service.deleteFile(image.getImageUrl(), "img");
+                awsS3Service.deleteFile(image.getImageUrl());
 
                 // RDB에서 해당 Image 데이터 삭제
                 reviewImageRepository.delete(image);

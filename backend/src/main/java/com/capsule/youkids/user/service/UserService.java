@@ -35,7 +35,7 @@ public interface UserService {
     boolean checkPartner(checkPartnerRequestDto request);
 
     // 본인 회원 유저 정보 조회
-    GetMyInfoResponseDto getMyInfo(UUID userId);
+    GetMyInfoResponseDto getMyInfo(String email);
 
     // 본인 회원 유저 수정
     boolean modifyMyInfo(ModifyMyInfoRequestDto request, MultipartFile file);

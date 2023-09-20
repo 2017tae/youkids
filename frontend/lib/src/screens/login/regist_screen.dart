@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/screens/home/home_screen.dart';
 
 import '../../widgets/button_widgets/send_button_widget.dart';
@@ -10,6 +11,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 
 class RegistScreen extends StatefulWidget {
+  final String email;
+
+  RegistScreen({required this.email});
+
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
@@ -32,7 +37,7 @@ class RegistScreen extends StatefulWidget {
 
     void sendDataToServer() async{
       final String nickname = nicknameController.text;
-      final String partner = partnerController.text;
+      final String? partner = partnerController.text;
       final String description = descriptionController.text;
       bool isCar;
 
@@ -46,7 +51,7 @@ class RegistScreen extends StatefulWidget {
       final response = await http.post(
         Uri.parse('http://10.0.2.2:8080/user/addInfo'),
         headers: {'Content-Type':'application/json'},
-        body: jsonEncode({'userId':"c982299d-0ef1-48fc-9d21-535e8e2d3ae5",'nickname': nickname,'car':isCar,'parnerId':null, "description":description})
+        body: jsonEncode({'email': widget.email,'nickname': nickname,'car':isCar,'parnerId':null, "description":description})
       );
 
       if (response.statusCode == 200) {
@@ -66,6 +71,8 @@ class RegistScreen extends StatefulWidget {
         print("답은!!");
         print(token1);
 
+        saveEmail(widget.email);
+
         print("Successfully sent data to server");
         Navigator.pushAndRemoveUntil(
           context,
@@ -77,6 +84,10 @@ class RegistScreen extends StatefulWidget {
       }
     }
 
+    saveEmail(String email) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('email', email);
+    }
 
     String? isCarValue;
 

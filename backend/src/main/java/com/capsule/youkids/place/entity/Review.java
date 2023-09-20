@@ -53,4 +53,9 @@ public class Review {
         place.upReviewNum();
         place.addReviewSum(score);
     }
+
+    public void UpdateReview(double score, String description) {
+        this.score = score;
+        this.description = description;
+    }
 }

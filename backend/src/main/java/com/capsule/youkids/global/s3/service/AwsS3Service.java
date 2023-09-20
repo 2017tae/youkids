@@ -6,9 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface AwsS3Service {
 
-    public String uploadImg(MultipartFile multiFile) throws IOException;
+    public String uploadFile(MultipartFile multiFile, String type) throws IOException;
 
-    public File convert(MultipartFile multiFile) throws IOException;
-
-    public void deleteFile(String deleteUrl);
+    public void deleteFile(String deleteUrl, String type);
 }

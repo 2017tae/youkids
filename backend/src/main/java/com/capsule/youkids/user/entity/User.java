@@ -49,7 +49,7 @@ public class User extends BaseTimeEntity {
     private String profileImage;
 
     @Column
-    private boolean isCar;
+    private boolean car;
 
 
 }

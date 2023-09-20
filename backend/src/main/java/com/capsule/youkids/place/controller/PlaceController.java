@@ -4,8 +4,10 @@ import com.capsule.youkids.place.dto.BookmarkListResponseDto;
 import com.capsule.youkids.place.dto.BookmarkRequestDto;
 import com.capsule.youkids.place.dto.DetailPlaceResponseDto;
 import com.capsule.youkids.place.dto.ReviewDeleteRequestDto;
+import com.capsule.youkids.place.dto.ReviewUpdateRequestDto;
 import com.capsule.youkids.place.dto.ReviewWriteRequestDto;
 import com.capsule.youkids.place.service.PlaceService;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -66,7 +69,12 @@ public class PlaceController {
     @PostMapping("/review")
     public ResponseEntity<?> writeReview(@RequestPart ReviewWriteRequestDto reviewWriteRequestDto, @RequestPart(required = false)
     List<MultipartFile> files) {
-        String result = placeService.writeReview(reviewWriteRequestDto, files);
+        String result = null;
+        try {
+            result = placeService.writeReview(reviewWriteRequestDto, files);
+        } catch (IOException e) {
+            return new ResponseEntity<>("리뷰 작성 중 에러 발생", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         if(result.equals("success"))
             return new ResponseEntity<>("리뷰 작성 성공", HttpStatus.CREATED);
         else if(result.equals("empty"))
@@ -86,4 +94,23 @@ public class PlaceController {
         else
             return new ResponseEntity<>("삭제 성공", HttpStatus.OK);
     }
+
+    // 리뷰 수정하기
+    @PutMapping("/review")
+    public ResponseEntity<?> updateReview(@RequestPart ReviewUpdateRequestDto reviewUpdateRequestDto, @RequestPart(required = false)
+    List<MultipartFile> files) {
+        String result = null;
+        try {
+            result = placeService.updateReview(reviewUpdateRequestDto, files);
+        } catch (IOException e) {
+            return new ResponseEntity<>("리뷰 수정 중 에러 발생", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        if(result.equals("success"))
+            return new ResponseEntity<>("리뷰 수정 성공", HttpStatus.CREATED);
+        else if(result.equals("error"))
+            return new ResponseEntity<>("리뷰 수정 중 에러 발생", HttpStatus.INTERNAL_SERVER_ERROR);
+        else
+            return new ResponseEntity<>("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
+    }
+
 }

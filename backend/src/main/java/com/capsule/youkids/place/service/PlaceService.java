@@ -3,7 +3,9 @@ package com.capsule.youkids.place.service;
 import com.capsule.youkids.place.dto.BookmarkListResponseDto;
 import com.capsule.youkids.place.dto.BookmarkRequestDto;
 import com.capsule.youkids.place.dto.DetailPlaceResponseDto;
+import com.capsule.youkids.place.dto.PlaceRecommDto;
 import com.capsule.youkids.place.dto.ReviewDeleteRequestDto;
+import com.capsule.youkids.place.dto.ReviewUpdateRequestDto;
 import com.capsule.youkids.place.dto.ReviewWriteRequestDto;
 import com.capsule.youkids.place.entity.Review;
 import java.io.IOException;
@@ -23,8 +25,14 @@ public interface PlaceService {
     public BookmarkListResponseDto getBookmarkList(UUID userId);
 
     // 리뷰 작성하기
-    public String writeReview(ReviewWriteRequestDto reviewWriteRequestDto, List<MultipartFile> files);
+    public String writeReview(ReviewWriteRequestDto reviewWriteRequestDto, List<MultipartFile> files)
+            throws IOException;
 
     // 리뷰 삭제하기
     public String deleteReview(ReviewDeleteRequestDto reviewDeleteRequestDto);
+
+    // 리뷰 수정하기
+    public String updateReview(ReviewUpdateRequestDto reviewUpdateRequestDto, List<MultipartFile> files)
+            throws IOException;
+
 }

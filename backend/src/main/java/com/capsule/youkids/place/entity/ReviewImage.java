@@ -40,4 +40,13 @@ public class ReviewImage {
         this.placeId = placeId;
         review.getImages().add(this);
     }
+
+    @Override
+    public String toString() {
+        return "ReviewImage{" +
+                "reviewImageId=" + reviewImageId +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", placeId=" + placeId +
+                '}';
+    }
 }

@@ -1,9 +1,11 @@
 package com.capsule.youkids.place.dto;
 
+import com.capsule.youkids.place.entity.Place;
 import com.capsule.youkids.place.entity.PlaceImage;
 import com.capsule.youkids.place.entity.Review;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -30,7 +32,7 @@ public class PlaceInfoDto {
     private int reviewNum;
     private boolean subwayFlag;
     private String subwayId;
-    private double subwayDistance;
+    private Double subwayDistance;
     private List<String> images;
 
     @Builder
@@ -53,5 +55,24 @@ public class PlaceInfoDto {
         this.subwayId = subwayId;
         this.subwayDistance = subwayDistance;
         this.images = images;
+    }
+
+    public PlaceInfoDto(Place place) {
+        this.placeId = place.getPlaceId();
+        this.name = place.getName();
+        this.address = place.getAddress();
+        this.latitude = place.getLatitude();
+        this.longitude = place.getLongitude();
+        this.phoneNumber = place.getPhoneNumber();
+        this.category = place.getCategory();
+        this.homepage = place.getHomepage();
+        this.description = place.getDescription();
+        this.reviewNum = place.getReviewNum();
+        this.reviewSum = place.getReviewSum();
+        this.subwayFlag = place.isSubwayFlag();
+        this.subwayId = place.getSubwayId();
+        this.subwayDistance = place.getSubwayDistance();
+        this.images = place.getImages().stream().map((image)->{return image.getUrl();}).collect(
+                Collectors.toList());
     }
 }

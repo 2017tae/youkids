@@ -55,13 +55,33 @@ public class Place {
     private String subwayId;
 
     @Column
-    private double subwayDistance;
+    private Double subwayDistance;
 
     @OneToMany(mappedBy = "place")
     private List<PlaceImage> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "place")
     private List<Review> reviews = new ArrayList<>();
+
+    @Builder
+    public Place(int placeId, String name, String address, double latitude, double longitude,
+            String phoneNumber, String category, String homepage, String description, int reviewSum,
+            int reviewNum, boolean subwayFlag, String subwayId, double subwayDistance) {
+        this.placeId = placeId;
+        this.name = name;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.phoneNumber = phoneNumber;
+        this.category = category;
+        this.homepage = homepage;
+        this.description = description;
+        this.reviewSum = reviewSum;
+        this.reviewNum = reviewNum;
+        this.subwayFlag = subwayFlag;
+        this.subwayId = subwayId;
+        this.subwayDistance = subwayDistance;
+    }
 
     public void upReviewNum() {
         this.reviewNum++;

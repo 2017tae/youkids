@@ -6,9 +6,11 @@ import com.capsule.youkids.place.dto.BookmarkListResponseDto;
 import com.capsule.youkids.place.dto.BookmarkRequestDto;
 import com.capsule.youkids.place.dto.DetailPlaceResponseDto;
 import com.capsule.youkids.place.dto.PlaceInfoDto;
+import com.capsule.youkids.place.dto.PlaceRecommDto;
 import com.capsule.youkids.place.dto.ReviewDeleteRequestDto;
 import com.capsule.youkids.place.dto.ReviewImageInfoDto;
 import com.capsule.youkids.place.dto.ReviewInfoDto;
+import com.capsule.youkids.place.dto.ReviewUpdateRequestDto;
 import com.capsule.youkids.place.dto.ReviewWriteRequestDto;
 import com.capsule.youkids.place.entity.Bookmark;
 import com.capsule.youkids.place.entity.BookmarkMongo;
@@ -27,7 +29,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,15 +54,15 @@ public class PlaceServiceImpl implements PlaceService {
     private ReviewInfoDto moveToReviewDto(Review review) {
         // 리뷰 이미지 리스트를 꺼냄
         List<ReviewImage> reviewImages = review.getImages();
-        
+
         // 리뷰 url을 담을 리스트 생성
         List<String> imageList = new ArrayList<>();
-        for(ReviewImage image : reviewImages) {
-            
+        for (ReviewImage image : reviewImages) {
+
             // url 넣어줌
             imageList.add(image.getImageUrl());
         }
-        
+
         // 데이터 옮겨 담기
         return ReviewInfoDto.builder()
                 .reviewId(review.getReviewId())
@@ -74,8 +78,8 @@ public class PlaceServiceImpl implements PlaceService {
 
         // image 리스트 생성
         List<String> images = new ArrayList<>();
-        for(PlaceImage image : place.getImages()) {
-            
+        for (PlaceImage image : place.getImages()) {
+
             // 이미지 url을 리스트에 저장
             images.add(image.getUrl());
         }
@@ -108,8 +112,10 @@ public class PlaceServiceImpl implements PlaceService {
         List<ReviewImageInfoDto> list = new ArrayList<>();
 
         int end = reviewImages.size() - 1;
-        for(int i=end; i>=0; i--) {
-            if(list.size() == num) break;
+        for (int i = end; i >= 0; i--) {
+            if (list.size() == num) {
+                break;
+            }
             ReviewImage reviewImage = reviewImages.get(i);
             ReviewImageInfoDto temp = ReviewImageInfoDto.builder()
                     .reviewImageId(reviewImage.getReviewImageId())
@@ -156,7 +162,7 @@ public class PlaceServiceImpl implements PlaceService {
             List<ReviewInfoDto> reviews = new ArrayList<>();
 
             // 리뷰 옮겨 담기
-            for(Review review : reviewList) {
+            for (Review review : reviewList) {
                 // 위에 만든 메서드로 Dto를 리스트에 저장
                 reviews.add(moveToReviewDto(review));
             }
@@ -233,11 +239,25 @@ public class PlaceServiceImpl implements PlaceService {
         return response;
     }
 
+    private void saveImages(Review review, List<MultipartFile> files) throws IOException {
+        // S3에 파일 업로드 및 이미지 리스트에 저장
+        for (MultipartFile file : files) {
+            ReviewImage image = ReviewImage.builder()
+                    .imageUrl(awsS3Service.uploadFile(file, "img"))
+                    .review(review)
+                    .placeId(review.getPlace().getPlaceId())
+                    .build();
+
+            // ReviewImage Table에 삽입
+            reviewImageRepository.save(image);
+        }
+    }
+
     // 리뷰 작성하기
     @Transactional
     @Override
     public String writeReview(ReviewWriteRequestDto reviewWriteRequestDto,
-            List<MultipartFile> files) {
+            List<MultipartFile> files) throws IOException {
         // RequestDto에서 파라미터 빼오기
         UUID userId = reviewWriteRequestDto.getUserId();
         int placeId = reviewWriteRequestDto.getPlaceId();
@@ -248,9 +268,12 @@ public class PlaceServiceImpl implements PlaceService {
         Optional<User> user = userRepository.findById(userId);
         Optional<Place> place = placeRepository.findById(placeId);
 
-        if(!user.isPresent() || !place.isPresent())
+        // user와 place 중 하나라도 RDB에 없으면 스킵
+        if (!user.isPresent() || !place.isPresent()) {
             return "error";
+        }
 
+        // 리뷰 생성
         Review review = Review.builder()
                 .score(score)
                 .description(description)
@@ -258,29 +281,13 @@ public class PlaceServiceImpl implements PlaceService {
                 .place(place.get())
                 .build();
 
+        // image가 존재하는 경우 image 저장
         if (!files.isEmpty()) {
-            // S3에 파일 업로드 및 이미지 리스트에 저장
-            try {
-                for (MultipartFile file : files) {
-                    ReviewImage image = ReviewImage.builder()
-                            .imageUrl(awsS3Service.uploadImg(file))
-                            .review(review)
-                            .placeId(placeId)
-                            .build();
-
-                    // ReviewImage Table에 삽입
-                    reviewImageRepository.save(image);
-                }
-            } catch (IOException e) {
-                return "error";
-            }
+            saveImages(review, files);
         }
 
-        try {
-            reviewRepository.save(review);
-        } catch (Exception e) {
-            return "error";
-        }
+        reviewRepository.save(review);
+
         return "success";
     }
 
@@ -296,7 +303,7 @@ public class PlaceServiceImpl implements PlaceService {
         Optional<Review> result = reviewRepository.findById(reviewId);
 
         // 해당 데이터가 존재한다면
-        if(result.isPresent()) {
+        if (result.isPresent()) {
             Review review = result.get();
 
             // place의 리뷰 수, 총점 갱신
@@ -308,8 +315,12 @@ public class PlaceServiceImpl implements PlaceService {
 
             try {
                 // S3와 RDB에서 리뷰 이미지 삭제
-                for(ReviewImage image : images) {
-                    awsS3Service.deleteFile(image.getImageUrl());
+                for (ReviewImage image : images) {
+
+                    // S3에서 파일 삭제 
+                    awsS3Service.deleteFile(image.getImageUrl(), "img");
+
+                    // RDB에서 파일 삭제
                     reviewImageRepository.delete(image);
                 }
 
@@ -320,9 +331,52 @@ public class PlaceServiceImpl implements PlaceService {
             } catch (Exception e) {
                 return "error";
             }
-        }
-        else {
+        } else {
             return "bad request";
         }
+    }
+
+    // 리뷰 수정하기
+    @Transactional
+    @Override
+    public String updateReview(ReviewUpdateRequestDto reviewUpdateRequestDto,
+            List<MultipartFile> files) throws IOException {
+        Optional<Review> reviewOptional = reviewRepository.findById(reviewUpdateRequestDto.getReviewId());
+
+        // reviewId에 맞는 Review 객체가 있는 경우
+        if (reviewOptional.isPresent()) {
+            Review review = reviewOptional.get();
+
+            // image가 존재한다면 업로드
+            if (!files.isEmpty()) {
+                saveImages(review, files);
+            }
+
+            // 삭제할 이미지 리스트 빼내기
+            List<Integer> deleteImageIds = reviewUpdateRequestDto.getDeletedImageIds();
+            List<ReviewImage> deleteImages = reviewImageRepository.findReviewImagesInImageIds(
+                    deleteImageIds);
+            System.out.println(deleteImages.toString());
+
+            // 이미지 삭제 과정
+            for (ReviewImage image : deleteImages) {
+
+                // S3에서 파일 삭제
+                awsS3Service.deleteFile(image.getImageUrl(), "img");
+
+                // RDB에서 해당 Image 데이터 삭제
+                reviewImageRepository.delete(image);
+            }
+
+            // score와 description 갱신
+            double score = reviewUpdateRequestDto.getScore();
+            String description = reviewUpdateRequestDto.getDescription();
+            review.UpdateReview(score, description);
+
+        } else {
+            return "bad request";
+        }
+
+        return "success";
     }
 }

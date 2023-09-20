@@ -35,4 +35,6 @@ public interface PlaceService {
     public String updateReview(ReviewUpdateRequestDto reviewUpdateRequestDto, List<MultipartFile> files)
             throws IOException;
 
+    // 추천 장소 뿌리기 (일단 랜덤으로 100개)
+    public PlaceRecommDto recommPlace();
 }

@@ -113,4 +113,8 @@ public class PlaceController {
             return new ResponseEntity<>("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
     }
 
+    @GetMapping("/recomm")
+    public ResponseEntity<?> recommPlaces() {
+        return new ResponseEntity<>(placeService.recommPlace(), HttpStatus.OK);
+    }
 }

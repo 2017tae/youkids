@@ -379,4 +379,15 @@ public class PlaceServiceImpl implements PlaceService {
 
         return "success";
     }
+
+    // 추천 장소 뿌리기 (일단 랜덤으로 100개만)
+    @Override
+    public PlaceRecommDto recommPlace() {
+        Random random = new Random();
+        List<Integer> placeIds = random.ints(100, 1, 500)
+                .boxed()
+                .collect(Collectors.toList());
+        List<PlaceInfoDto> placeList = placeRepository.getRecommPlaceInfos(placeIds);
+        return PlaceRecommDto.builder().places(placeList).build();
+    }
 }

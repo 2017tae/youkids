@@ -6,16 +6,18 @@ import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email'],
-      serverClientId: '');
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+      scopes: ['email'],
+      serverClientId:
+          '31434893465-tn9d6hi4acg55i885n3mdgl1g4328ah4.apps.googleusercontent.com');
 
   _login() async {
     try {
@@ -26,10 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final response = await http.post(
         Uri.parse('http://10.0.2.2:8080/user/verify-token'),
-        headers: {
-          'Authorization': 'Bearer $idToken',
-          'Provider': 'Google'
-        },
+        headers: {'Authorization': 'Bearer $idToken', 'Provider': 'Google'},
       );
 
       if (response.statusCode == 200) {
@@ -46,13 +45,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
           String? rawCookie = response.headers['set-cookie'];
           int? index = rawCookie?.indexOf(';');
-          String? token = (index == -1) ? rawCookie : rawCookie?.substring(
-              0, index);
+          String? token =
+              (index == -1) ? rawCookie : rawCookie?.substring(0, index);
 
           print("JWT Token : $token");
 
           saveToken(token!);
-
 
           String? token1 = await readToken();
 
@@ -61,10 +59,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
-                (Route<dynamic> route) => false,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            (Route<dynamic> route) => false,
           );
-
         }
         print('Server verified the token successfully');
       } else {
@@ -83,16 +80,15 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void saveToken(String token) async {
-    final storage = new FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     await storage.write(key: 'jwt_token', value: token);
   }
 
   Future<String?> readToken() async {
-    final storage = new FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     String? token = await storage.read(key: 'jwt_token');
     return token;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -118,22 +114,14 @@ class _LoginScreenState extends State<LoginScreen> {
             //     size: 28,
             //   ),
             // ),
-            SizedBox(
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height / 3.3),
+            SizedBox(height: MediaQuery.of(context).size.height / 3.3),
             const Text(
               'YouKids',
               style: TextStyle(
                 fontSize: 48.0, // 크기를 24로 설정
               ),
             ),
-            SizedBox(
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height / 12),
+            SizedBox(height: MediaQuery.of(context).size.height / 12),
             GoogleAuthButton(
               onPressed: _login,
             ),

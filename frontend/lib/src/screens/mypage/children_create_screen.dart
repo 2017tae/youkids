@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:youkids/src/models/home_models/child_icon_model.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class ChildrenCreateScreen extends StatefulWidget {
   const ChildrenCreateScreen({super.key});
@@ -14,6 +15,7 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
   String childrenName = '';
   String childrenGender = '남';
   DateTime childrenBirth = DateTime.now();
+  File? childrenImage;
 
   bool dateChanged = false;
   Future<void> selectDate(BuildContext context) async {
@@ -30,6 +32,22 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
         dateChanged = true;
       });
     }
+  }
+
+  final picker = ImagePicker();
+  Future getImage() async {
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      setState(() {
+        childrenImage = File(pickedImage.path);
+      });
+    } else {}
+  }
+
+  void deleteImage() {
+    setState(() {
+      childrenImage = null;
+    });
   }
 
   @override
@@ -173,25 +191,50 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 30, bottom: 30),
-                child: Center(
-                  child: Container(
-                    width: 150,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black12),
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          image: AssetImage(tmpChildStoryIcon[0].imgUrl),
-                          fit: BoxFit.cover),
-                    ),
+              GestureDetector(
+                onTap: deleteImage,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 30, bottom: 30),
+                  child: Center(
+                    child: childrenImage != null
+                        ? Container(
+                            width: 150,
+                            height: 150,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black12),
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: FileImage(childrenImage!),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          )
+                        // 없을때
+                        : Container(
+                            width: 150,
+                            height: 150,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black12),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Center(
+                                child: Text(
+                              "아이 사진을\n올려주세요",
+                              style: TextStyle(
+                                fontSize: 20,
+                              ),
+                              textAlign: TextAlign.center,
+                            )),
+                          ),
                   ),
                 ),
               ),
-              const Text(
-                "사진 변경",
-                style: TextStyle(color: Color(0XFF0075FF), fontSize: 18),
+              GestureDetector(
+                onTap: getImage,
+                child: const Text(
+                  "사진 변경",
+                  style: TextStyle(color: Color(0XFF0075FF), fontSize: 18),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(10),

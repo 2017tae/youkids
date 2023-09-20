@@ -4,6 +4,7 @@ import 'package:youkids/src/screens/mypage/children_update_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 
 class ChildrenScreen extends StatelessWidget {
+  // initState로 애기 정보를 받아오기
   final String childrenName;
   const ChildrenScreen({super.key, required this.childrenName});
 

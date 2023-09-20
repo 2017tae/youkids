@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:youkids/src/models/home_models/child_icon_model.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class ChildrenUpdateScreen extends StatefulWidget {
   final String childrenName;
@@ -11,10 +13,16 @@ class ChildrenUpdateScreen extends StatefulWidget {
 }
 
 class _ChildrenUpdateScreenState extends State<ChildrenUpdateScreen> {
-  // input으로 받을 아이 정보
+  // 애기 id로 넘어오면 initState해서 애기 정보를 저장하기
   String childrenName = '';
   String childrenGender = '남';
   DateTime childrenBirth = DateTime.now();
+  // 기존 사진
+  File? childrenImage;
+  // 새 사진
+  File? newImage;
+  // 새로 사진이 올라왔는지
+  bool imageUploaded = false;
 
   bool dateChanged = false;
   Future<void> selectDate(BuildContext context) async {
@@ -31,6 +39,30 @@ class _ChildrenUpdateScreenState extends State<ChildrenUpdateScreen> {
         dateChanged = true;
       });
     }
+  }
+
+  final picker = ImagePicker();
+  Future getImage() async {
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      setState(() {
+        imageUploaded = true;
+        newImage = File(pickedImage.path);
+      });
+    }
+  }
+
+  void deleteImage() {
+    setState(() {
+      newImage = null;
+    });
+  }
+
+  File? whichImage() {
+    if (!imageUploaded) {
+      return childrenImage;
+    }
+    return newImage;
   }
 
   @override
@@ -73,23 +105,52 @@ class _ChildrenUpdateScreenState extends State<ChildrenUpdateScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 30, bottom: 30),
-                child: Center(
-                  child: Container(
-                    width: 150,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black12),
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          image: AssetImage(tmpChildStoryIcon[0].imgUrl),
-                          fit: BoxFit.cover),
+                child: GestureDetector(
+                  onTap: deleteImage,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 30, bottom: 30),
+                    child: Center(
+                      child: whichImage() != null
+                          // 바뀐거
+                          ? Container(
+                              width: 150,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black12),
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  image: FileImage(whichImage()!),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            )
+                          // 기존
+                          : Container(
+                              width: 150,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black12),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Center(
+                                  child: Text(
+                                "아이 사진을\n올려주세요",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                ),
+                                textAlign: TextAlign.center,
+                              )),
+                            ),
                     ),
                   ),
                 ),
               ),
-              const Text(
-                "사진 변경",
-                style: TextStyle(color: Color(0XFF0075FF), fontSize: 18),
+              GestureDetector(
+                onTap: getImage,
+                child: const Text(
+                  "사진 변경",
+                  style: TextStyle(color: Color(0XFF0075FF), fontSize: 18),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(10),

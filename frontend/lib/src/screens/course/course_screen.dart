@@ -278,40 +278,54 @@ class _CourseScreenState extends State<CourseScreen> {
                                               ),
                                             ),
                                           ),
-                                          Container(
-                                            height: 40,
-                                            width: 40,
-                                            margin: EdgeInsets.symmetric(
-                                                horizontal: 10),
-                                            child: TextButton(
-                                              onPressed: () async {
-                                                _startNavigation(course);
-                                              },
-                                              style: ButtonStyle(
-                                                backgroundColor:
-                                                    MaterialStateProperty.all<
-                                                            Color>(
-                                                        Color(0xFFF6766E)),
-                                                shape:
-                                                    MaterialStateProperty.all<
-                                                        RoundedRectangleBorder>(
-                                                  RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50.0),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                height: 40,
+                                                width: 40,
+                                                margin: EdgeInsets.symmetric(
+                                                    horizontal: 10),
+                                                child: TextButton(
+                                                  onPressed: () async {
+                                                    _startNavigation(course);
+                                                  },
+                                                  style: ButtonStyle(
+                                                    backgroundColor:
+                                                        MaterialStateProperty
+                                                            .all<Color>(Color(
+                                                                0xFFF6766E)),
+                                                    shape: MaterialStateProperty
+                                                        .all<
+                                                            RoundedRectangleBorder>(
+                                                      RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(50.0),
+                                                      ),
+                                                    ),
+                                                    padding: MaterialStateProperty
+                                                        .all<EdgeInsetsGeometry>(
+                                                            EdgeInsets.zero),
+                                                  ),
+                                                  child: SvgPicture.asset(
+                                                    'lib/src/assets/icons/navi.svg',
+                                                    width: 24,
+                                                    height: 24,
                                                   ),
                                                 ),
-                                                padding: MaterialStateProperty
-                                                    .all<EdgeInsetsGeometry>(
-                                                        EdgeInsets.zero),
                                               ),
-                                              child: SvgPicture.asset(
-                                                'lib/src/assets/icons/navi.svg',
-                                                width: 24,
-                                                height: 24,
+                                              Text(
+                                                  '경로 안내',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w700,
+                                                    fontSize: 10,
+                                                    color: Colors.grey,
+                                                  ),
                                               ),
-                                            ),
-                                          )
+                                            ],
+                                          ),
                                         ],
                                       ),
                                       ...course.places

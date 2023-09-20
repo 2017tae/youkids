@@ -1,9 +1,12 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:youkids/src/models/course_models/course_detail_model.dart';
 import 'package:youkids/src/providers/course_providers.dart';
+import 'package:geolocator/geolocator.dart';
 
 class CourseScreen extends StatefulWidget {
   const CourseScreen({super.key});
@@ -13,15 +16,53 @@ class CourseScreen extends StatefulWidget {
 }
 
 class _CourseScreenState extends State<CourseScreen> {
+  NaverMapController? _controller;
+  String? selectedMarkerId;
   late ScrollController scrollController;
   List<Course_detail_model> courses = [];
+  List<NMarker> coursePlaces = [];
   bool isMaxHeightReached = false;
-
+  double latitude = 37.5;
+  double longitude = 127.0;
+  double zoomLevel = 15.0;
   bool isLoading = true;
+  bool isLoadingCurCoords = true;
   CourseProviders courseProviders = CourseProviders();
 
   Future initCourses() async {
-    courses = await courseProviders.getCourse();
+    String api = dotenv.get("api_key");
+    String userId = "";
+    Uri uri = Uri.parse(api + userId);
+    courses = await courseProviders.getCourse(uri);
+  }
+
+  Future<void> getCurrentLocation() async {
+    // 위치 권한 받음
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    try {
+      await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high)
+          .then((response) {
+        setState(() {
+          latitude = response.latitude;
+          longitude = response.longitude;
+          isLoadingCurCoords = false;
+        });
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> _initCurrentLocation() async {
+    await getCurrentLocation();
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -32,9 +73,11 @@ class _CourseScreenState extends State<CourseScreen> {
         isLoading = false;
       });
     });
+
+    _initCurrentLocation();
     scrollController = ScrollController();
     scrollController.addListener(() {
-      // Check if max height is reached
+      // maxheight에 도달했으면
       if (scrollController.position.pixels >=
           scrollController.position.maxScrollExtent) {
         setState(() {
@@ -52,6 +95,66 @@ class _CourseScreenState extends State<CourseScreen> {
   void dispose() {
     scrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> _updateCamera() async {
+    final cameraPosition = await _controller!.getCameraPosition();
+
+    final currentZoom = cameraPosition.zoom;
+
+    _controller!.updateCamera(
+      NCameraUpdate.fromCameraPosition(NCameraPosition(
+        target: NLatLng(latitude - pow(1 / 1.55, currentZoom), longitude),
+        zoom: currentZoom,
+      )),
+    );
+  }
+
+  void _onCourseClicked(Course_detail_model course) {
+    // Naver map contorller 불러오기
+    if (_controller != null) {
+      for (int i = 0; i < coursePlaces.length; i++) {
+        _controller!.deleteOverlay(
+            NOverlayInfo(type: NOverlayType.marker, id: i.toString()));
+      }
+      // 코스의 중간 지점 계산
+      double middleLatitude = 0.0;
+      double middleLongitude = 0.0;
+
+      for (var place in course.places) {
+        middleLatitude += place.latitude;
+        middleLongitude += place.longitude;
+      }
+
+      middleLatitude /= course.places.length;
+      middleLongitude /= course.places.length;
+
+      // 중간 지점으로 카메라 이동
+      _controller!.updateCamera(
+        NCameraUpdate.fromCameraPosition(
+          NCameraPosition(
+            target: NLatLng(middleLatitude - 0.2, middleLongitude),
+            zoom: 8.5,
+          ),
+        ),
+      );
+
+      // 해당 코스 마커 렌더링
+      int i = 0;
+      for (var place in course.places) {
+        final marker = NMarker(
+          icon:
+              NOverlayImage.fromAssetImage("lib/src/assets/icons/mapMark.png"),
+          size: NMarker.autoSize,
+          id: i.toString(),
+          position: NLatLng(place.latitude, place.longitude),
+        );
+        i++;
+
+        // 마커 지도 위에 렌더링
+        _controller!.addOverlay(marker);
+      }
+    }
   }
 
   @override
@@ -82,9 +185,19 @@ class _CourseScreenState extends State<CourseScreen> {
       body: Stack(
         children: [
           NaverMap(
-            options: const NaverMapViewOptions(),
+            options: NaverMapViewOptions(
+                initialCameraPosition: NCameraPosition(
+                  target: NLatLng(
+                    37.5110317,
+                    127.0602133,
+                  ),
+                  zoom: 15,
+                ),
+                locale: Locale.fromSubtags(languageCode: 'Ko')),
             onMapReady: (controller) {
-              print("네이버 맵 로딩됨!");
+              setState(() {
+                _controller = controller; // NaverMapController 초기화
+              });
             },
           ),
           DraggableScrollableSheet(
@@ -110,27 +223,59 @@ class _CourseScreenState extends State<CourseScreen> {
                         child: Column(
                           children: [
                             const SizedBox(
-                              height: 50,
+                              height: 70,
                             ),
-                            // Add your courses here
-                            ...courses.map(
-                              (course) => Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 20),
+                            ...courses.asMap().entries.map((entry) {
+                              final course = entry.value;
+                              return GestureDetector(
+                                onTap: () => _onCourseClicked(course),
+                                child: Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 10),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        course.courseName,
-                                        style: TextStyle(fontSize: 20),
+                                      ListTile(
+                                        title: Text(
+                                          course.courseName,
+                                          style: TextStyle(fontSize: 20),
+                                        ),
                                       ),
-                                      ...course.places.map((place) => ListTile(
-                                            title: Text(place.name),
-                                            subtitle: Text(place.address),
-                                          )),
+                                      ...course.places
+                                          .asMap()
+                                          .entries
+                                          .map((placeEntry) {
+                                        final placeIndex = placeEntry.key;
+                                        final place = placeEntry.value;
+                                        return Column(
+                                          children: [
+                                            ListTile(
+                                              title: Text(place.name),
+                                              subtitle: Text(place.address),
+                                            ),
+                                            Container(
+                                              margin: EdgeInsets.symmetric(
+                                                  horizontal: 10), // 좌우 마진 추가
+                                              child: Divider(
+                                                color: Color(0xFF949494),
+                                                thickness: placeIndex ==
+                                                        course.places.length - 1
+                                                    ? 1.5
+                                                    : 0.5,
+                                                height: placeIndex ==
+                                                        course.places.length - 1
+                                                    ? 50.0
+                                                    : 0.0,
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }),
                                     ],
-                                  )),
-                            )
+                                  ),
+                                ),
+                              );
+                            }),
                           ],
                         ),
                       ),
@@ -140,22 +285,45 @@ class _CourseScreenState extends State<CourseScreen> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(30.0),
+                          // boxShadow: [
+                          //   BoxShadow(
+                          //     blurRadius: 100
+                          //   )
+                          // ]
                         ),
-
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        child: Column(
+                          // Column로 감싸기
                           children: [
-                            Container(
-                              margin: EdgeInsets.only(top: 10, bottom: 20),
-                              height: 8,
-                              width: 80,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.grey,
+                            Flexible(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(top: 10, bottom: 5),
+                                    height: 8,
+                                    width: 80,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
                               ),
+                              flex: 1,
                             ),
+                            // 텍스트 추가
+                            Flexible(
+                                child: Text(
+                                  '코스 목록',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                flex: 1),
                           ],
                         ),
+                        height: 65,
                       ),
                     ),
                   ],
@@ -167,6 +335,32 @@ class _CourseScreenState extends State<CourseScreen> {
       ),
       bottomNavigationBar: const FooterWidget(
         currentIndex: 1,
+      ),
+      floatingActionButton: Container(
+        height: 45,
+        width: 45,
+        // margin: EdgeInsets.symmetric(vertical: 35),
+        child: FloatingActionButton(
+          onPressed: () {
+            if (!isLoadingCurCoords) {
+              if (_controller != null) {
+                _updateCamera();
+                final marker = NMarker(
+                    icon: NOverlayImage.fromAssetImage(
+                        "lib/src/assets/icons/mapMark.png"),
+                    size: NMarker.autoSize,
+                    id: "curCoord",
+                    position: NLatLng(latitude, longitude));
+                _controller!.addOverlay(marker);
+              }
+            }
+          },
+          backgroundColor: const Color(0xffffffff),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(100),
+          ),
+          child: SvgPicture.asset('lib/src/assets/icons/coords.svg'),
+        ),
       ),
     );
   }

@@ -21,8 +21,8 @@ public class Place {
     @Column
     private String name;
 
-    @Column
-    private String address;
+	@Column
+	private String address;
 
     @Column
     private double latitude;

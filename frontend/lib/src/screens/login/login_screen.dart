@@ -1,5 +1,6 @@
 import 'package:auth_buttons/auth_buttons.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/screens/home/home_screen.dart';
 import 'package:youkids/src/screens/login/regist_screen.dart';
 import 'package:http/http.dart' as http;
@@ -31,13 +32,16 @@ class _LoginScreenState extends State<LoginScreen> {
         headers: {'Authorization': 'Bearer $idToken', 'Provider': 'Google'},
       );
 
+      String? token1 = await readToken();
+
       if (response.statusCode == 200) {
         if (response.body == "new_user") {
           //새로운 user
           print("new user!");
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => RegistScreen()),
+            MaterialPageRoute(
+                builder: (context) => RegistScreen(email: account!.email)),
           );
         } else {
           // 이미 회원가입한 유저
@@ -56,6 +60,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
           print("답은!!");
           print(token1);
+
+          // email 저장
+          saveEmail(account!.email);
 
           Navigator.pushAndRemoveUntil(
             context,
@@ -88,6 +95,11 @@ class _LoginScreenState extends State<LoginScreen> {
     const storage = FlutterSecureStorage();
     String? token = await storage.read(key: 'jwt_token');
     return token;
+  }
+
+  saveEmail(String email) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('email', email);
   }
 
   @override

@@ -1,12 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/models/home_models/child_icon_model.dart';
 import 'package:youkids/src/widgets/mypage_widgets/mychildren_widget.dart';
 import 'package:youkids/src/widgets/mypage_widgets/mygroup_widget.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
+import 'package:http/http.dart' as http;
 
-class MyPageScreen extends StatelessWidget {
+class MyPageScreen extends StatefulWidget {
   const MyPageScreen({super.key});
+
+  @override
+  State<MyPageScreen> createState() => _MyPageScreenState();
+}
+
+class _MyPageScreenState extends State<MyPageScreen> {
+  void getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('email') != null) {
+      print(prefs.getString('email'));
+    }
+  }
+
+  Future<String?> readToken() async {
+    const storage = FlutterSecureStorage();
+    String? token = await storage.read(key: 'jwt_token');
+    return token;
+  }
+
+  Future getMyInfo(Future<String?> email) async {
+    final response = await http.get(
+      Uri.parse('http://localhost:8080/mypage/$email'),
+    );
+    print(response.statusCode);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getEmail();
+  }
 
   @override
   Widget build(BuildContext context) {

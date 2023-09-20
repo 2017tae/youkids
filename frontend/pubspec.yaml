@@ -39,7 +39,9 @@ dependencies:
   flutter_svg: ^2.0.7
   flutter_naver_map: ^1.0.0
   http: ^1.1.0
-
+  auth_buttons: ^3.0.2
+  google_sign_in: ^5.0.2
+  flutter_secure_storage: ^4.0.0
 
 dev_dependencies:
   flutter_test:

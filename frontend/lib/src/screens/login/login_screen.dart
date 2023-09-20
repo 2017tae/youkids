@@ -106,18 +106,18 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start, // 상단에 배치
           children: [
-            IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => RegistScreen()),
-                );
-              },
-              icon: const Icon(
-                Icons.account_circle_rounded,
-                size: 28,
-              ),
-            ),
+            // IconButton(
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => RegistScreen()),
+            //     );
+            //   },
+            //   icon: const Icon(
+            //     Icons.account_circle_rounded,
+            //     size: 28,
+            //   ),
+            // ),
             SizedBox(
                 height: MediaQuery
                     .of(context)

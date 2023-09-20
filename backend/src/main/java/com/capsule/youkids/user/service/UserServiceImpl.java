@@ -116,8 +116,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public User addInfoUser(addUserInfoRequestDto request) {
 
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException());
+        User user = userRepository.findByEmailAndRoleNot(request.getEmail(), Role.DELETED)
+                .orElseThrow(()-> new IllegalArgumentException());
 
         user.addInfoToUser(request);
 
@@ -125,16 +125,16 @@ public class UserServiceImpl implements UserService {
 
         // Group 만들기
         GroupInfo groupInfo = GroupInfo.builder()
-                .groupId(request.getUserId())
-                .leaderId(request.getUserId())
+                .groupId(user.getUserId())
+                .leaderId(user.getUserId())
                 .groupImg(null)
                 .build();
 
         groupInfoRepository.save(groupInfo);
 
         GroupJoin groupJoin = GroupJoin.builder()
-                .groupId(request.getUserId())
-                .userId(request.getUserId())
+                .groupId(user.getUserId())
+                .userId(user.getUserId())
                 .groupName(null)
                 .build();
 
@@ -151,8 +151,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean checkPartner(checkPartnerRequestDto request) {
 
-        // partner로 선택한 유저 유무 파악
-        Optional<User> user = userRepository.findByEmail(request.getPartnerEmail());
+        User user = userRepository.findByEmailAndRoleNot(request.getPartnerEmail(), Role.DELETED)
+                .orElseThrow(()-> new IllegalArgumentException());
 
         if (Objects.isNull(user)) {
 
@@ -165,10 +165,10 @@ public class UserServiceImpl implements UserService {
 
     // 현재 유저 정보를 파악한다.(유저만)
     @Override
-    public GetMyInfoResponseDto getMyInfo(UUID userId) {
+    public GetMyInfoResponseDto getMyInfo(String email) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException());
+        User user = userRepository.findByEmailAndRoleNot(email, Role.DELETED)
+                .orElseThrow(()-> new IllegalArgumentException());
 
         return new GetMyInfoResponseDto(user);
     }
@@ -178,8 +178,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean modifyMyInfo(ModifyMyInfoRequestDto request, MultipartFile file) {
 
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException());
+        User user = userRepository.findByEmailAndRoleNot(request.getEmail(), Role.DELETED)
+                .orElseThrow(()-> new IllegalArgumentException());
 
         // S3를 통해 저장---------------------
 
@@ -188,7 +188,7 @@ public class UserServiceImpl implements UserService {
 
         if (request.isPartner()) {
             // Partner가 있으면,
-            if (request.getUserId() != user.getPartnerId()) {
+            if (user.getUserId() != user.getPartnerId()) {
                 return false;
             }
         } else {
@@ -204,8 +204,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean deleteMyInfo(DeleteMyInfoRequestDto request) {
 
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException());
+        User user = userRepository.findByEmailAndRoleNot(request.getEmail(), Role.DELETED)
+                .orElseThrow(()-> new IllegalArgumentException());
 
         user.changeToDeleted(user);
 

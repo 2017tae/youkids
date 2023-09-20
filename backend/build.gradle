@@ -23,7 +23,7 @@ repositories {
 
 dependencies {
 	implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '3.1.4'
-
+	implementation 'mysql:mysql-connector-java:8.0.33'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
@@ -33,7 +33,11 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+	// mongo
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
+	// s3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
 }
 

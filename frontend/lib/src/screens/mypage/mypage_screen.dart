@@ -1,5 +1,6 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/models/home_models/child_icon_model.dart';
@@ -16,30 +17,41 @@ class MyPageScreen extends StatefulWidget {
 }
 
 class _MyPageScreenState extends State<MyPageScreen> {
-  void getEmail() async {
+  String? email;
+  String? nickname;
+  // String? profileImage;
+
+  Future<String?> getEmail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.getString('email') != null) {
-      print(prefs.getString('email'));
+    return prefs.getString('email');
+  }
+
+  void getMyInfo() async {
+    email = await getEmail();
+    if (email != null) {
+      String uri = 'https://j9a604.p.ssafy.io/api/user/mypage/$email';
+      print(uri);
+      try {
+        final response = await http.get(
+          Uri.parse(uri),
+          headers: {'Content-Type': 'application/json'},
+        );
+        print(response.statusCode);
+        if (response.statusCode == 200) {
+          print(response.statusCode);
+          Map<String, dynamic> jsonMap = jsonDecode(response.body);
+          setState(() {
+            email = jsonMap['email'];
+            nickname = jsonMap['nickname'];
+          });
+          print('$email $nickname');
+        } else {
+          throw Exception('상태 코드 ${response.statusCode}');
+        }
+      } catch (err) {
+        print('에러 $err');
+      }
     }
-  }
-
-  Future<String?> readToken() async {
-    const storage = FlutterSecureStorage();
-    String? token = await storage.read(key: 'jwt_token');
-    return token;
-  }
-
-  Future getMyInfo(Future<String?> email) async {
-    final response = await http.get(
-      Uri.parse('http://localhost:8080/mypage/$email'),
-    );
-    print(response.statusCode);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getEmail();
   }
 
   @override
@@ -83,6 +95,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                             onTap: () {
                               // settings 페이지로
                               print('settings');
+                              getMyInfo();
                             },
                             child: const Icon(
                               Icons.settings,
@@ -113,7 +126,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("은우 엄마",
+                                Text('은우 엄마',
                                     style: TextStyle(
                                       fontSize: 25,
                                       overflow: TextOverflow.ellipsis,

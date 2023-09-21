@@ -1,5 +1,6 @@
 import 'package:auth_buttons/auth_buttons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/screens/home/home_screen.dart';
 import 'package:youkids/src/screens/login/regist_screen.dart';
@@ -15,10 +16,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-      scopes: ['email'],
-      serverClientId:
-          '31434893465-tn9d6hi4acg55i885n3mdgl1g4328ah4.apps.googleusercontent.com');
+  final GoogleSignIn _googleSignIn =
+      GoogleSignIn(scopes: ['email'], serverClientId: dotenv.get("login_key"));
 
   _login() async {
     try {

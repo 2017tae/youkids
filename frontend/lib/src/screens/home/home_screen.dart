@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/screens/home/indoor_recom_list_screen.dart';
 import 'package:youkids/src/screens/home/review_recom_list_screen.dart';
 import 'package:youkids/src/screens/home/week_recom_list_screen.dart';
@@ -8,10 +9,50 @@ import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:youkids/src/widgets/home_widgets/card_frame_widget.dart';
 import 'package:youkids/src/widgets/home_widgets/child_icon_widget.dart';
 
+
+import '../../providers/auth_model.dart';
 import '../login/login_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+
+  bool _isLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<String?> getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('email'); // Returns 'john_doe' if it exists, otherwise returns null.
+  }
+
+  void someFunction() async {
+    await removeData();
+    print('Email removed from SharedPreferences');
+  }
+
+  removeData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('email');
+  }
+
+  _checkLoginStatus() async {
+    String? email = await getEmail();
+    print(email);
+    setState(() {
+      _isLoggedIn = email != null;  // 이메일이 null이 아니면 로그인된 것으로 판단
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +77,7 @@ class HomeScreen extends StatelessWidget {
             icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
                 height: 24),
           ),
-          IconButton(
+          _isLoggedIn == false ? IconButton(
             onPressed: () {
               Navigator.push(
                 context,
@@ -47,7 +88,14 @@ class HomeScreen extends StatelessWidget {
               Icons.account_circle_rounded,
               size: 28,
             ),
-          ),
+          ) : Container(),
+          IconButton(
+            icon: Icon(Icons.delete),  // 예시 아이콘. 원하는 아이콘으로 변경하세요.
+            onPressed: () async {
+              await removeData();
+              print('Email removed from SharedPreferences');
+            },
+          )
         ],
       ),
       body: SingleChildScrollView(
@@ -56,7 +104,7 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
+               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 10),
                 child: Text(
                   '아이 맞춤 형 장소',

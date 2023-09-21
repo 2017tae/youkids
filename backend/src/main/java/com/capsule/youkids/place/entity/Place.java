@@ -39,7 +39,7 @@ public class Place {
     @Column
     private String homepage;
 
-    @Column
+    @Column(length = 1000)
     private String description;
 
     @Column(columnDefinition = "integer default 0")
@@ -56,6 +56,15 @@ public class Place {
 
     @Column
     private Double subwayDistance;
+
+    @Column
+    private Integer naverReviewNum;
+
+    @Column
+    private Integer visitedReviewNum;
+
+    @Column
+    private int naverNum;
 
     @OneToMany(mappedBy = "place")
     private List<PlaceImage> images = new ArrayList<>();

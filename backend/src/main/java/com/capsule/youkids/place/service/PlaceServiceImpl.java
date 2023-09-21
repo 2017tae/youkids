@@ -85,24 +85,10 @@ public class PlaceServiceImpl implements PlaceService {
             images.add(image.getUrl());
         }
 
+        System.out.println(place);
+
         // 데이터 옮기기
-        return PlaceInfoDto.builder()
-                .placeId(place.getPlaceId())
-                .name(place.getName())
-                .address(place.getAddress())
-                .latitude(place.getLatitude())
-                .longitude(place.getLongitude())
-                .phoneNumber(place.getPhoneNumber())
-                .category(place.getCategory())
-                .homepage(place.getHomepage())
-                .description(place.getDescription())
-                .reviewSum(place.getReviewSum())
-                .reviewNum(place.getReviewNum())
-                .subwayFlag(place.isSubwayFlag())
-                .subwayId(place.getSubwayId())
-                .subwayDistance(place.getSubwayDistance())
-                .images(images)
-                .build();
+        return new PlaceInfoDto(place);
     }
 
     public List<ReviewImageInfoDto> getRecentImages(int placeId, int num) {

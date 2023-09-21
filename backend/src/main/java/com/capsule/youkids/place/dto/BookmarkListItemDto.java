@@ -1,5 +1,6 @@
 package com.capsule.youkids.place.dto;
 
+import com.capsule.youkids.place.entity.Place;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,18 +12,16 @@ public class BookmarkListItemDto {
     int placeId;
     String name;
     String address;
-    double latitude;
-    double longitude;
+    Double latitude;
+    Double longitude;
     String category;
 
-    @Builder
-    public BookmarkListItemDto(int placeId, String name, String address, double latitude,
-            double longitude, String category) {
-        this.placeId = placeId;
-        this.name = name;
-        this.address = address;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.category = category;
+    public BookmarkListItemDto(Place place) {
+        this.placeId = place.getPlaceId();
+        this.name = place.getName();
+        this.address = place.getAddress();
+        this.latitude = place.getLatitude();
+        this.longitude = place.getLongitude();
+        this.category = place.getCategory();
     }
 }

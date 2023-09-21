@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:kakao_flutter_sdk_navi/kakao_flutter_sdk_navi.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:youkids/src/models/course_models/course_detail_model.dart';
 import 'package:youkids/src/providers/course_providers.dart';
@@ -108,6 +109,38 @@ class _CourseScreenState extends State<CourseScreen> {
         zoom: currentZoom,
       )),
     );
+  }
+
+  Future<void> _startNavigation(Course_detail_model course) async {
+    if (await NaviApi.instance.isKakaoNaviInstalled()) {
+      List<Location> viaList = [];
+
+      // 경유지 추가
+      for (var place in course.places) {
+        viaList.add(Location(
+          name: place.name,
+          x: place.longitude.toString(),
+          y: place.latitude.toString(),
+        ));
+      }
+      print(viaList.toString());
+      // 카카오내비로 경로 안내 연결
+      await NaviApi.instance.shareDestination(
+        // 마지막 경유지가 목적지
+        destination: viaList.last,
+
+        // 첫번째 ~ 마지막-1번째 까지 경유지
+        viaList: viaList.sublist(0, viaList.length - 1),
+
+        // wgs84 좌표계 옵션
+        option: NaviOption(coordType: CoordType.wgs84),
+      );
+    } else {
+      //카카오내비가 없는 경우
+
+      // 카카오내비 설치 페이지 이동
+      launchBrowserTab(Uri.parse(NaviApi.webNaviInstall));
+    }
   }
 
   void _onCourseClicked(Course_detail_model course) {
@@ -235,11 +268,65 @@ class _CourseScreenState extends State<CourseScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      ListTile(
-                                        title: Text(
-                                          course.courseName,
-                                          style: TextStyle(fontSize: 20),
-                                        ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: ListTile(
+                                              title: Text(
+                                                course.courseName,
+                                                style: TextStyle(fontSize: 20),
+                                              ),
+                                            ),
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                height: 40,
+                                                width: 40,
+                                                margin: EdgeInsets.symmetric(
+                                                    horizontal: 10),
+                                                child: TextButton(
+                                                  onPressed: () async {
+                                                    _startNavigation(course);
+                                                  },
+                                                  style: ButtonStyle(
+                                                    backgroundColor:
+                                                        MaterialStateProperty
+                                                            .all<Color>(Color(
+                                                                0xFFF6766E)),
+                                                    shape: MaterialStateProperty
+                                                        .all<
+                                                            RoundedRectangleBorder>(
+                                                      RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(50.0),
+                                                      ),
+                                                    ),
+                                                    padding: MaterialStateProperty
+                                                        .all<EdgeInsetsGeometry>(
+                                                            EdgeInsets.zero),
+                                                  ),
+                                                  child: SvgPicture.asset(
+                                                    'lib/src/assets/icons/navi.svg',
+                                                    width: 24,
+                                                    height: 24,
+                                                  ),
+                                                ),
+                                              ),
+                                              Text(
+                                                  '경로 안내',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w700,
+                                                    fontSize: 10,
+                                                    color: Colors.grey,
+                                                  ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
                                       ),
                                       ...course.places
                                           .asMap()
@@ -255,7 +342,7 @@ class _CourseScreenState extends State<CourseScreen> {
                                             ),
                                             Container(
                                               margin: EdgeInsets.symmetric(
-                                                  horizontal: 10), // 좌우 마진 추가
+                                                  horizontal: 10),
                                               child: Divider(
                                                 color: Color(0xFF949494),
                                                 thickness: placeIndex ==
@@ -284,7 +371,7 @@ class _CourseScreenState extends State<CourseScreen> {
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(30.0),
+                          borderRadius: BorderRadius.circular(20.0),
                           // boxShadow: [
                           //   BoxShadow(
                           //     blurRadius: 100
@@ -292,7 +379,6 @@ class _CourseScreenState extends State<CourseScreen> {
                           // ]
                         ),
                         child: Column(
-                          // Column로 감싸기
                           children: [
                             Flexible(
                               child: Row(
@@ -311,7 +397,6 @@ class _CourseScreenState extends State<CourseScreen> {
                               ),
                               flex: 1,
                             ),
-                            // 텍스트 추가
                             Flexible(
                                 child: Text(
                                   '코스 목록',

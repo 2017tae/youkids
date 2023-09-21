@@ -25,10 +25,10 @@ public class Place {
 	private String address;
 
     @Column
-    private double latitude;
+    private Double latitude;
 
     @Column
-    private double longitude;
+    private Double longitude;
 
     @Column
     private String phoneNumber;

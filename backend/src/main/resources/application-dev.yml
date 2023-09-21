@@ -1,0 +1,28 @@
+cloud:
+  aws:
+    credentials:
+      access-key: AKIATL6FCOMLY3FWS5WO
+      secret-key: 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
+    s3:
+      bucket: youkids
+spring:
+  datasource:
+    url: jdbc:mysql://j9a604.p.ssafy.io:3306/S09P22A604?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
+    username: root
+    password: xhfldhkwlsdldhkzhzh
+  data:
+    mongodb:
+      username: youkids
+      password: xhfldhkwlsdldhkzhzh
+      host: j9a604.p.ssafy.io
+      port: 27017
+      database: youkids
+      authentication-database: admin
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 31434893465-tn9d6hi4acg55i885n3mdgl1g4328ah4.apps.googleusercontent.com
+jwt:
+  key: asdfjkadfjkdsfadfasdfdafasfadfadasdfafdfa

@@ -337,8 +337,22 @@ class _CourseScreenState extends State<CourseScreen> {
                                         return Column(
                                           children: [
                                             ListTile(
+                                              contentPadding: EdgeInsets.only(left: 16.0, right: 16.0), // 왼쪽 패딩 조정
                                               title: Text(place.name),
-                                              subtitle: Text(place.address),
+
+                                              subtitle: Padding(
+                                                padding: EdgeInsets.only(top: 8.0), // title과 subtitle 사이의 간격을 조절
+                                                child: Row(
+                                                  children: [
+                                                    SvgPicture.asset(
+                                                      'lib/src/assets/icons/course_white.svg',
+                                                      height: 16,
+                                                    ),
+                                                    SizedBox(width: 5.0),  // 아이콘과 텍스트 사이 간격 조정
+                                                    Text(place.address),
+                                                  ],
+                                                ),
+                                              ),
                                             ),
                                             Container(
                                               margin: EdgeInsets.symmetric(

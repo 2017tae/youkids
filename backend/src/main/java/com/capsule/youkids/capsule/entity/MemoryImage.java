@@ -22,7 +22,7 @@ public class MemoryImage {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memoryImageId;
+    private long memoryImageId;
 
     @Column
     private String memoryUrl;

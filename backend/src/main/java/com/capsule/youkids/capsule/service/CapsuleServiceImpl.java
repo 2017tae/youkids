@@ -5,6 +5,7 @@ import com.capsule.youkids.capsule.dto.CapsuleListResponseDto;
 import com.capsule.youkids.capsule.dto.CapsuleResponseDto;
 import com.capsule.youkids.capsule.dto.CreateMemoryRequestDto;
 import com.capsule.youkids.capsule.dto.MemoryDeleteRequestDto;
+import com.capsule.youkids.capsule.dto.MemoryDetailResponseDto;
 import com.capsule.youkids.capsule.dto.MemoryListResponseDto;
 import com.capsule.youkids.capsule.dto.MemoryResponseDto;
 import com.capsule.youkids.capsule.dto.MemoryResponseDto.MemoryImageDto;
@@ -28,9 +29,11 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -155,7 +158,8 @@ public class CapsuleServiceImpl implements CapsuleService {
                     }
 
                     // 메모리 이미지 dto를 생성한다.
-                    MemoryImageDto memoryImageDto = new MemoryImageDto(memoryImage.getMemoryUrl(), childrenList);
+                    MemoryImageDto memoryImageDto = new MemoryImageDto(memoryImage.getMemoryUrl(),
+                            childrenList);
 
                     // 리스트에 저장한다.
                     memoryImageDtoList.add(memoryImageDto);
@@ -173,6 +177,12 @@ public class CapsuleServiceImpl implements CapsuleService {
         } else {
             // 해당하는 캡슐이 없다는 오류를 보내주면 된다.
         }
+
+        MemoryDetailResponseDto memoryDetailResponseDto = MemoryDetailResponseDto.builder()
+                .year(2000)
+                .build();
+
+        System.out.println(memoryDetailResponseDto.getImages());
 
         return memoryListResponseDto;
     }
@@ -195,6 +205,11 @@ public class CapsuleServiceImpl implements CapsuleService {
                 .description(request.getDescription())
                 .location(request.getLocation())
                 .build();
+
+        // -----------------------------
+        // 유저가 없으면 에러 발생~~~~~~~
+        // -----------------------------
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
 
         // 생성된 메모리에 메모리 이미지를 연결한다.
         // S3에 저장한다.
@@ -283,7 +298,7 @@ public class CapsuleServiceImpl implements CapsuleService {
     /**
      * 메모리 수정 하는 함수
      *
-     * @param dto MemoryUpdateRequestDto 업데이트에 필요한 MemoryId, location, description
+     * @param request MemoryUpdateRequestDto 업데이트에 필요한 MemoryId, location, description
      * @return 업데이트가 잘 되었는지 확인
      */
     @Override
@@ -344,20 +359,63 @@ public class CapsuleServiceImpl implements CapsuleService {
         // 파트너를 저장할 객체 생성
         User partner = null;
 
-        if(user.getPartnerId() != null){
+        if (user.getPartnerId() != null) {
             partner = userRepository.findByUserId(user.getPartnerId()).get();
         }
 
-        if(partner == null && user != memory.getCapsule().getUser()){
+        if (partner == null && user != memory.getCapsule().getUser()) {
             return false;
         }
 
-        if(partner != memory.getCapsule().getUser() && user != memory.getCapsule().getUser()){
+        if (partner != memory.getCapsule().getUser() && user != memory.getCapsule().getUser()) {
             return false;
         }
 
         memoryRepository.delete(memory);
 
         return true;
+    }
+
+    /**
+     * 특정 메모리 상세 정보를 리턴하는 함수
+     *
+     * @param memoryId
+     * @return MemoryDetailResponseDto : {year, month, day, description, location, images[],
+     * childrenImageList[]}
+     */
+    @Override
+    public MemoryDetailResponseDto getMemoryDetail(long memoryId) {
+
+        // 메모리가 없다면 에러 호출
+        Memory memory = memoryRepository.findById(memoryId).orElseThrow();
+
+        // 모든 사진들에 대한 아이의 중복을 없애기 위해 사용
+        Set<String> child = new HashSet<>();
+
+        List<MemoryImage> memoryImageList = memory.getMemoryImages();
+
+        List<String> childrenImageList;
+        List<String> imageList = new ArrayList<>();
+
+        for(MemoryImage memoryImage : memoryImageList){
+            imageList.add(memoryImage.getMemoryUrl());
+            for(MemoryChildren memoryChildren: memoryImage.getMemoryChildrenList()){
+                child.add(memoryChildren.getChildren().getChildrenImage());
+            }
+        }
+
+        childrenImageList = new ArrayList<>(child);
+
+        MemoryDetailResponseDto response = MemoryDetailResponseDto.builder()
+                .year(memory.getYear())
+                .month(memory.getMonth())
+                .day(memory.getDay())
+                .description(memory.getDescription())
+                .location(memory.getLocation())
+                .images(imageList)
+                .childrenImageList(childrenImageList)
+                .build();
+
+        return response ;
     }
 }

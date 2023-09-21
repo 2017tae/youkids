@@ -30,7 +30,7 @@ public class Memory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    private Long memoryId;
+    private long memoryId;
 
     @Column
     private int year;

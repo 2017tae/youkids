@@ -4,6 +4,7 @@ package com.capsule.youkids.capsule.controller;
 import com.capsule.youkids.capsule.dto.CapsuleListResponseDto;
 import com.capsule.youkids.capsule.dto.CreateMemoryRequestDto;
 import com.capsule.youkids.capsule.dto.MemoryDeleteRequestDto;
+import com.capsule.youkids.capsule.dto.MemoryDetailResponseDto;
 import com.capsule.youkids.capsule.dto.MemoryListResponseDto;
 import com.capsule.youkids.capsule.dto.MemoryUpdateRequestDto;
 import com.capsule.youkids.capsule.service.CapsuleService;
@@ -59,6 +60,14 @@ public class CapsuleController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("/memory/{memoryId}")
+    public ResponseEntity<?> getMemory(@RequestParam long memoryId) {
+
+        MemoryDetailResponseDto response = capsuleService.getMemoryDetail(memoryId);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PutMapping("/memory")
     public ResponseEntity<?> updateMemory(@RequestBody MemoryUpdateRequestDto request) {
 
@@ -69,7 +78,7 @@ public class CapsuleController {
     }
 
     @DeleteMapping("/memory")
-    public ResponseEntity<?> deleteMemory(@RequestBody MemoryDeleteRequestDto request){
+    public ResponseEntity<?> deleteMemory(@RequestBody MemoryDeleteRequestDto request) {
 
         // 에러 처리 해야한다.
         boolean response = capsuleService.deleteMemory(request);

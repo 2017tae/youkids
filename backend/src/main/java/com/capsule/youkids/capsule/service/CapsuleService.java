@@ -3,6 +3,7 @@ package com.capsule.youkids.capsule.service;
 import com.capsule.youkids.capsule.dto.CapsuleListResponseDto;
 import com.capsule.youkids.capsule.dto.CreateMemoryRequestDto;
 import com.capsule.youkids.capsule.dto.MemoryDeleteRequestDto;
+import com.capsule.youkids.capsule.dto.MemoryDetailResponseDto;
 import com.capsule.youkids.capsule.dto.MemoryListResponseDto;
 import com.capsule.youkids.capsule.dto.MemoryUpdateRequestDto;
 import com.capsule.youkids.capsule.entity.Capsule;
@@ -66,4 +67,12 @@ public interface CapsuleService {
      * @return 삭제가 됐는지 안됐는지 리턴
      */
     public boolean deleteMemory(MemoryDeleteRequestDto request);
+
+    /**
+     * 특정 메모리 상세 정보를 리턴하는 함수
+     *
+     * @param memoryId
+     * @return MemoryDetailResponseDto : {year, month, day, description, location, images[], childrenImageList[]}
+     */
+    public MemoryDetailResponseDto getMemoryDetail(long memoryId);
 }

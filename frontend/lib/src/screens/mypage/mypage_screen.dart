@@ -17,8 +17,8 @@ class MyPageScreen extends StatefulWidget {
 }
 
 class _MyPageScreenState extends State<MyPageScreen> {
-  String? email;
-  String? nickname;
+  String? email = ' ';
+  String nickname = ' ';
   // String? profileImage;
 
   Future<String?> getEmail() async {
@@ -29,22 +29,18 @@ class _MyPageScreenState extends State<MyPageScreen> {
   void getMyInfo() async {
     email = await getEmail();
     if (email != null) {
-      String uri = 'https://j9a604.p.ssafy.io/api/user/mypage/$email';
-      print(uri);
+      String uri = 'http://10.0.2.2:8080/user/mypage/$email';
       try {
         final response = await http.get(
           Uri.parse(uri),
           headers: {'Content-Type': 'application/json'},
         );
-        print(response.statusCode);
         if (response.statusCode == 200) {
-          print(response.statusCode);
           Map<String, dynamic> jsonMap = jsonDecode(response.body);
           setState(() {
             email = jsonMap['email'];
             nickname = jsonMap['nickname'];
           });
-          print('$email $nickname');
         } else {
           throw Exception('상태 코드 ${response.statusCode}');
         }
@@ -52,6 +48,13 @@ class _MyPageScreenState extends State<MyPageScreen> {
         print('에러 $err');
       }
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // setState를 하기 전에 눈으로 훼이크를 줘야함
+    getMyInfo();
   }
 
   @override
@@ -95,7 +98,6 @@ class _MyPageScreenState extends State<MyPageScreen> {
                             onTap: () {
                               // settings 페이지로
                               print('settings');
-                              getMyInfo();
                             },
                             child: const Icon(
                               Icons.settings,
@@ -122,19 +124,19 @@ class _MyPageScreenState extends State<MyPageScreen> {
                           const SizedBox(
                             width: 20,
                           ),
-                          const Expanded(
+                          Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('은우 엄마',
-                                    style: TextStyle(
+                                Text(nickname,
+                                    style: const TextStyle(
                                       fontSize: 25,
                                       overflow: TextOverflow.ellipsis,
                                     )),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
-                                Text("3살 아기 은우 엄마입니다~ 서로 정보 공유해요~~^^",
+                                const Text("3살 아기 은우 엄마입니다~ 서로 정보 공유해요~~^^",
                                     style: TextStyle(
                                       fontSize: 15,
                                     ))

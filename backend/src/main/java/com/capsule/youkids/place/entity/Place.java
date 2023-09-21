@@ -73,9 +73,10 @@ public class Place {
     private List<Review> reviews = new ArrayList<>();
 
     @Builder
-    public Place(int placeId, String name, String address, double latitude, double longitude,
+    public Place(int placeId, String name, String address, Double latitude, Double longitude,
             String phoneNumber, String category, String homepage, String description, int reviewSum,
-            int reviewNum, boolean subwayFlag, String subwayId, double subwayDistance) {
+            int reviewNum, boolean subwayFlag, String subwayId, Double subwayDistance,
+            Integer naverReviewNum, Integer visitedReviewNum, int naverNum) {
         this.placeId = placeId;
         this.name = name;
         this.address = address;
@@ -90,6 +91,9 @@ public class Place {
         this.subwayFlag = subwayFlag;
         this.subwayId = subwayId;
         this.subwayDistance = subwayDistance;
+        this.naverReviewNum = naverReviewNum;
+        this.visitedReviewNum = visitedReviewNum;
+        this.naverNum = naverNum;
     }
 
     public void upReviewNum() {
@@ -106,5 +110,28 @@ public class Place {
 
     public void subReviewSum(double score) {
         this.reviewSum -= score;
+    }
+
+    @Override
+    public String toString() {
+        return "Place{" +
+                "placeId=" + placeId +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", category='" + category + '\'' +
+                ", homepage='" + homepage + '\'' +
+                ", description='" + description + '\'' +
+                ", reviewSum=" + reviewSum +
+                ", reviewNum=" + reviewNum +
+                ", subwayFlag=" + subwayFlag +
+                ", subwayId='" + subwayId + '\'' +
+                ", subwayDistance=" + subwayDistance +
+                ", naverReviewNum=" + naverReviewNum +
+                ", visitedReviewNum=" + visitedReviewNum +
+                ", naverNum=" + naverNum +
+                '}';
     }
 }

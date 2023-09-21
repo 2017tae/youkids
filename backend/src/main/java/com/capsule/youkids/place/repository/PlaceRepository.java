@@ -2,6 +2,7 @@ package com.capsule.youkids.place.repository;
 
 import com.capsule.youkids.place.dto.BookmarkListItemDto;
 import com.capsule.youkids.place.dto.PlaceInfoDto;
+import com.capsule.youkids.place.dto.PlaceRecommItemDto;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,7 +15,7 @@ public interface PlaceRepository extends JpaRepository<Place, Integer> {
             + "from Place p where p.placeId in :placeIds")
     List<BookmarkListItemDto> getbookmarkPlaceInfos(@Param("placeIds") List<Integer> placeIds);
 
-    @Query("select new com.capsule.youkids.place.dto.PlaceInfoDto(p)"
+    @Query("select new com.capsule.youkids.place.dto.PlaceRecommItemDto(p)"
             + "from Place p where p.placeId in :placeIds")
-    List<PlaceInfoDto> getRecommPlaceInfos(@Param("placeIds") List<Integer> placeIds);
+    List<PlaceRecommItemDto> getRecommPlaceInfos(@Param("placeIds") List<Integer> placeIds);
 }

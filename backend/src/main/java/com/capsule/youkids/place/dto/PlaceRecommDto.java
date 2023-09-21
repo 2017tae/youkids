@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class PlaceRecommDto {
-    private List<PlaceInfoDto> places;
+    private List<PlaceRecommItemDto> places;
 
     @Builder
-    public PlaceRecommDto(List<PlaceInfoDto> places) {
+    public PlaceRecommDto(List<PlaceRecommItemDto> places) {
         this.places = places;
     }
 }

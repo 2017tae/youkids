@@ -22,8 +22,8 @@ public class PlaceInfoDto {
     private int placeId;
     private String name;
     private String address;
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
     private String phoneNumber;
     private String category;
     private String homepage;

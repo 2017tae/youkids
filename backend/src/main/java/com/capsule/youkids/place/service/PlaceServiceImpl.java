@@ -384,7 +384,7 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     public PlaceRecommDto recommPlace() {
         Random random = new Random();
-        List<Integer> placeIds = random.ints(100, 1, 500)
+        List<Integer> placeIds = random.ints(100, 1, 150)
                 .boxed()
                 .collect(Collectors.toList());
         List<PlaceInfoDto> placeList = placeRepository.getRecommPlaceInfos(placeIds);

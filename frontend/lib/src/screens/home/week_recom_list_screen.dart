@@ -4,18 +4,20 @@ import 'package:youkids/src/widgets/home_widgets/card_frame_widget.dart';
 import 'package:youkids/src/widgets/home_widgets/child_icon_widget.dart';
 
 class WeekRecomListScreen extends StatelessWidget {
-  const WeekRecomListScreen({super.key});
+  final List? places;
+
+  const WeekRecomListScreen({required this.places});
 
   @override
   Widget build(BuildContext context) {
     final List<Widget> dummy = [
-      const CardFrame21Widget(),
-      const CardFrame21Widget(),
-      const CardFrame21Widget(),
-      const CardFrame21Widget(),
-      const CardFrame21Widget(),
-      const CardFrame21Widget(),
-      const CardFrame21Widget(),
+      // const CardFrame21Widget(),
+      // const CardFrame21Widget(),
+      // const CardFrame21Widget(),
+      // const CardFrame21Widget(),
+      // const CardFrame21Widget(),
+      // const CardFrame21Widget(),
+      // const CardFrame21Widget(),
     ];
     return Scaffold(
       appBar: AppBar(

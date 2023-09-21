@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 // 2:1 ratio card
 class CardFrame21Widget extends StatelessWidget {
+  final String imageUrl;
+
   const CardFrame21Widget({
-    super.key,
+    required this.imageUrl
   });
 
   @override
@@ -16,7 +18,11 @@ class CardFrame21Widget extends StatelessWidget {
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: const Color(0xffF5EEEC),
+              image: DecorationImage(
+                image: NetworkImage(imageUrl),
+                fit: BoxFit.cover,
+              )
+              // color: const Color(0xffF5EEEC),
             ),
           ),
         ),

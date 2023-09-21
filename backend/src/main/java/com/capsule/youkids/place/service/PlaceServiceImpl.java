@@ -7,6 +7,7 @@ import com.capsule.youkids.place.dto.BookmarkRequestDto;
 import com.capsule.youkids.place.dto.DetailPlaceResponseDto;
 import com.capsule.youkids.place.dto.PlaceInfoDto;
 import com.capsule.youkids.place.dto.PlaceRecommDto;
+import com.capsule.youkids.place.dto.PlaceRecommItemDto;
 import com.capsule.youkids.place.dto.ReviewDeleteRequestDto;
 import com.capsule.youkids.place.dto.ReviewImageInfoDto;
 import com.capsule.youkids.place.dto.ReviewInfoDto;
@@ -317,7 +318,7 @@ public class PlaceServiceImpl implements PlaceService {
                 // S3와 RDB에서 리뷰 이미지 삭제
                 for (ReviewImage image : images) {
 
-                    // S3에서 파일 삭제 
+                    // S3에서 파일 삭제
                     awsS3Service.deleteFile(image.getImageUrl());
 
                     // RDB에서 파일 삭제
@@ -384,10 +385,10 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     public PlaceRecommDto recommPlace() {
         Random random = new Random();
-        List<Integer> placeIds = random.ints(100, 1, 150)
+        List<Integer> placeIds = random.ints(100, 1, 154)
                 .boxed()
                 .collect(Collectors.toList());
-        List<PlaceInfoDto> placeList = placeRepository.getRecommPlaceInfos(placeIds);
+        List<PlaceRecommItemDto> placeList = placeRepository.getRecommPlaceInfos(placeIds);
         return PlaceRecommDto.builder().places(placeList).build();
     }
 }

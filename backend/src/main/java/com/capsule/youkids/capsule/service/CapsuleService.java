@@ -2,6 +2,7 @@ package com.capsule.youkids.capsule.service;
 
 import com.capsule.youkids.capsule.dto.CapsuleListResponseDto;
 import com.capsule.youkids.capsule.dto.CreateMemoryRequestDto;
+import com.capsule.youkids.capsule.dto.MemoryDeleteRequestDto;
 import com.capsule.youkids.capsule.dto.MemoryListResponseDto;
 import com.capsule.youkids.capsule.dto.MemoryUpdateRequestDto;
 import com.capsule.youkids.capsule.entity.Capsule;
@@ -57,4 +58,12 @@ public interface CapsuleService {
      * @return 업데이트가 잘 되었는지 확인
      */
     public boolean updateMemory(MemoryUpdateRequestDto dto);
+
+    /**
+     * 메모리를 삭제하는 함수
+     *
+     * @param request MemoryDeleteRequestDto : {memory_id, email}
+     * @return 삭제가 됐는지 안됐는지 리턴
+     */
+    public boolean deleteMemory(MemoryDeleteRequestDto request);
 }

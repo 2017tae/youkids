@@ -3,6 +3,7 @@ package com.capsule.youkids.capsule.controller;
 
 import com.capsule.youkids.capsule.dto.CapsuleListResponseDto;
 import com.capsule.youkids.capsule.dto.CreateMemoryRequestDto;
+import com.capsule.youkids.capsule.dto.MemoryDeleteRequestDto;
 import com.capsule.youkids.capsule.dto.MemoryListResponseDto;
 import com.capsule.youkids.capsule.dto.MemoryUpdateRequestDto;
 import com.capsule.youkids.capsule.service.CapsuleService;
@@ -11,6 +12,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -62,6 +64,15 @@ public class CapsuleController {
 
         // 에러 처리 해야한다.
         boolean response = capsuleService.updateMemory(request);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/memory")
+    public ResponseEntity<?> deleteMemory(@RequestBody MemoryDeleteRequestDto request){
+
+        // 에러 처리 해야한다.
+        boolean response = capsuleService.deleteMemory(request);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

@@ -4,6 +4,7 @@ import com.capsule.youkids.capsule.dto.CapsuleDto;
 import com.capsule.youkids.capsule.dto.CapsuleListResponseDto;
 import com.capsule.youkids.capsule.dto.CapsuleResponseDto;
 import com.capsule.youkids.capsule.dto.CreateMemoryRequestDto;
+import com.capsule.youkids.capsule.dto.MemoryDeleteRequestDto;
 import com.capsule.youkids.capsule.dto.MemoryListResponseDto;
 import com.capsule.youkids.capsule.dto.MemoryResponseDto;
 import com.capsule.youkids.capsule.dto.MemoryResponseDto.MemoryImageDto;
@@ -154,10 +155,7 @@ public class CapsuleServiceImpl implements CapsuleService {
                     }
 
                     // 메모리 이미지 dto를 생성한다.
-                    MemoryImageDto memoryImageDto = MemoryImageDto.builder()
-                            .childrenList(childrenList)
-                            .url(memoryImage.getMemoryUrl())
-                            .build();
+                    MemoryImageDto memoryImageDto = new MemoryImageDto(memoryImage.getMemoryUrl(), childrenList);
 
                     // 리스트에 저장한다.
                     memoryImageDtoList.add(memoryImageDto);
@@ -324,6 +322,41 @@ public class CapsuleServiceImpl implements CapsuleService {
         }
 
         memory.updateMemory(request);
+
+        return true;
+    }
+
+    /**
+     * 메모리를 삭제하는 함수
+     *
+     * @param request MemoryDeleteRequestDto : {memory_id, email}
+     * @return 삭제가 됐는지 안됐는지 리턴
+     */
+    @Override
+    public boolean deleteMemory(MemoryDeleteRequestDto request) {
+
+        // 유저가 없어. 그러면 삐이ㅏ이잉익 에러
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+
+        // 메모리가 없으면 오류!!!! 보내줘야해
+        Memory memory = memoryRepository.findById(request.getMemory_id()).orElseThrow();
+
+        // 파트너를 저장할 객체 생성
+        User partner = null;
+
+        if(user.getPartnerId() != null){
+            partner = userRepository.findByUserId(user.getPartnerId()).get();
+        }
+
+        if(partner == null && user != memory.getCapsule().getUser()){
+            return false;
+        }
+
+        if(partner != memory.getCapsule().getUser() && user != memory.getCapsule().getUser()){
+            return false;
+        }
+
+        memoryRepository.delete(memory);
 
         return true;
     }

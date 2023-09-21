@@ -18,12 +18,11 @@ public class MemoryResponseDto {
         this.memoryImageDtoList = memoryImageDtoList;
     }
 
-    public class MemoryImageDto {
+    public static class MemoryImageDto {
 
         String url;
         List<Long> childrenList;
 
-        @Builder
         public MemoryImageDto(String url, List<Long> childrenList){
             this.url = url;
             this.childrenList = childrenList;

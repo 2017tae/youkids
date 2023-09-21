@@ -1,27 +1,24 @@
 package com.capsule.youkids.place.dto;
 
 import com.capsule.youkids.place.entity.Place;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class BookmarkListItemDto {
+public class PlaceRecommItemDto {
 
-    int placeId;
-    String name;
-    String address;
-    Double latitude;
-    Double longitude;
-    String category;
+    private int placeId;
+    private String name;
+    private String address;
+    private String category;
+    private String imageUrl;
 
-    public BookmarkListItemDto(Place place) {
+    public PlaceRecommItemDto(Place place) {
         this.placeId = place.getPlaceId();
         this.name = place.getName();
         this.address = place.getAddress();
-        this.latitude = place.getLatitude();
-        this.longitude = place.getLongitude();
         this.category = place.getCategory();
+        this.imageUrl = place.getImages().isEmpty() ? "" : place.getImages().get(0).getUrl();
     }
 }

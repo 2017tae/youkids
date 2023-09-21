@@ -8,6 +8,8 @@ import com.capsule.youkids.capsule.dto.MemoryDetailResponseDto;
 import com.capsule.youkids.capsule.dto.MemoryListResponseDto;
 import com.capsule.youkids.capsule.dto.MemoryUpdateRequestDto;
 import com.capsule.youkids.capsule.service.CapsuleService;
+import com.capsule.youkids.global.common.constant.Code;
+import com.capsule.youkids.global.common.response.BaseResponse;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -32,57 +34,53 @@ public class CapsuleController {
 
     private final CapsuleService capsuleService;
 
-    @GetMapping("/all/{userId}")
-    public ResponseEntity<?> getAllCapsuleList(@PathVariable UUID userId) {
+    @GetMapping("/all/{email}")
+    public BaseResponse getAllCapsuleList(@PathVariable String email) {
 
         // 에러처리 해야한다.
-        CapsuleListResponseDto capsuleListResponseDto = capsuleService.getCapsuleList(userId);
+        CapsuleListResponseDto capsuleListResponseDto = capsuleService.getCapsuleList(email);
 
-        return new ResponseEntity<>(capsuleListResponseDto, HttpStatus.OK);
+        return BaseResponse.success(Code.SUCCESS, capsuleListResponseDto);
     }
 
     @GetMapping("/images/{capsuleId}")
-    public ResponseEntity<?> getAllMemoryByCapsule(@PathVariable int capsuleId) {
+    public BaseResponse getAllMemoryByCapsule(@PathVariable int capsuleId) {
 
         // 에러처리 해야한다.
-        MemoryListResponseDto memoryListResponseDto = capsuleService.getMemoryList(capsuleId);
-
-        return new ResponseEntity<>(memoryListResponseDto, HttpStatus.OK);
+        return BaseResponse.success(Code.SUCCESS, capsuleService.getMemoryList(capsuleId));
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<?> createMemory(@RequestPart CreateMemoryRequestDto request,
-            @RequestPart(required = false) List<MultipartFile> fileList) {
+    public BaseResponse createMemory(@RequestPart CreateMemoryRequestDto request,
+                                     @RequestPart(required = false) List<MultipartFile> fileList) {
 
         // 에러처리 해야한다.
         capsuleService.createMemory(request, fileList);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return BaseResponse.success(Code.SUCCESS);
     }
 
     @GetMapping("/memory/{memoryId}")
-    public ResponseEntity<?> getMemory(@RequestParam long memoryId) {
+    public BaseResponse getMemory(@RequestParam long memoryId) {
 
-        MemoryDetailResponseDto response = capsuleService.getMemoryDetail(memoryId);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return BaseResponse.success(Code.SUCCESS, capsuleService.getMemoryDetail(memoryId));
     }
 
     @PutMapping("/memory")
-    public ResponseEntity<?> updateMemory(@RequestBody MemoryUpdateRequestDto request) {
+    public BaseResponse updateMemory(@RequestBody MemoryUpdateRequestDto request) {
 
         // 에러 처리 해야한다.
-        boolean response = capsuleService.updateMemory(request);
+        capsuleService.updateMemory(request);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return BaseResponse.success(Code.SUCCESS);
     }
 
     @DeleteMapping("/memory")
-    public ResponseEntity<?> deleteMemory(@RequestBody MemoryDeleteRequestDto request) {
+    public BaseResponse deleteMemory(@RequestBody MemoryDeleteRequestDto request) {
 
         // 에러 처리 해야한다.
-        boolean response = capsuleService.deleteMemory(request);
+        capsuleService.deleteMemory(request);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return BaseResponse.success(Code.SUCCESS);
     }
 }

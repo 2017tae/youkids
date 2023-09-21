@@ -17,12 +17,12 @@ import org.springframework.web.multipart.MultipartFile;
 public interface CapsuleService {
 
     /**
-     * 유저 아이디를 통해서 아이디가 가입된 모든 그룹을 확인하고, 모든 그룹의 캡슐 리스트를 가져온다.
+     * 유저 이메일을 통해서 아이디가 가입된 모든 그룹을 확인하고, 모든 그룹의 캡슐 리스트를 가져온다.
      *
-     * @param userId
+     * @param email
      * @return CapsuleListResponseDto
      */
-    public CapsuleListResponseDto getCapsuleList(UUID userId);
+    CapsuleListResponseDto getCapsuleList(String email);
 
     /**
      * 캡슐 아이디를 통해서 캡슐 아이디에 해당하는 모든 메모리를 반환한다.
@@ -30,7 +30,7 @@ public interface CapsuleService {
      * @param capsuleId
      * @return MemoryListResponseDto
      */
-    public MemoryListResponseDto getMemoryList(int capsuleId);
+    MemoryListResponseDto getMemoryList(int capsuleId);
 
     /**
      * 메모리를 생성한다.
@@ -40,7 +40,7 @@ public interface CapsuleService {
      * @return 생성이 잘 되었는지 안 됐는지
      */
 
-    public boolean createMemory(CreateMemoryRequestDto createMemoryRequestDto,
+    boolean createMemory(CreateMemoryRequestDto createMemoryRequestDto,
             List<MultipartFile> multipartFileList);
 
     /**
@@ -50,7 +50,7 @@ public interface CapsuleService {
      * @param url
      * @return 캡슐이 생성 되었다면 캡슐을 리턴한다.
      */
-    public Capsule createCapsule(User user, String url);
+    Capsule createCapsule(User user, String url);
 
     /**
      * 메모리 수정 하는 함수
@@ -58,7 +58,7 @@ public interface CapsuleService {
      * @param dto MemoryUpdateRequestDto 업데이트에 필요한 MemoryId, location, description
      * @return 업데이트가 잘 되었는지 확인
      */
-    public boolean updateMemory(MemoryUpdateRequestDto dto);
+    void updateMemory(MemoryUpdateRequestDto dto);
 
     /**
      * 메모리를 삭제하는 함수
@@ -66,7 +66,7 @@ public interface CapsuleService {
      * @param request MemoryDeleteRequestDto : {memory_id, email}
      * @return 삭제가 됐는지 안됐는지 리턴
      */
-    public boolean deleteMemory(MemoryDeleteRequestDto request);
+    void deleteMemory(MemoryDeleteRequestDto request);
 
     /**
      * 특정 메모리 상세 정보를 리턴하는 함수
@@ -74,5 +74,5 @@ public interface CapsuleService {
      * @param memoryId
      * @return MemoryDetailResponseDto : {year, month, day, description, location, images[], childrenImageList[]}
      */
-    public MemoryDetailResponseDto getMemoryDetail(long memoryId);
+    MemoryDetailResponseDto getMemoryDetail(long memoryId);
 }

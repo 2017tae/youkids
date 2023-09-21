@@ -20,6 +20,9 @@ import com.capsule.youkids.capsule.repository.MemoryImageRepository;
 import com.capsule.youkids.capsule.repository.MemoryRepository;
 import com.capsule.youkids.children.entity.Children;
 import com.capsule.youkids.children.repository.ChildrenRepository;
+import com.capsule.youkids.global.common.constant.Code;
+import com.capsule.youkids.global.common.exception.RestApiException;
+import com.capsule.youkids.group.entity.GroupJoin;
 import com.capsule.youkids.group.repository.GroupInfoRepository;
 import com.capsule.youkids.group.repository.GroupJoinRepository;
 import com.capsule.youkids.user.entity.User;
@@ -54,24 +57,23 @@ public class CapsuleServiceImpl implements CapsuleService {
     private final ChildrenRepository childrenRepository;
 
     /**
-     * 유저 아이디를 통해서 아이디가 가입된 모든 그룹을 확인하고, 모든 그룹들의 리스트를 가져온다.
+     * 유저 이메일을 통해서 아이디가 가입된 모든 그룹을 확인하고, 모든 그룹들의 리스트를 가져온다.
      *
-     * @param userId
+     * @param email
      * @return CapsuleListResponseDto
      */
     @Override
-    public CapsuleListResponseDto getCapsuleList(UUID userId) {
+    public CapsuleListResponseDto getCapsuleList(String email) {
 
-        // List<Integer> groupList = groupRepository(userId);
-        // 위 배열로 교체해야한다.
-        List<Integer> groups = new ArrayList<>();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RestApiException(Code.USER_NOT_FOUND));
+
+        List<GroupJoin> groups = groupJoinRepository.findByUserId(user.getUserId());
 
         List<CapsuleResponseDto> capsuleResponseDtos = new LinkedList<>();
 
-        for (int group : groups) {
-            // UUID groupLeader = groupInfoRepository.findByGroupId(group);
-            // 위의 식으로 변경 해줘야 한다.
-            UUID groupLeader = null;
+        for (GroupJoin group : groups) {
+            UUID groupLeader = group.getGroupId();
 
             // leader의 객체를 가져온다.
             // 유저를 가져올 때 유효한 role인지도 확인 해줘야함.
@@ -105,11 +107,11 @@ public class CapsuleServiceImpl implements CapsuleService {
             CapsuleResponseDto capsuleResponseDto = CapsuleResponseDto.builder()
                     .groupLeader(groupLeader)
                     .capsules(capsuleDtoList)
-                    .groupId(group)
+                    .groupId(group.getGroupId())
                     .build();
 
             // 내 아이디랑 같은 그룹을 먼저 보여준다.
-            if (groupLeader.equals(userId)) {
+            if (groupLeader.equals(user.getUserId())) {
                 capsuleResponseDtos.add(0, capsuleResponseDto);
             } else {
                 capsuleResponseDtos.add(capsuleResponseDto);
@@ -134,61 +136,53 @@ public class CapsuleServiceImpl implements CapsuleService {
     public MemoryListResponseDto getMemoryList(int capsuleId) {
 
         // 캡슐을 가져온다.
-        Optional<Capsule> capsule = capsuleRepository.findById(capsuleId);
+        // 캡슐이 없다면 에러 발생
+        Capsule capsule = capsuleRepository.findById(capsuleId)
+                .orElseThrow(() -> new RestApiException(Code.CAPSULE_NOT_FOUND));
 
         // 반환 하기 위한 dto 생성
         MemoryListResponseDto memoryListResponseDto = new MemoryListResponseDto();
 
-        // 만약 캡슐이 없다면 에러
-        if (!capsule.isEmpty()) {
-            // 캡슐에서 메모리들을 가져온다.
-            for (Memory memory : capsule.get().getMemories()) {
-                // 반환할 이미지 dto 리스트 생성
-                List<MemoryImageDto> memoryImageDtoList = new ArrayList<>();
+        // 캡슐에서 메모리들을 가져온다.
+        for (Memory memory : capsule.getMemories()) {
+            // 반환할 이미지 dto 리스트 생성
+            List<MemoryImageDto> memoryImageDtoList = new ArrayList<>();
 
-                // 메모리에서 메모리 사진을 가져온다.
-                for (MemoryImage memoryImage : memory.getMemoryImages()) {
+            // 메모리에서 메모리 사진을 가져온다.
+            for (MemoryImage memoryImage : memory.getMemoryImages()) {
 
-                    // 아이들을 저장할 리스트 배열을 생성한다.
-                    List<Long> childrenList = new ArrayList<>();
+                // 아이들을 저장할 리스트 배열을 생성한다.
+                List<Long> childrenList = new ArrayList<>();
 
-                    // 메모리 사진에 대한 아이들을 가져와서 리스트 배열에 저장한다.
-                    for (MemoryChildren memoryChildren : memoryImage.getMemoryChildrenList()) {
-                        childrenList.add(memoryChildren.getChildren().getChildrenId());
-                    }
-
-                    // 메모리 이미지 dto를 생성한다.
-                    MemoryImageDto memoryImageDto = new MemoryImageDto(memoryImage.getMemoryUrl(),
-                            childrenList);
-
-                    // 리스트에 저장한다.
-                    memoryImageDtoList.add(memoryImageDto);
+                // 메모리 사진에 대한 아이들을 가져와서 리스트 배열에 저장한다.
+                for (MemoryChildren memoryChildren : memoryImage.getMemoryChildrenList()) {
+                    childrenList.add(memoryChildren.getChildren().getChildrenId());
                 }
 
-                // 반환값에 추가한다.
-                MemoryResponseDto memoryResponseDto = MemoryResponseDto.builder()
-                        .month(memory.getMonth())
-                        .day(memory.getDay())
-                        .memoryImageDtoList(memoryImageDtoList)
-                        .build();
+                // 메모리 이미지 dto를 생성한다.
+                MemoryImageDto memoryImageDto = new MemoryImageDto(memoryImage.getMemoryUrl(),
+                        childrenList);
 
-                memoryListResponseDto.getMemoryResponseDtoList().add(memoryResponseDto);
+                // 리스트에 저장한다.
+                memoryImageDtoList.add(memoryImageDto);
             }
-        } else {
-            // 해당하는 캡슐이 없다는 오류를 보내주면 된다.
+
+            // 반환값에 추가한다.
+            MemoryResponseDto memoryResponseDto = MemoryResponseDto.builder()
+                    .month(memory.getMonth())
+                    .day(memory.getDay())
+                    .memoryImageDtoList(memoryImageDtoList)
+                    .build();
+
+            memoryListResponseDto.getMemoryResponseDtoList().add(memoryResponseDto);
         }
-
-        MemoryDetailResponseDto memoryDetailResponseDto = MemoryDetailResponseDto.builder()
-                .year(2000)
-                .build();
-
-        System.out.println(memoryDetailResponseDto.getImages());
 
         return memoryListResponseDto;
     }
 
     /**
      * 메모리를 생성한다.
+     * 여기 다 변경해야할거 같음.
      *
      * @param request
      * @param multipartFileList
@@ -197,7 +191,7 @@ public class CapsuleServiceImpl implements CapsuleService {
     @Override
     @Transactional
     public boolean createMemory(CreateMemoryRequestDto request,
-            List<MultipartFile> multipartFileList) {
+                                List<MultipartFile> multipartFileList) {
 
         // 우선 메모리를 생성한다.
         Memory memory = Memory.builder()
@@ -209,7 +203,8 @@ public class CapsuleServiceImpl implements CapsuleService {
         // -----------------------------
         // 유저가 없으면 에러 발생~~~~~~~
         // -----------------------------
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RestApiException(Code.USER_NOT_FOUND));
 
         // 생성된 메모리에 메모리 이미지를 연결한다.
         // S3에 저장한다.
@@ -229,6 +224,7 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         // 사진에 하나 하나에 대한 아이 태그 확인
         // 사진에 태그를 연결 및 아이에게 사진을 연결
+
         List<List<Long>> childrenList = request.getChildrenList();
         // 만약 아이 리스트가 없다면 실행하지 않는다.
         if (childrenList != null && !childrenList.isEmpty()) {
@@ -302,12 +298,13 @@ public class CapsuleServiceImpl implements CapsuleService {
      * @return 업데이트가 잘 되었는지 확인
      */
     @Override
-    public boolean updateMemory(MemoryUpdateRequestDto request) {
+    public void updateMemory(MemoryUpdateRequestDto request) {
 
         LocalDate ld = LocalDate.now((ZoneId.of("Asia/Seoul")));
 
         // 수정할 메모리가 없다면 에러 보내야됨
-        Memory memory = memoryRepository.findById(request.getMemory_id()).orElseThrow();
+        Memory memory = memoryRepository.findById(request.getMemory_id())
+                .orElseThrow(() -> new RestApiException(Code.MEMORY_NOT_FOUND));
 
         // 여기 메모리의 주인이 누구인지 확인해야할거 같은데
         // 메모리의 주인이 아니라면 에러 처리 해야할거 같아.
@@ -318,11 +315,11 @@ public class CapsuleServiceImpl implements CapsuleService {
 
                 if (!user.getEmail().equals(request.getEmail())) {
                     // 여기는 메모리의 주인이 아니라는 에러 던져줘야한다.
-                    return false;
+                    throw new RestApiException(Code.MEMORY_UPDATE_NOT_PERMITTED);
                 }
             } else {
                 // 이거는 메모리의 주인이 아니라는 에러 던져줘야한다.
-                return false;
+                throw new RestApiException(Code.MEMORY_UPDATE_NOT_PERMITTED);
             }
         }
 
@@ -330,15 +327,13 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         long dayDiff = ChronoUnit.DAYS.between(memoryDay, ld);
 
-        if (dayDiff > 5) {
+        if (dayDiff > 7) {
             // 이거 에러  처리 해줘야하나?
             // 수정 가능 날짜가 지나버림!
-            return false;
+            throw new RestApiException(Code.MEMORY_UPDATE_TIME_LIMIT_EXPIRED);
         }
 
         memory.updateMemory(request);
-
-        return true;
     }
 
     /**
@@ -348,46 +343,61 @@ public class CapsuleServiceImpl implements CapsuleService {
      * @return 삭제가 됐는지 안됐는지 리턴
      */
     @Override
-    public boolean deleteMemory(MemoryDeleteRequestDto request) {
+    public void deleteMemory(MemoryDeleteRequestDto request) {
 
         // 유저가 없어. 그러면 삐이ㅏ이잉익 에러
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RestApiException(Code.USER_NOT_FOUND));
 
         // 메모리가 없으면 오류!!!! 보내줘야해
-        Memory memory = memoryRepository.findById(request.getMemory_id()).orElseThrow();
+        Memory memory = memoryRepository.findById(request.getMemory_id())
+                .orElseThrow(() -> new RestApiException(Code.MEMORY_NOT_FOUND));
 
         // 파트너를 저장할 객체 생성
         User partner = null;
 
+        // 파트너가 존재하는지에 대해서 확인
         if (user.getPartnerId() != null) {
             partner = userRepository.findByUserId(user.getPartnerId()).get();
         }
 
         if (partner == null && user != memory.getCapsule().getUser()) {
-            return false;
+            throw new RestApiException(Code.MEMORY_DELETE_NOT_PERMITTED);
         }
 
         if (partner != memory.getCapsule().getUser() && user != memory.getCapsule().getUser()) {
-            return false;
+            throw new RestApiException(Code.MEMORY_DELETE_NOT_PERMITTED);
+        }
+
+        // 현재 시간과 메모리가 저장되었던 시간을 체크하는 로직
+
+        LocalDate ld = LocalDate.now((ZoneId.of("Asia/Seoul")));
+
+        LocalDate memoryDay = LocalDate.of(memory.getYear(), memory.getMonth(), memory.getDay());
+
+        long dayDiff = ChronoUnit.DAYS.between(memoryDay, ld);
+
+        if (dayDiff > 7) {
+            // 이거 에러  처리 해줘야하나?
+            // 수정 가능 날짜가 지나버림!
+            throw new RestApiException(Code.MEMORY_DELETE_TIME_LIMIT_EXPIRED);
         }
 
         memoryRepository.delete(memory);
-
-        return true;
     }
 
     /**
      * 특정 메모리 상세 정보를 리턴하는 함수
      *
      * @param memoryId
-     * @return MemoryDetailResponseDto : {year, month, day, description, location, images[],
-     * childrenImageList[]}
+     * @return MemoryDetailResponseDto : {year, month, day, description, location, images[], childrenImageList[]}
      */
     @Override
     public MemoryDetailResponseDto getMemoryDetail(long memoryId) {
 
         // 메모리가 없다면 에러 호출
-        Memory memory = memoryRepository.findById(memoryId).orElseThrow();
+        Memory memory = memoryRepository.findById(memoryId)
+                .orElseThrow(() -> new RestApiException(Code.MEMORY_NOT_FOUND));
 
         // 모든 사진들에 대한 아이의 중복을 없애기 위해 사용
         Set<String> child = new HashSet<>();
@@ -397,9 +407,9 @@ public class CapsuleServiceImpl implements CapsuleService {
         List<String> childrenImageList;
         List<String> imageList = new ArrayList<>();
 
-        for(MemoryImage memoryImage : memoryImageList){
+        for (MemoryImage memoryImage : memoryImageList) {
             imageList.add(memoryImage.getMemoryUrl());
-            for(MemoryChildren memoryChildren: memoryImage.getMemoryChildrenList()){
+            for (MemoryChildren memoryChildren : memoryImage.getMemoryChildrenList()) {
                 child.add(memoryChildren.getChildren().getChildrenImage());
             }
         }
@@ -416,6 +426,6 @@ public class CapsuleServiceImpl implements CapsuleService {
                 .childrenImageList(childrenImageList)
                 .build();
 
-        return response ;
+        return response;
     }
 }

@@ -23,9 +23,15 @@ public enum Code {
     USER_NOT_FOUND(false, 1011, "존재하지 않는 유저입니다."),
 
     // 장소 에러 (1021 ~ 1030)
-    PLACE_NOT_FOUND(false, 1021, "해당 장소를 찾을 수 없습니다.");
+    PLACE_NOT_FOUND(false, 1021, "해당 장소를 찾을 수 없습니다."),
 
-    // (1031 ~ 1040)
+    // 캡슐 에러 (1031 ~ 1040)
+    CAPSULE_NOT_FOUND(false, 1031, "캡슐을 찾을 수 없습니다."),
+    MEMORY_NOT_FOUND(false, 1032, "메모리를 찾을 수 없습니다."),
+    MEMORY_UPDATE_NOT_PERMITTED(false, 1033, "메모리를 수정할 권한이 없습니다."),
+    MEMORY_UPDATE_TIME_LIMIT_EXPIRED(false, 1034, "메모리를 수정할 수 있는 기간이 지났습니다."),
+    MEMORY_DELETE_NOT_PERMITTED(false, 1035, "메모리를 삭제할 권한이 없습니다."),
+    MEMORY_DELETE_TIME_LIMIT_EXPIRED(false, 1036, "메모리를 삭제할 수 있는 기간이 지났습니다.");
 
 
     private final boolean isSuccess;

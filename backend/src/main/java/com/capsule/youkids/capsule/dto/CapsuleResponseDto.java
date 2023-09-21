@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CapsuleResponseDto {
 
-    private int groupId;
+    private UUID groupId;
     private UUID groupLeader;
     private List<CapsuleDto> capsules;
 
     @Builder
-    public CapsuleResponseDto(int groupId, UUID groupLeader, List<CapsuleDto> capsules) {
+    public CapsuleResponseDto(UUID groupId, UUID groupLeader, List<CapsuleDto> capsules) {
         this.groupId = groupId;
         this.groupLeader = groupLeader;
         this.capsules = capsules;

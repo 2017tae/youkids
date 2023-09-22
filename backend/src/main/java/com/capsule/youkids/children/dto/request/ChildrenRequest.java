@@ -5,14 +5,16 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
 @Builder
+@NoArgsConstructor
 public class ChildrenRequest {
 
     private Long childrenId;
-    private UUID parentId;
+    private String parentEmail;
     private String name;
     private int gender;
     private LocalDate birthday;

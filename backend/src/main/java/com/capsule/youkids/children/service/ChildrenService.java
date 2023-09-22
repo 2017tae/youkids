@@ -12,8 +12,8 @@ public interface ChildrenService {
     // 애기 id로 애기 검색하기
     public ChildrenResponse findChildren(long childrenId) throws Exception;
 
-    // 부모 id로 애기들 검색하기
-    public List<ChildrenResponse> getParentsChildren(UUID id) throws Exception;
+    // 부모 email로 애기들 검색하기
+    public List<ChildrenResponse> getParentsChildren(String email) throws Exception;
 
     // 애기 등록하기
     public void registChildren(ChildrenRegistRequest childrenRegistRequest) throws Exception;

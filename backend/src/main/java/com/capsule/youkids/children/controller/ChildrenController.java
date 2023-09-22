@@ -29,13 +29,14 @@ public class ChildrenController {
 
     private final ChildrenService childrenService;
 
-    @GetMapping("/parent/{id}")
+    @GetMapping("/parent/{email}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "부모의 아이 찾음"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 부모 id"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 부모 정보"),
     })
-    public ResponseEntity<?> getParentsChildren(@PathVariable("id") UUID id) throws Exception {
-        List<ChildrenResponse> children = childrenService.getParentsChildren(id);
+    // 부모 email로 아이 찾기
+    public ResponseEntity<?> getParentsChildren(@PathVariable("email") String email) throws Exception {
+        List<ChildrenResponse> children = childrenService.getParentsChildren(email);
         return new ResponseEntity<>(children, HttpStatus.OK);
     }
 
@@ -44,6 +45,7 @@ public class ChildrenController {
             @ApiResponse(responseCode = "200", description = "아이 찾음"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 아이 id"),
     })
+    // 아이 id로 아이 정보 불러오기
     public ResponseEntity<?> findChildren(@PathVariable("id") long id) throws Exception {
         ChildrenResponse child = childrenService.findChildren(id);
         return new ResponseEntity<>(child, HttpStatus.OK);
@@ -52,9 +54,10 @@ public class ChildrenController {
     @PostMapping("")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "아이 등록 성공"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 부모 id"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 부모"),
             @ApiResponse(responseCode = "400", description = "알 수 없음"),
     })
+    // 애기 등록하기
     public ResponseEntity<?> registChildren(@RequestBody ChildrenRegistRequest childrenRegistRequest)
             throws Exception {
         childrenService.registChildren(childrenRegistRequest);
@@ -64,9 +67,10 @@ public class ChildrenController {
     @PutMapping()
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "아이 수정 성공"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 아이 id"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 아이"),
             @ApiResponse(responseCode = "400", description = "알 수 없음"),
     })
+    // 애기 정보 수정하기
     public ResponseEntity<?> updateChildren(@RequestBody ChildrenRequest childrenRequest)
             throws Exception {
         childrenService.updateChildren(childrenRequest);

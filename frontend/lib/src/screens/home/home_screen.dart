@@ -101,7 +101,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       drawer: const Drawer(),
       appBar: AppBar(
-        title: const Text(
+        title:
+        const Text(
           'YouKids',
           style: TextStyle(
             fontSize: 22,
@@ -158,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-               const Padding(
+              _isLoggedIn == true ? const Padding(
                 padding: EdgeInsets.symmetric(vertical: 10),
                 child: Text(
                   '아이 맞춤 형 장소',
@@ -167,8 +168,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
-              const ChildIconWidget(),
+              ): Container(),
+              _isLoggedIn == true ? const ChildIconWidget(): Container(),
               setHomeMenu(
                 context,
                 '이번 주 추천 장소',
@@ -190,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: CardFrame21Widget(
                         imageUrl: (places?.isNotEmpty ?? false)
                             ? places![0]['imageUrl']
-                            : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
+                            : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png", name: places![0]['name'], address: places![0]['address'],
 
                       )
                   ),
@@ -214,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: CardFrame11Widget(
                           imageUrl: (places?.isNotEmpty ?? false)
                               ? places![1]['imageUrl']
-                              : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
+                              : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png", name: places![1]['name'], address: places![1]['address'],
                         ),
                       ),
                       GestureDetector(
@@ -231,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: CardFrame11Widget(
                           imageUrl: (places?.isNotEmpty ?? false)
                               ? places![2]['imageUrl']
-                              : "https://picturepractice.s3.a p-northeast-2.amazonaws.com/Park/1514459962%233.png",
+                              : "https://picturepractice.s3.a p-northeast-2.amazonaws.com/Park/1514459962%233.png",name: places![2]['name'], address: places![2]['address'],
                         ),
                       ),
                     ],

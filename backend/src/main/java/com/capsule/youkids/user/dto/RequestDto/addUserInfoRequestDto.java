@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class addUserInfoRequestDto {
 
-    private UUID userId;
+    private String email;
 
     private String nickname;
 
-    private boolean isCar;
+    private boolean car;
 
     private UUID partnerId;
 

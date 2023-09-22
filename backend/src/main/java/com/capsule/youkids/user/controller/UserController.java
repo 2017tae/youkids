@@ -103,6 +103,8 @@ public class UserController {
     public ResponseEntity<?> addInfoUser(@RequestBody addUserInfoRequestDto request,
             HttpServletResponse httpServletResponse) {
 
+        System.out.println(request.getEmail());
+
         User user = userService.addInfoUser(request);
 
         if (!Objects.isNull(user)) {
@@ -149,10 +151,10 @@ public class UserController {
     }
 
     // Mypage에서 User의 정보만 GET
-    @GetMapping("/mypage/{userId}")
-    public ResponseEntity<?> GetMyInfo(@PathVariable UUID userId) {
+    @GetMapping("/mypage/{email}")
+    public ResponseEntity<?> GetMyInfo(@PathVariable String email) {
 
-        GetMyInfoResponseDto getMyInfoResponseDto = userService.getMyInfo(userId);
+        GetMyInfoResponseDto getMyInfoResponseDto = userService.getMyInfo(email);
 
         return new ResponseEntity<>(getMyInfoResponseDto, HttpStatus.OK);
 

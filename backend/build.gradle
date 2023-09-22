@@ -22,16 +22,21 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
-	implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '3.1.4'
+	implementation 'mysql:mysql-connector-java:8.0.33'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-//	runtimeOnly 'com.mysql:mysql-connector-j:8.0.32'
+	runtimeOnly 'com.mysql:mysql-connector-j:8.0.32'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// mongo
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+	// s3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
 	//spring security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -47,7 +52,6 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.google.api-client/google-api-client
 	implementation group: 'com.google.api-client', name: 'google-api-client', version: '2.2.0'
 	implementation group: 'com.google.http-client', name: 'google-http-client-jackson2', version: '1.11.0-beta'
-
 }
 
 tasks.named('test') {

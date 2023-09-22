@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ModifyMyInfoRequestDto {
 
-    private String email;
+    private UUID userId;
 
     private String nickname;
 

@@ -1,5 +1,6 @@
 package com.capsule.youkids.user.dto.RequestDto;
 
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -7,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class checkPartnerRequestDto {
 
-    private String partnerEmail;
+    private UUID partnerId;
 
 
 }

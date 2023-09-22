@@ -1,10 +1,13 @@
 package com.capsule.youkids.user.controller;
 
+import com.capsule.youkids.global.common.constant.Code;
+import com.capsule.youkids.global.common.exception.RestApiException;
 import com.capsule.youkids.user.dto.RequestDto.DeleteMyInfoRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.ModifyMyInfoRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.checkPartnerRequestDto;
 import com.capsule.youkids.user.dto.ResponseDto.GetMyInfoResponseDto;
+import com.capsule.youkids.user.dto.ResponseDto.GiveUserDto;
 import com.capsule.youkids.user.entity.Token;
 import com.capsule.youkids.user.entity.User;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
@@ -16,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,8 +58,8 @@ public class UserController {
             // User가 이미 등록이 되어있는지 확인
             User user = userService.verifyUser(idToken);
 
-            // 유저가 이미 등록된 유저라면,
-            if (!Objects.isNull(user)) {
+            // 유저가 이미 등록된 유저라면, or 회원가입시 닉네임 입력X(-> 다시 회원가입 하도록)
+            if (!Objects.isNull(user) && !Objects.isNull(user.getNickname())) {
 
                 // JWT를 발행
                 Token token = userService.getToken(user);
@@ -77,20 +81,37 @@ public class UserController {
                 httpServletResponse.setHeader("Access-Control-Allow-Methods",
                         "POST,GET,PUT,DELETE");
 
-                return new ResponseEntity<>(HttpStatus.OK);
+                GiveUserDto giveUserDto = new GiveUserDto(user, false);
+
+                return new ResponseEntity<>(giveUserDto ,HttpStatus.OK);
             } else {
-                // 등록된 유저가 아니라면
 
-                // 회원가입 루트(DB에 일정부분 등록 -> email, provider, provider_id)
-                boolean check = userService.newUser(idToken, provider);
+                if(!Objects.isNull(user)){
+                    // 등록된 유저 O / 회원가입 X
 
-                if (check) {
-                    // "new_user"라고 body에 담아 보냄으로써 프론트에서 확인
-                    return new ResponseEntity<>("new_user", HttpStatus.OK);
+                    GiveUserDto giveUserDto = new GiveUserDto(user, true);
+
+                    return new ResponseEntity<>(giveUserDto, HttpStatus.OK);
+
+
+                }else {
+                    // 등록된 유저가 아니라면
+                    // 회원가입 루트(DB에 일정부분 등록 -> email, provider, provider_id)
+                    User newUser = userService.newUser(idToken, provider);
+                    if (!Objects.isNull(newUser)) {
+
+                        // "new_user"라고 body에 담아 보냄으로써 프론트에서 확인
+                        GiveUserDto giveUserDto = new GiveUserDto(newUser, true);
+
+                        return new ResponseEntity<>(giveUserDto, HttpStatus.OK);
+                    } else {
+
+                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                    }
+
                 }
             }
 
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
             //Token이 유효하지 않다면,
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Social Token is invalid");
@@ -102,8 +123,6 @@ public class UserController {
     @PostMapping("/addInfo")
     public ResponseEntity<?> addInfoUser(@RequestBody addUserInfoRequestDto request,
             HttpServletResponse httpServletResponse) {
-
-        System.out.println(request.getEmail());
 
         User user = userService.addInfoUser(request);
 
@@ -151,10 +170,10 @@ public class UserController {
     }
 
     // Mypage에서 User의 정보만 GET
-    @GetMapping("/mypage/{email}")
-    public ResponseEntity<?> GetMyInfo(@PathVariable String email) {
+    @GetMapping("/mypage/{userId}")
+    public ResponseEntity<?> GetMyInfo(@PathVariable UUID userId) {
 
-        GetMyInfoResponseDto getMyInfoResponseDto = userService.getMyInfo(email);
+        GetMyInfoResponseDto getMyInfoResponseDto = userService.getMyInfo(userId);
 
         return new ResponseEntity<>(getMyInfoResponseDto, HttpStatus.OK);
 

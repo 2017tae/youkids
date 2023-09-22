@@ -376,9 +376,9 @@ public class PlaceServiceImpl implements PlaceService {
                 .boxed()
                 .collect(Collectors.toList());
 
-        Collections.shuffle(placeIds);
-
         List<PlaceRecommItemDto> placeList = placeRepository.getRecommPlaceInfos(placeIds);
+        Collections.shuffle(placeList);
+
         return PlaceRecommDto.builder().places(placeList).build();
     }
 }

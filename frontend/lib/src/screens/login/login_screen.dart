@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8080/user/verify-token'),
+        Uri.parse('https://j9a604.p.ssafy.io/api/user/verify-token'),
         headers: {
           'Authorization': 'Bearer $idToken',
           'Provider': 'Google'

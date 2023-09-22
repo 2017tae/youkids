@@ -41,7 +41,11 @@ class CardFrame21Widget extends StatelessWidget {
 }
 
 class CardFrame11Widget extends StatelessWidget {
-  const CardFrame11Widget({super.key});
+  final String imageUrl;
+
+  const CardFrame11Widget({
+    required this.imageUrl
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +57,10 @@ class CardFrame11Widget extends StatelessWidget {
           decoration: BoxDecoration(
             color: const Color(0xffF5EEEC),
             borderRadius: BorderRadius.circular(10),
+              image: DecorationImage(
+                image: NetworkImage(imageUrl),
+                fit: BoxFit.cover,
+              )
           ),
         ),
         Positioned(

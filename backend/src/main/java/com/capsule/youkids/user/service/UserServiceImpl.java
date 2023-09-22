@@ -9,6 +9,8 @@ import com.capsule.youkids.user.dto.RequestDto.ModifyMyInfoRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.checkPartnerRequestDto;
 import com.capsule.youkids.user.dto.ResponseDto.GetMyInfoResponseDto;
+import com.capsule.youkids.user.dto.view.GetMyInfoDto;
+import com.capsule.youkids.user.dto.view.PartnerInfoDto;
 import com.capsule.youkids.user.entity.Role;
 import com.capsule.youkids.user.entity.Token;
 import com.capsule.youkids.user.entity.User;
@@ -170,7 +172,21 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmailAndRoleNot(email, Role.DELETED)
                 .orElseThrow(()-> new IllegalArgumentException());
 
-        return new GetMyInfoResponseDto(user);
+        UUID partnerId = user.getPartnerId();
+
+        if(Objects.isNull(partnerId)){
+
+            GetMyInfoResponseDto getMyInfoResponseDto = new GetMyInfoResponseDto(new GetMyInfoDto(user), null);
+
+            return getMyInfoResponseDto;
+        }
+
+
+        User partner = userRepository.findById(partnerId).orElseThrow(()-> new IllegalArgumentException());
+
+        GetMyInfoResponseDto getMyInfoResponseDto = new GetMyInfoResponseDto(new GetMyInfoDto(user), new PartnerInfoDto(partner));
+
+        return getMyInfoResponseDto;
     }
 
     // 유저의 정보만 수정한다.

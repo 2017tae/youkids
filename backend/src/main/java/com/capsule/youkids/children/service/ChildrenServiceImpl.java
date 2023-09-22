@@ -42,9 +42,9 @@ public class ChildrenServiceImpl implements ChildrenService {
     }
 
     @Override
-    public List<ChildrenResponse> getParentsChildren(String email) throws Exception {
-        // 부모 찾기
-        Optional<User> user = userRepository.findByEmailAndRoleNot(email, Role.DELETED);
+    public List<ChildrenResponse> getParentsChildren(UUID id) throws Exception {
+        // 부모 찾기(String email
+        Optional<User> user = userRepository.findById(id);
         // 유저가 있으면
         if (user.isPresent()) {
             // 리더면
@@ -87,7 +87,7 @@ public class ChildrenServiceImpl implements ChildrenService {
     @Override
     public void registChildren(ChildrenRegistRequest childrenRegistRequest) throws Exception {
         // 부모 찾기
-        Optional<User> user = userRepository.findByEmailAndRoleNot(childrenRegistRequest.getParentEmail(), Role.DELETED);
+        Optional<User> user = userRepository.findById(childrenRegistRequest.getParentId());
         // 부모가 있으면
         if (user.isPresent()) {
             try {

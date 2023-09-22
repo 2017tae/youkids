@@ -11,12 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class GroupUserRequest {
-    private String leaderEmail;
-    private String userEmail;
-
-//    @Builder
-//    public GroupUserRequest(String leaderEmail, String userEmail) {
-//        this.leaderEmail = leaderEmail;
-//        this.userEmail = userEmail;
-//    }
+    private UUID leaderId;
+    private UUID userId;
 }

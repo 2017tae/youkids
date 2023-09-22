@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class ChildrenRegistRequest {
-    private String parentEmail;
+    private UUID parentId;
     private String name;
     private int gender;
     private LocalDate birthday;

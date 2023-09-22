@@ -30,10 +30,8 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public void addUserInGroup(GroupUserRequest groupUserRequest) throws Exception {
-        // 이메일로 리더, 유저 정보 검색하기
-        Optional<User> leader = userRepository.findByEmailAndRoleNot(groupUserRequest.getLeaderEmail(),
-                Role.DELETED);
-        Optional<User> user = userRepository.findByEmailAndRoleNot(groupUserRequest.getUserEmail(), Role.DELETED);
+        Optional<User> leader = userRepository.findById(groupUserRequest.getLeaderId());
+        Optional<User> user = userRepository.findById(groupUserRequest.getUserId());
 
         // 유저가 없으면 에러~
         if (leader.isEmpty() || user.isEmpty()) {
@@ -80,10 +78,8 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public void deleteUserFromGroup(GroupUserRequest groupUserRequest) throws Exception {
-        // 이메일로 유저 검색하기
-        Optional<User> leader = userRepository.findByEmailAndRoleNot(groupUserRequest.getLeaderEmail(),
-                Role.DELETED);
-        Optional<User> user = userRepository.findByEmailAndRoleNot(groupUserRequest.getUserEmail(), Role.DELETED);
+        Optional<User> leader = userRepository.findById(groupUserRequest.getLeaderId());
+        Optional<User> user = userRepository.findById(groupUserRequest.getUserId());
 
         // 유저가 없으면 에러~
         if (leader.isEmpty() || user.isEmpty()) {
@@ -117,19 +113,31 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<GroupResponse> getAllJoinedGroup(String email) throws Exception {
-        Optional<User> user = userRepository.findByEmailAndRoleNot(email, Role.DELETED);
+    public List<GroupResponse> getAllJoinedGroup(UUID id) throws Exception {
+        Optional<User> user = userRepository.findById(id);
         // 유저가 있으면 그룹에 속한 정보를 모두 불러와서
         if (user.isPresent()) {
-            List<GroupJoin> groupList = groupJoinRepository.findByUserIdOrderByCreatedTime(user.get().getUserId());
             List<GroupResponse> groupResponseList = new ArrayList<>();
+            // 내가 리더가 아니면 파트너 그룹도 불러오기
+            if (!user.get().isLeader() && user.get().getPartnerId() != null) {
+                Optional<GroupInfo> groupInfo = groupInfoRepository.findByLeaderId(user.get().getPartnerId());
+                Optional<User> leader = userRepository.findById(user.get().getPartnerId());
+                GroupResponse gr = GroupResponse.builder().
+                        groupId(groupInfo.get().getGroupId()).
+                        leaderId(leader.get().getUserId()).
+                        groupName(String.format("%s님의 그룹", leader.get().getNickname())).
+                        groupImg(groupInfo.get().getGroupImg()).
+                        build();
+                groupResponseList.add(gr);
+            }
+            List<GroupJoin> groupList = groupJoinRepository.findByUserIdOrderByCreatedTime(user.get().getUserId());
             // 그룹 정보를 추출해낸다~
             for (GroupJoin g : groupList) {
                 Optional<GroupInfo> gi = groupInfoRepository.findById(g.getGroupId());
                 Optional<User> leader = userRepository.findById(gi.get().getLeaderId());
                 GroupResponse gr = GroupResponse.builder().
                         groupId(g.getGroupId()).
-                        leaderEmail(leader.get().getEmail()).
+                        leaderId(leader.get().getUserId()).
                         groupName(g.getGroupName()).
                         groupImg(gi.get().getGroupImg()).
                         build();
@@ -151,7 +159,7 @@ public class GroupServiceImpl implements GroupService {
         for (GroupJoin gr : groupJoinList) {
             Optional<User> u = userRepository.findById(gr.getUserId());
             UserResponse ur = UserResponse.builder()
-                    .email(u.get().getEmail())
+                    .userId(u.get().getUserId())
                     .nickname(u.get().getNickname())
                     .profileImage(u.get().getProfileImage())
                     .build();
@@ -162,7 +170,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public void updateGroupName(UpdateGroupRequest updateGroupRequest) throws Exception {
-        Optional<User> user = userRepository.findByEmailAndRoleNot(updateGroupRequest.getEmail(), Role.DELETED);
+        Optional<User> user = userRepository.findById(updateGroupRequest.getUserId());
         Optional<GroupInfo> groupInfo = groupInfoRepository.findById(updateGroupRequest.getGroupId());
 
         // 유저나 그룹 자체가 없는 경우

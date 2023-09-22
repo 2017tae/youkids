@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class ChildrenRequest {
 
     private Long childrenId;
-    private String parentEmail;
+    private UUID parentId;
     private String name;
     private int gender;
     private LocalDate birthday;

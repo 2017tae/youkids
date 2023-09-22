@@ -5,6 +5,7 @@ import com.capsule.youkids.children.dto.request.ChildrenRequest;
 import com.capsule.youkids.children.dto.response.ChildrenResponse;
 import com.capsule.youkids.children.entity.Children;
 import com.capsule.youkids.children.repository.ChildrenRepository;
+import com.capsule.youkids.user.entity.Role;
 import com.capsule.youkids.user.entity.User;
 import com.capsule.youkids.user.repository.UserRepository;
 import java.util.ArrayList;
@@ -29,7 +30,6 @@ public class ChildrenServiceImpl implements ChildrenService {
         if (child.isPresent()) {
             Children result = child.get();
             ChildrenResponse cr = ChildrenResponse.builder()
-                    .parentId(result.getParent().getUserId())
                     .childrenId(result.getChildrenId())
                     .name(result.getName())
                     .gender(result.getGender())
@@ -42,34 +42,52 @@ public class ChildrenServiceImpl implements ChildrenService {
     }
 
     @Override
-    public List<ChildrenResponse> getParentsChildren(UUID id) throws Exception {
+    public List<ChildrenResponse> getParentsChildren(String email) throws Exception {
         // 부모 찾기
-        Optional<User> user = userRepository.findById(id);
-        // 부모 있으면 찾고
+        Optional<User> user = userRepository.findByEmailAndRoleNot(email, Role.DELETED);
+        // 유저가 있으면
         if (user.isPresent()) {
-            List<Children> children = childrenRepository.findAllByParentOrderByBirthday(user.get());
-            List<ChildrenResponse> childrenResponseList = new ArrayList<>();
-            for (Children c : children) {
-                ChildrenResponse cr = ChildrenResponse.builder()
-                        .parentId(c.getParent().getUserId())
-                        .childrenId(c.getChildrenId())
-                        .name(c.getName())
-                        .gender(c.getGender())
-                        .birthday(c.getBirthday())
-                        .childrenImage(c.getChildrenImage())
-                        .build();
-                childrenResponseList.add(cr);
+            // 리더면
+            if (user.get().isLeader()) {
+                List<Children> children = childrenRepository.findAllByParentOrderByBirthday(user.get());
+                List<ChildrenResponse> childrenResponseList = new ArrayList<>();
+                for (Children c : children) {
+                    ChildrenResponse cr = ChildrenResponse.builder()
+                            .childrenId(c.getChildrenId())
+                            .name(c.getName())
+                            .gender(c.getGender())
+                            .birthday(c.getBirthday())
+                            .childrenImage(c.getChildrenImage())
+                            .build();
+                    childrenResponseList.add(cr);
+                }
+                return childrenResponseList;
+                // 리더가 아니면 파트너 아이디 가져와서 애기 찾기
+            } else {
+                Optional<User> partner = userRepository.findById(user.get().getPartnerId());
+                List<Children> children = childrenRepository.findAllByParentOrderByBirthday(partner.get());
+                List<ChildrenResponse> childrenResponseList = new ArrayList<>();
+                for (Children c : children) {
+                    ChildrenResponse cr = ChildrenResponse.builder()
+                            .childrenId(c.getChildrenId())
+                            .name(c.getName())
+                            .gender(c.getGender())
+                            .birthday(c.getBirthday())
+                            .childrenImage(c.getChildrenImage())
+                            .build();
+                    childrenResponseList.add(cr);
+                }
+                return childrenResponseList;
             }
-            return childrenResponseList;
         }
         // 아님 에러
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no parent id");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no parent info");
     }
 
     @Override
     public void registChildren(ChildrenRegistRequest childrenRegistRequest) throws Exception {
         // 부모 찾기
-        Optional<User> user = userRepository.findById(childrenRegistRequest.getParentId());
+        Optional<User> user = userRepository.findByEmailAndRoleNot(childrenRegistRequest.getParentEmail(), Role.DELETED);
         // 부모가 있으면
         if (user.isPresent()) {
             try {
@@ -101,7 +119,6 @@ public class ChildrenServiceImpl implements ChildrenService {
             try {
                 children.get().updateChildren(childrenRequest.getName(), childrenRequest.getGender(), childrenRequest.getBirthday(), childrenRequest.getChildrenImage());
                 childrenRepository.save(children.get());
-                Children newChild = childrenRepository.findById(childrenRequest.getChildrenId()).get();
             } catch (Exception e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "unknown");
             }

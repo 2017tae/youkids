@@ -126,7 +126,7 @@ public class GroupServiceImpl implements GroupService {
             // 그룹 정보를 추출해낸다~
             for (GroupJoin g : groupList) {
                 Optional<GroupInfo> gi = groupInfoRepository.findById(g.getGroupId());
-                Optional<User> leader = userRepository.findByUserId(gi.get().getLeaderId());
+                Optional<User> leader = userRepository.findById(gi.get().getLeaderId());
                 GroupResponse gr = GroupResponse.builder().
                         groupId(g.getGroupId()).
                         leaderEmail(leader.get().getEmail()).

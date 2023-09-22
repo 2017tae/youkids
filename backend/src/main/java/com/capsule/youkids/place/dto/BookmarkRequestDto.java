@@ -11,10 +11,10 @@ public class BookmarkRequestDto {
 
     private UUID userId;
     private int placeId;
-    private int flag;
+    private boolean flag;
 
     @Builder
-    public BookmarkRequestDto(UUID userId, int placeId, int flag) {
+    public BookmarkRequestDto(UUID userId, int placeId, boolean flag) {
         this.userId = userId;
         this.placeId = placeId;
         this.flag = flag;

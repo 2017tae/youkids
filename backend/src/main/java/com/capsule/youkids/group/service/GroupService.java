@@ -10,13 +10,13 @@ import java.util.UUID;
 public interface GroupService {
 
     // 리더가 그룹에 사람 추가하기
-    public void addUserInGroup(GroupUserRequest addUserRequest) throws Exception;
+    public void addUserInGroup(GroupUserRequest groupUserRequest) throws Exception;
 
     // 리더가 그룹에서 사람 제거하기
     public void deleteUserFromGroup(GroupUserRequest groupUserRequest) throws Exception;
 
     // 유저가 속한 모든 그룹 불러오기
-    public List<GroupResponse> getAllJoinedGroup(UUID userId) throws Exception;
+    public List<GroupResponse> getAllJoinedGroup(String email) throws Exception;
 
     // 그룹에 속한 모든 유저 불러오기
     public List<UserResponse> getAllJoinedUser(UUID groupId) throws Exception;

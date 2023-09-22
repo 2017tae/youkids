@@ -8,6 +8,7 @@ import com.capsule.youkids.group.entity.GroupInfo;
 import com.capsule.youkids.group.entity.GroupJoin;
 import com.capsule.youkids.group.repository.GroupInfoRepository;
 import com.capsule.youkids.group.repository.GroupJoinRepository;
+import com.capsule.youkids.user.entity.Role;
 import com.capsule.youkids.user.entity.User;
 import com.capsule.youkids.user.repository.UserRepository;
 import java.util.ArrayList;
@@ -28,33 +29,44 @@ public class GroupServiceImpl implements GroupService {
     private final UserRepository userRepository;
 
     @Override
-    public void addUserInGroup(GroupUserRequest groupUserRequest) throws Exception{
-        Optional<User> leader = userRepository.findById(groupUserRequest.getLeaderId());
-        Optional<User> user = userRepository.findById(groupUserRequest.getUserId());
+    public void addUserInGroup(GroupUserRequest groupUserRequest) throws Exception {
+        // 이메일로 리더, 유저 정보 검색하기
+        Optional<User> leader = userRepository.findByEmailAndRoleNot(groupUserRequest.getLeaderEmail(),
+                Role.DELETED);
+        Optional<User> user = userRepository.findByEmailAndRoleNot(groupUserRequest.getUserEmail(), Role.DELETED);
+
         // 유저가 없으면 에러~
         if (leader.isEmpty() || user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no user exists");
         }
-        // 리더가 그룹이 없으면 에러~
-        Optional<GroupInfo> groupInfo = groupInfoRepository.findByLeaderId(leader.get().getUserId());
-        if (groupInfo.isEmpty()) {
+
+        // 리더가 그룹이 없으면 에러~ (사실 가입 시 그룹이 만들어져 있어서 무의미한 필터링이긴 함)
+        // 리더가 리더가 아니거나(파트너에 종속되어 있음)
+        UUID lid = leader.get().getUserId();
+        Optional<GroupInfo> groupInfo = groupInfoRepository.findByLeaderId(lid);
+        if (groupInfo.isEmpty() || !leader.get().isLeader()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no group exists");
         }
-        UUID gid = groupInfo.get().getGroupId();
+
+        // 유저가 리더의 파트너인 경우
         UUID uid = user.get().getUserId();
+        if (leader.get().getPartnerId() != null && leader.get().getPartnerId().equals(uid)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "partner");
+        }
+
+        UUID gid = groupInfo.get().getGroupId();
         Optional<GroupJoin> group = groupJoinRepository.findByGroupIdAndUserId(gid, uid);
         // 이미 추가되어 있으면 에러~
         if (group.isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "already exists");
         }
 
-        // leader.equals(user) 면 내가 내 그룹을 만들자마자 속하는거
-        // 아닐 경우 다른 사람에게 초대를 보내는거
-        // *프론트에서 초대를 보낼때 sendInvite 같은거 해서 상대방에게 알람을 보낸 뒤 수락 시 이 서비스 수행하기*
-        // 이미 등록된 경우 빠꾸먹이고, 아닐시 send
+        // ----------------------------------분리---------------------------------
+        // 이 시점에서 초대를 보내서 승락 시 아래 서비스 수행
+        // ----------------------------------분리---------------------------------
 
         // 등록 대상이 되는 유저가 속해있는 그룹의 수 + 1
-        int newGroupIndex = groupJoinRepository.findByUserId(uid).size() + 1;
+        int newGroupIndex = groupJoinRepository.findByUserIdOrderByCreatedTime(uid).size() + 1;
 
         String newGroupName = String.format("내 그룹 %d", newGroupIndex);
 
@@ -68,24 +80,36 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public void deleteUserFromGroup(GroupUserRequest groupUserRequest) throws Exception {
-        Optional<User> leader = userRepository.findById(groupUserRequest.getLeaderId());
-        Optional<User> user = userRepository.findById(groupUserRequest.getUserId());
+        // 이메일로 유저 검색하기
+        Optional<User> leader = userRepository.findByEmailAndRoleNot(groupUserRequest.getLeaderEmail(),
+                Role.DELETED);
+        Optional<User> user = userRepository.findByEmailAndRoleNot(groupUserRequest.getUserEmail(), Role.DELETED);
+
         // 유저가 없으면 에러~
         if (leader.isEmpty() || user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no user exists");
         }
+
         // 리더가 그룹이 없으면 에러~
+        UUID lid = leader.get().getUserId();
         Optional<GroupInfo> groupInfo = groupInfoRepository.findByLeaderId(leader.get().getUserId());
-        if (groupInfo.isEmpty()) {
+        if (groupInfo.isEmpty() || !leader.get().isLeader()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no group exists");
         }
-        UUID gid = groupInfo.get().getGroupId();
+
+        // 유저가 리더의 파트너인 경우
         UUID uid = user.get().getUserId();
-        Optional<GroupJoin> group = groupJoinRepository.findByGroupIdAndUserId(gid, uid);
+        if (leader.get().getPartnerId() != null && leader.get().getPartnerId().equals(uid)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "partner");
+        }
+
         // 이미 없으면 에러~
-        if (group.isEmpty()) {
+        UUID gid = groupInfo.get().getGroupId();
+        Optional<GroupJoin> groupJoin = groupJoinRepository.findByGroupIdAndUserId(gid, uid);
+        if (groupJoin.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "already not in the group");
         }
+
         // 삭제
         groupJoinRepository.deleteByGroupIdAndUserId(gid, uid);
 
@@ -93,18 +117,19 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<GroupResponse> getAllJoinedGroup(UUID userId) throws Exception {
-        Optional<User> user = userRepository.findById(userId);
+    public List<GroupResponse> getAllJoinedGroup(String email) throws Exception {
+        Optional<User> user = userRepository.findByEmailAndRoleNot(email, Role.DELETED);
         // 유저가 있으면 그룹에 속한 정보를 모두 불러와서
         if (user.isPresent()) {
-            List<GroupJoin> groupList = groupJoinRepository.findByUserId(userId);
+            List<GroupJoin> groupList = groupJoinRepository.findByUserIdOrderByCreatedTime(user.get().getUserId());
             List<GroupResponse> groupResponseList = new ArrayList<>();
             // 그룹 정보를 추출해낸다~
             for (GroupJoin g : groupList) {
                 Optional<GroupInfo> gi = groupInfoRepository.findById(g.getGroupId());
+                Optional<User> leader = userRepository.findByUserId(gi.get().getLeaderId());
                 GroupResponse gr = GroupResponse.builder().
                         groupId(g.getGroupId()).
-                        leaderId(gi.get().getLeaderId()).
+                        leaderEmail(leader.get().getEmail()).
                         groupName(g.getGroupName()).
                         groupImg(gi.get().getGroupImg()).
                         build();
@@ -121,12 +146,12 @@ public class GroupServiceImpl implements GroupService {
         if (groupInfo.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "no group");
         }
-        List<GroupJoin> groupJoinList = groupJoinRepository.findByGroupId(groupInfo.get().getGroupId());
+        List<GroupJoin> groupJoinList = groupJoinRepository.findByGroupIdOrderByCreatedTime(groupInfo.get().getGroupId());
         List<UserResponse> userResponseList = new ArrayList<>();
         for (GroupJoin gr : groupJoinList) {
             Optional<User> u = userRepository.findById(gr.getUserId());
             UserResponse ur = UserResponse.builder()
-                    .userId(u.get().getUserId())
+                    .email(u.get().getEmail())
                     .nickname(u.get().getNickname())
                     .profileImage(u.get().getProfileImage())
                     .build();
@@ -137,21 +162,23 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public void updateGroupName(UpdateGroupRequest updateGroupRequest) throws Exception {
-        Optional<User> user = userRepository.findById(updateGroupRequest.getUserId());
+        Optional<User> user = userRepository.findByEmailAndRoleNot(updateGroupRequest.getEmail(), Role.DELETED);
         Optional<GroupInfo> groupInfo = groupInfoRepository.findById(updateGroupRequest.getGroupId());
+
         // 유저나 그룹 자체가 없는 경우
         if (user.isEmpty() || groupInfo.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no user or group");
         }
         UUID gid = groupInfo.get().getGroupId();
         UUID uid = user.get().getUserId();
-        Optional<GroupJoin> group = groupJoinRepository.findByGroupIdAndUserId(gid, uid);
+        Optional<GroupJoin> groupJoin = groupJoinRepository.findByGroupIdAndUserId(gid, uid);
+
         // 둘 다 있지만 속하지 않은 경우
-        if (group.isEmpty()) {
+        if (groupJoin.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "not in the group");
         }
-        group.get().updateGroupName(updateGroupRequest.getGroupName());
-        groupJoinRepository.save(group.get());
+        groupJoin.get().updateGroupName(updateGroupRequest.getGroupName());
+        groupJoinRepository.save(groupJoin.get());
     }
 
 }

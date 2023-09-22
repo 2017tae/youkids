@@ -18,6 +18,7 @@ public enum Code {
     COURSE_LIST_NOT_FOUND(false, 1002, "생성된 코스가 없습니다."),
     COURSE_PLACE_ITEM_NOT_FOUND(false, 1003, "코스의 정보를 찾을 수 없습니다."),
     COURSE_COUNT_FULL(false, 1004, "더 이상 코스를 생성할 수 없습니다."),
+    COURSE_AUTH_FAIL(false, 1005, "수정 및 삭제를 할 권한이 없습니다."),
 
     // 유저 에러 (1011 ~ 1020)
     USER_NOT_FOUND(false, 1011, "존재하지 않는 유저입니다."),

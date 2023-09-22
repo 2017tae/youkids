@@ -1,5 +1,7 @@
 package com.capsule.youkids.user.dto.ResponseDto;
 
+import com.capsule.youkids.user.dto.view.GetMyInfoDto;
+import com.capsule.youkids.user.dto.view.PartnerInfoDto;
 import com.capsule.youkids.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,16 +12,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GetMyInfoResponseDto {
 
-    private String email;
+    private GetMyInfoDto getMyInfoDto;
 
-    private String nickname;
+    private PartnerInfoDto partnerInfoDto;
 
-    private String profileImage;
 
-    public GetMyInfoResponseDto(User user) {
-        this.email = user.getEmail();
-        this.nickname = user.getNickname();
-        this.profileImage = user.getProfileImage();
+    public GetMyInfoResponseDto(GetMyInfoDto getMyInfoDto, PartnerInfoDto partnerInfoDto) {
+        this.getMyInfoDto = getMyInfoDto;
+        this.partnerInfoDto = partnerInfoDto;
+
     }
 
 }

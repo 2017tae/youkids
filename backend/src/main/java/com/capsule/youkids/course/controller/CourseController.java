@@ -5,6 +5,7 @@ import com.capsule.youkids.course.dto.CourseRequestDto;
 import com.capsule.youkids.course.dto.ModifyCourseRequestDto;
 import com.capsule.youkids.course.service.CourseService;
 import com.capsule.youkids.global.common.constant.Code;
+import com.capsule.youkids.global.common.exception.RestApiException;
 import com.capsule.youkids.global.common.response.BaseResponse;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -27,27 +28,43 @@ public class CourseController {
     @PostMapping("")
     public BaseResponse saveCourse(
             @RequestBody CourseRequestDto courseRequestDto) {
-        courseService.save(courseRequestDto);
-        return BaseResponse.success(Code.SUCCESS);
+        try {
+            courseService.save(courseRequestDto);
+            return BaseResponse.success(Code.SUCCESS);
+        } catch (RestApiException e) {
+            return BaseResponse.error(e.getErrorCode());
+        }
     }
 
     @GetMapping("/{userId}")
     public BaseResponse getCourse(
             @PathVariable("userId") UUID userId) {
-        return BaseResponse.success(Code.SUCCESS, courseService.getCourseIdsByUserId(userId));
+        try {
+            return BaseResponse.success(Code.SUCCESS, courseService.getCourseIdsByUserId(userId));
+        } catch (RestApiException e) {
+            return BaseResponse.error(e.getErrorCode());
+        }
     }
 
     @PutMapping("")
     public BaseResponse updateCourse(
             @RequestBody ModifyCourseRequestDto modifyCourseRequestDto) {
-        courseService.update(modifyCourseRequestDto);
-        return BaseResponse.success(Code.SUCCESS);
+        try {
+            courseService.update(modifyCourseRequestDto);
+            return BaseResponse.success(Code.SUCCESS);
+        } catch (RestApiException e) {
+            return BaseResponse.error(e.getErrorCode());
+        }
     }
 
     @DeleteMapping("")
     public BaseResponse deleteCourse(
             @RequestBody DeleteCourseRequestDto deleteCourseRequestDto) {
-        courseService.delete(deleteCourseRequestDto);
-        return BaseResponse.success(Code.SUCCESS);
+        try {
+            courseService.delete(deleteCourseRequestDto);
+            return BaseResponse.success(Code.SUCCESS);
+        } catch (RestApiException e) {
+            return BaseResponse.error(e.getErrorCode());
+        }
     }
 }

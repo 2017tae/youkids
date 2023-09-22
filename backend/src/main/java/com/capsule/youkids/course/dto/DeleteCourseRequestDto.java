@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 public class DeleteCourseRequestDto {
 
     private UUID courseId;
+    private UUID userId;
 }

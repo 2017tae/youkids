@@ -28,6 +28,7 @@ import com.capsule.youkids.user.entity.User;
 import com.capsule.youkids.user.repository.UserRepository;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -371,10 +372,13 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     public PlaceRecommDto recommPlace() {
         Random random = new Random();
-        List<Integer> placeIds = random.ints(100, 1, 154)
+        List<Integer> placeIds = random.ints(100, 1, 288)
                 .boxed()
                 .collect(Collectors.toList());
+
         List<PlaceRecommItemDto> placeList = placeRepository.getRecommPlaceInfos(placeIds);
+        Collections.shuffle(placeList);
+
         return PlaceRecommDto.builder().places(placeList).build();
     }
 }

@@ -44,7 +44,7 @@ public class User extends BaseTimeEntity {
     @Column(columnDefinition = "boolean default false")
     private boolean Car;
 
-    @Column(columnDefinition = "boolean default false")
+    @Column(columnDefinition = "boolean default true")
     private boolean leader;
 
     @Column

@@ -39,27 +39,27 @@ class _HomeScreenState extends State<HomeScreen> {
     loadDataFuture = _checkLoginStatus();
   }
 
-  Future<String?> getEmail() async {
+  Future<String?> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('email'); // Returns 'john_doe' if it exists, otherwise returns null.
+    return prefs.getString('userId'); // Returns 'john_doe' if it exists, otherwise returns null.
   }
 
   void someFunction() async {
     await removeData();
-    print('Email removed from SharedPreferences');
+    print('UserId removed from SharedPreferences');
   }
 
   removeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove('email');
+    prefs.remove('userId');
   }
 
 
   Future<void> _checkLoginStatus() async {
-    String? email = await getEmail();
-    print(email);
+    String? userId = await getUserId();
+    print(userId);
     setState(() {
-      _isLoggedIn = email != null;  // 이메일이 null이 아니면 로그인된 것으로 판단
+      _isLoggedIn = userId != null;  // 이메일이 null이 아니면 로그인된 것으로 판단
     });
 
     final response = await http.get(
@@ -119,7 +119,19 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
                 height: 24),
           ),
-          _isLoggedIn == false ? IconButton(
+          // _isLoggedIn == false ? IconButton(
+          //   onPressed: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(builder: (context)=> LoginScreen()),
+          //     );
+          //   },
+          //   icon: const Icon(
+          //     Icons.account_circle_rounded,
+          //     size: 28,
+          //   ),
+          // ) : Container(),
+          IconButton(
             onPressed: () {
               Navigator.push(
                 context,
@@ -130,14 +142,14 @@ class _HomeScreenState extends State<HomeScreen> {
               Icons.account_circle_rounded,
               size: 28,
             ),
-          ) : Container(),
-          IconButton(
-            icon: Icon(Icons.delete),  // 예시 아이콘. 원하는 아이콘으로 변경하세요.
-            onPressed: () async {
-              await removeData();
-              print('Email removed from SharedPreferences');
-            },
-          )
+          ),
+          // IconButton(
+          //   icon: Icon(Icons.delete),  // 예시 아이콘. 원하는 아이콘으로 변경하세요.
+          //   onPressed: () async {
+          //     await removeData();
+          //     print('userId removed from SharedPreferences');
+          //   },
+          // )
         ],
       ),
       body: SingleChildScrollView(
@@ -219,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: CardFrame11Widget(
                           imageUrl: (places?.isNotEmpty ?? false)
                               ? places![2]['imageUrl']
-                              : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
+                              : "https://picturepractice.s3.a p-northeast-2.amazonaws.com/Park/1514459962%233.png",
                         ),
                       ),
                     ],

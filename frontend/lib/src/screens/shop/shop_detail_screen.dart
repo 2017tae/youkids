@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 class ShopDetailScreen extends StatefulWidget {
   final int placeId;
 
+
   const ShopDetailScreen({required this.placeId});
 
   @override

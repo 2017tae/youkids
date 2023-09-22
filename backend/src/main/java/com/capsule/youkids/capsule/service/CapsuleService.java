@@ -19,10 +19,10 @@ public interface CapsuleService {
     /**
      * 유저 이메일을 통해서 아이디가 가입된 모든 그룹을 확인하고, 모든 그룹의 캡슐 리스트를 가져온다.
      *
-     * @param email
+     * @param userId
      * @return CapsuleListResponseDto
      */
-    CapsuleListResponseDto getCapsuleList(String email);
+    CapsuleListResponseDto getCapsuleList(UUID userId);
 
     /**
      * 캡슐 아이디를 통해서 캡슐 아이디에 해당하는 모든 메모리를 반환한다.

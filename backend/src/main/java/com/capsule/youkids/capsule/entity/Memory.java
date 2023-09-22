@@ -1,6 +1,7 @@
 package com.capsule.youkids.capsule.entity;
 
 import com.capsule.youkids.capsule.dto.MemoryUpdateRequestDto;
+import com.capsule.youkids.global.time.BaseTimeEntity;
 import com.capsule.youkids.user.entity.User;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -25,11 +26,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Memory {
+public class Memory extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long memoryId;
 
     @Column

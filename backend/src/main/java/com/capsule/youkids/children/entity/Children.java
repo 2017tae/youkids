@@ -1,7 +1,10 @@
 package com.capsule.youkids.children.entity;
 
+import com.capsule.youkids.capsule.entity.MemoryChildren;
+import com.capsule.youkids.capsule.entity.MemoryImage;
 import com.capsule.youkids.user.entity.User;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -52,6 +56,10 @@ public class Children {
     private String childrenImage;
 
     // 애기 성향
+
+    // 애기와 연결된 이미지 리스트
+    @OneToMany(mappedBy = "children", fetch = FetchType.LAZY)
+    private List<MemoryChildren> memoryChildrenList;
 
     @Builder
     public Children(User parent, String name, int gender, LocalDate birthday, String childrenImage) {

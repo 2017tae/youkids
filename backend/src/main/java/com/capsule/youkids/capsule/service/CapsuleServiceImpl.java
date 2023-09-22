@@ -22,11 +22,14 @@ import com.capsule.youkids.children.entity.Children;
 import com.capsule.youkids.children.repository.ChildrenRepository;
 import com.capsule.youkids.global.common.constant.Code;
 import com.capsule.youkids.global.common.exception.RestApiException;
+import com.capsule.youkids.global.s3.service.AwsS3Service;
 import com.capsule.youkids.group.entity.GroupJoin;
 import com.capsule.youkids.group.repository.GroupInfoRepository;
 import com.capsule.youkids.group.repository.GroupJoinRepository;
+import com.capsule.youkids.user.entity.Role;
 import com.capsule.youkids.user.entity.User;
 import com.capsule.youkids.user.repository.UserRepository;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -55,20 +58,23 @@ public class CapsuleServiceImpl implements CapsuleService {
     private final GroupJoinRepository groupJoinRepository;
     private final GroupInfoRepository groupInfoRepository;
     private final ChildrenRepository childrenRepository;
+    private final AwsS3Service awsS3Service;
 
     /**
-     * 유저 이메일을 통해서 아이디가 가입된 모든 그룹을 확인하고, 모든 그룹들의 리스트를 가져온다.
+     * 유저 아이디를 통해서 아이디가 가입된 모든 그룹을 확인하고, 모든 그룹들의 리스트를 가져온다.
      *
-     * @param email
+     * @param userId
      * @return CapsuleListResponseDto
      */
     @Override
-    public CapsuleListResponseDto getCapsuleList(String email) {
+    public CapsuleListResponseDto getCapsuleList(UUID userId) {
 
-        User user = userRepository.findByEmail(email)
+        // userId를 통해서 탈퇴되지 않은 유저인지 확인 후 User 리턴
+        User user = userRepository.findByIdAndRoleNot(userId, Role.DELETED)
                 .orElseThrow(() -> new RestApiException(Code.USER_NOT_FOUND));
 
-        List<GroupJoin> groups = groupJoinRepository.findByUserId(user.getUserId());
+        // user
+        List<GroupJoin> groups = groupJoinRepository.findByUserIdOrderByCreatedTime(userId);
 
         List<CapsuleResponseDto> capsuleResponseDtos = new LinkedList<>();
 
@@ -77,11 +83,20 @@ public class CapsuleServiceImpl implements CapsuleService {
 
             // leader의 객체를 가져온다.
             // 유저를 가져올 때 유효한 role인지도 확인 해줘야함.
-            Optional<User> leader = userRepository.findById(groupLeader);
+            Optional<User> leader = userRepository.findByIdAndRoleNot(groupLeader, Role.DELETED);
 
             // 만약 그룹장이 탈퇴했다면
             if (leader.isEmpty()) {
                 continue;
+            }
+            // 만약 그룹장이 리더가 아니라면 (파트너에게 종속 되어 버렸다면)
+            else if (!leader.get().isLeader()) {
+                if (!leader.get().equals(user)) {
+                    continue;
+                } else {
+                    leader = userRepository.findByIdAndRoleNot(leader.get().getPartnerId(),
+                            Role.DELETED);
+                }
             }
 
             // 그룹장의 id로 모든 캡슐을 검색해서 가져온다.
@@ -110,12 +125,7 @@ public class CapsuleServiceImpl implements CapsuleService {
                     .groupId(group.getGroupId())
                     .build();
 
-            // 내 아이디랑 같은 그룹을 먼저 보여준다.
-            if (groupLeader.equals(user.getUserId())) {
-                capsuleResponseDtos.add(0, capsuleResponseDto);
-            } else {
-                capsuleResponseDtos.add(capsuleResponseDto);
-            }
+            capsuleResponseDtos.add(capsuleResponseDto);
         }
 
         // CapsuleListReponseDto로 묶어서 보내준다.
@@ -181,8 +191,7 @@ public class CapsuleServiceImpl implements CapsuleService {
     }
 
     /**
-     * 메모리를 생성한다.
-     * 여기 다 변경해야할거 같음.
+     * 메모리를 생성한다. 여기 다 변경해야할거 같음.
      *
      * @param request
      * @param multipartFileList
@@ -191,7 +200,7 @@ public class CapsuleServiceImpl implements CapsuleService {
     @Override
     @Transactional
     public boolean createMemory(CreateMemoryRequestDto request,
-                                List<MultipartFile> multipartFileList) {
+            List<MultipartFile> multipartFileList) {
 
         // 우선 메모리를 생성한다.
         Memory memory = Memory.builder()
@@ -203,8 +212,13 @@ public class CapsuleServiceImpl implements CapsuleService {
         // -----------------------------
         // 유저가 없으면 에러 발생~~~~~~~
         // -----------------------------
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByIdAndRoleNot(request.getUserId(), Role.DELETED)
                 .orElseThrow(() -> new RestApiException(Code.USER_NOT_FOUND));
+
+        if (!user.isLeader()) {
+            user = userRepository.findByIdAndRoleNot(user.getPartnerId(), Role.DELETED)
+                    .orElseThrow(() -> new RestApiException(Code.USER_NOT_FOUND));
+        }
 
         // 생성된 메모리에 메모리 이미지를 연결한다.
         // S3에 저장한다.
@@ -212,14 +226,18 @@ public class CapsuleServiceImpl implements CapsuleService {
         for (MultipartFile multipartFile : multipartFileList) {
             // S3를 사용해서 파일 저장 해야한다.
             // 변경해줘야해.
-            String fileUrl = "";
-            MemoryImage memoryImage = MemoryImage.builder()
-                    .memoryUrl(fileUrl)
-                    .memory(memory)
-                    .build();
+            try {
+                String fileUrl = awsS3Service.uploadFile(multipartFile);
+                MemoryImage memoryImage = MemoryImage.builder()
+                        .memoryUrl(fileUrl)
+                        .memory(memory)
+                        .build();
 
-            memoryImageRepository.save(memoryImage);
-            memoryImages.add(memoryImage);
+                memoryImageRepository.save(memoryImage);
+                memoryImages.add(memoryImage);
+            } catch (IOException e) {
+                throw new RestApiException(Code.)
+            }
         }
 
         // 사진에 하나 하나에 대한 아이 태그 확인
@@ -245,6 +263,7 @@ public class CapsuleServiceImpl implements CapsuleService {
 
                     // 추가해야함
                     // children.add(memoryChildren) 해줘야한다.
+                    children.getMemoryChildrenList().add(memoryChildren);
                     memoryImages.get(idx).getMemoryChildrenList().add(memoryChildren);
                 }
             }
@@ -253,8 +272,9 @@ public class CapsuleServiceImpl implements CapsuleService {
         // 캡슐이 있는지 확인 후 있다면 캡슐에 메모리 저장
         // 여기 유저 부분 변경해야된다.
         // 변경점
-        Capsule capsule = capsuleRepository.findByUserAndYear(userRepository.findByUserId(
-                UUID.fromString("1")).get(), memory.getYear()).orElse(null);
+        Capsule capsule = capsuleRepository
+                .findByUserAndYear(user, memory.getYear())
+                .orElse(null);
 
         if (capsule.equals(null)) {
             // 유저 변경해야해.
@@ -276,7 +296,7 @@ public class CapsuleServiceImpl implements CapsuleService {
 
     @Override
     @Transactional
-    public Capsule createCapsule(User user, String url) {
+    public Capsule createCapsule(User user, String url) throws RestApiException {
 
         int year = LocalDate.now((ZoneId.of("Asia/Seoul"))).getYear();
 
@@ -298,29 +318,20 @@ public class CapsuleServiceImpl implements CapsuleService {
      * @return 업데이트가 잘 되었는지 확인
      */
     @Override
-    public void updateMemory(MemoryUpdateRequestDto request) {
+    public void updateMemory(MemoryUpdateRequestDto request) throws RestApiException {
 
         LocalDate ld = LocalDate.now((ZoneId.of("Asia/Seoul")));
 
         // 수정할 메모리가 없다면 에러 보내야됨
-        Memory memory = memoryRepository.findById(request.getMemory_id())
+        Memory memory = memoryRepository.findById(request.getMemoryId())
                 .orElseThrow(() -> new RestApiException(Code.MEMORY_NOT_FOUND));
 
-        // 여기 메모리의 주인이 누구인지 확인해야할거 같은데
-        // 메모리의 주인이 아니라면 에러 처리 해야할거 같아.
-        if (!memory.getCapsule().getUser().getEmail().equals(request.getEmail())) {
-            if (memory.getCapsule().getUser().getPartnerId() != null) {
-                User user = userRepository.findByUserId(
-                        memory.getCapsule().getUser().getPartnerId()).get();
+        User user = userRepository.findByIdAndRoleNot(request.getUserId(), Role.DELETED)
+                .orElseThrow(() -> new RestApiException(Code.MEMORY_UPDATE_NOT_PERMITTED));
 
-                if (!user.getEmail().equals(request.getEmail())) {
-                    // 여기는 메모리의 주인이 아니라는 에러 던져줘야한다.
-                    throw new RestApiException(Code.MEMORY_UPDATE_NOT_PERMITTED);
-                }
-            } else {
-                // 이거는 메모리의 주인이 아니라는 에러 던져줘야한다.
-                throw new RestApiException(Code.MEMORY_UPDATE_NOT_PERMITTED);
-            }
+        if (!user.isLeader()) {
+            user = userRepository.findByIdAndRoleNot(user.getPartnerId(), Role.DELETED)
+                    .orElseThrow(() -> new RestApiException(Code.MEMORY_UPDATE_NOT_PERMITTED));
         }
 
         LocalDate memoryDay = LocalDate.of(memory.getYear(), memory.getMonth(), memory.getDay());
@@ -343,29 +354,22 @@ public class CapsuleServiceImpl implements CapsuleService {
      * @return 삭제가 됐는지 안됐는지 리턴
      */
     @Override
-    public void deleteMemory(MemoryDeleteRequestDto request) {
+    public void deleteMemory(MemoryDeleteRequestDto request) throws RestApiException {
 
         // 유저가 없어. 그러면 삐이ㅏ이잉익 에러
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByIdAndRoleNot(request.getUserId(), Role.DELETED)
                 .orElseThrow(() -> new RestApiException(Code.USER_NOT_FOUND));
 
         // 메모리가 없으면 오류!!!! 보내줘야해
-        Memory memory = memoryRepository.findById(request.getMemory_id())
+        Memory memory = memoryRepository.findById(request.getMemoryId())
                 .orElseThrow(() -> new RestApiException(Code.MEMORY_NOT_FOUND));
 
-        // 파트너를 저장할 객체 생성
-        User partner = null;
-
-        // 파트너가 존재하는지에 대해서 확인
-        if (user.getPartnerId() != null) {
-            partner = userRepository.findByUserId(user.getPartnerId()).get();
+        if (!user.isLeader()) {
+            user = userRepository.findByIdAndRoleNot(user.getPartnerId(), Role.DELETED)
+                    .orElseThrow(() -> new RestApiException(Code.MEMORY_DELETE_NOT_PERMITTED));
         }
 
-        if (partner == null && user != memory.getCapsule().getUser()) {
-            throw new RestApiException(Code.MEMORY_DELETE_NOT_PERMITTED);
-        }
-
-        if (partner != memory.getCapsule().getUser() && user != memory.getCapsule().getUser()) {
+        if (!user.equals(memory.getCapsule().getUser())) {
             throw new RestApiException(Code.MEMORY_DELETE_NOT_PERMITTED);
         }
 
@@ -390,10 +394,11 @@ public class CapsuleServiceImpl implements CapsuleService {
      * 특정 메모리 상세 정보를 리턴하는 함수
      *
      * @param memoryId
-     * @return MemoryDetailResponseDto : {year, month, day, description, location, images[], childrenImageList[]}
+     * @return MemoryDetailResponseDto : {year, month, day, description, location, images[],
+     * childrenImageList[]}
      */
     @Override
-    public MemoryDetailResponseDto getMemoryDetail(long memoryId) {
+    public MemoryDetailResponseDto getMemoryDetail(long memoryId) throws RestApiException {
 
         // 메모리가 없다면 에러 호출
         Memory memory = memoryRepository.findById(memoryId)

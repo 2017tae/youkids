@@ -9,6 +9,7 @@ import com.capsule.youkids.capsule.dto.MemoryListResponseDto;
 import com.capsule.youkids.capsule.dto.MemoryUpdateRequestDto;
 import com.capsule.youkids.capsule.service.CapsuleService;
 import com.capsule.youkids.global.common.constant.Code;
+import com.capsule.youkids.global.common.exception.RestApiException;
 import com.capsule.youkids.global.common.response.BaseResponse;
 import java.util.List;
 import java.util.UUID;
@@ -35,52 +36,79 @@ public class CapsuleController {
     private final CapsuleService capsuleService;
 
     @GetMapping("/all/{email}")
-    public BaseResponse getAllCapsuleList(@PathVariable String email) {
+    public BaseResponse getAllCapsuleList(@PathVariable UUID userId) {
 
         // 에러처리 해야한다.
-        CapsuleListResponseDto capsuleListResponseDto = capsuleService.getCapsuleList(email);
+        try {
+            CapsuleListResponseDto response = capsuleService.getCapsuleList(userId);
+            return BaseResponse.success(Code.SUCCESS, response);
+        } catch (RestApiException e) {
+            return BaseResponse.error(e.getErrorCode());
+        }
 
-        return BaseResponse.success(Code.SUCCESS, capsuleListResponseDto);
     }
 
     @GetMapping("/images/{capsuleId}")
     public BaseResponse getAllMemoryByCapsule(@PathVariable int capsuleId) {
 
-        // 에러처리 해야한다.
-        return BaseResponse.success(Code.SUCCESS, capsuleService.getMemoryList(capsuleId));
+        try {
+            MemoryListResponseDto response = capsuleService.getMemoryList(capsuleId);
+            return BaseResponse.success(Code.SUCCESS, response);
+        } catch (RestApiException e) {
+            return BaseResponse.error(e.getErrorCode());
+        }
     }
 
     @PostMapping("/upload")
     public BaseResponse createMemory(@RequestPart CreateMemoryRequestDto request,
-                                     @RequestPart(required = false) List<MultipartFile> fileList) {
+            @RequestPart(required = false) List<MultipartFile> fileList) {
 
         // 에러처리 해야한다.
-        capsuleService.createMemory(request, fileList);
+        try {
+            capsuleService.createMemory(request, fileList);
+            return BaseResponse.success(Code.SUCCESS);
+        } catch (RestApiException e) {
+            return BaseResponse.error(e.getErrorCode());
+        }
 
-        return BaseResponse.success(Code.SUCCESS);
     }
 
     @GetMapping("/memory/{memoryId}")
     public BaseResponse getMemory(@RequestParam long memoryId) {
 
-        return BaseResponse.success(Code.SUCCESS, capsuleService.getMemoryDetail(memoryId));
+        try {
+            MemoryDetailResponseDto response = capsuleService.getMemoryDetail(memoryId);
+            return BaseResponse.success(Code.SUCCESS, response);
+        } catch (RestApiException e) {
+            return BaseResponse.error(e.getErrorCode());
+        }
+
     }
 
     @PutMapping("/memory")
     public BaseResponse updateMemory(@RequestBody MemoryUpdateRequestDto request) {
 
         // 에러 처리 해야한다.
-        capsuleService.updateMemory(request);
+        try {
+            capsuleService.updateMemory(request);
+            return BaseResponse.success(Code.SUCCESS);
 
-        return BaseResponse.success(Code.SUCCESS);
+        } catch (RestApiException e) {
+            return BaseResponse.error(e.getErrorCode());
+        }
+
     }
 
     @DeleteMapping("/memory")
     public BaseResponse deleteMemory(@RequestBody MemoryDeleteRequestDto request) {
 
         // 에러 처리 해야한다.
-        capsuleService.deleteMemory(request);
+        try {
+            capsuleService.deleteMemory(request);
+            return BaseResponse.success(Code.SUCCESS);
+        } catch (RestApiException e) {
+            return BaseResponse.error(e.getErrorCode());
+        }
 
-        return BaseResponse.success(Code.SUCCESS);
     }
 }

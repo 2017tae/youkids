@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
     // 새로운 유저일 경우, 저장(이 때, 바로 JWT 발행 X)
     @Transactional
     @Override
-    public boolean newUser(GoogleIdToken idToken, String provider) {
+    public User newUser(GoogleIdToken idToken, String provider) {
 
         GoogleIdToken.Payload payload = idToken.getPayload();
 
@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
 
-        return true;
+        return user;
     }
 
     // 새로운 유저가 추가정보를 입력 후 JWT 발행
@@ -118,7 +118,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User addInfoUser(addUserInfoRequestDto request) {
 
-        User user = userRepository.findByEmailAndRoleNot(request.getEmail(), Role.DELETED)
+        User user = userRepository.findByUserIdAndRoleNot(request.getUserId(), Role.DELETED)
                 .orElseThrow(()-> new IllegalArgumentException());
 
         user.addInfoToUser(request);
@@ -153,7 +153,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean checkPartner(checkPartnerRequestDto request) {
 
-        User user = userRepository.findByEmailAndRoleNot(request.getPartnerEmail(), Role.DELETED)
+        User user = userRepository.findByUserIdAndRoleNot(request.getPartnerId(), Role.DELETED)
                 .orElseThrow(()-> new IllegalArgumentException());
 
         if (Objects.isNull(user)) {
@@ -167,9 +167,9 @@ public class UserServiceImpl implements UserService {
 
     // 현재 유저 정보를 파악한다.(유저만)
     @Override
-    public GetMyInfoResponseDto getMyInfo(String email) {
+    public GetMyInfoResponseDto getMyInfo(UUID userId) {
 
-        User user = userRepository.findByEmailAndRoleNot(email, Role.DELETED)
+        User user = userRepository.findByUserIdAndRoleNot(userId, Role.DELETED)
                 .orElseThrow(()-> new IllegalArgumentException());
 
         UUID partnerId = user.getPartnerId();
@@ -194,7 +194,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean modifyMyInfo(ModifyMyInfoRequestDto request, MultipartFile file) {
 
-        User user = userRepository.findByEmailAndRoleNot(request.getEmail(), Role.DELETED)
+        User user = userRepository.findByUserIdAndRoleNot(request.getUserId(), Role.DELETED)
                 .orElseThrow(()-> new IllegalArgumentException());
 
         // S3를 통해 저장---------------------
@@ -220,7 +220,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean deleteMyInfo(DeleteMyInfoRequestDto request) {
 
-        User user = userRepository.findByEmailAndRoleNot(request.getEmail(), Role.DELETED)
+        User user = userRepository.findByUserIdAndRoleNot(request.getUserId(), Role.DELETED)
                 .orElseThrow(()-> new IllegalArgumentException());
 
         user.changeToDeleted(user);

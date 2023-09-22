@@ -26,7 +26,7 @@ public interface UserService {
     Token getToken(User user);
 
     // 회원가입 루트(DB에 일정부분 등록 -> email, provider, provider_id)
-    boolean newUser(GoogleIdToken idToken, String provider);
+    User newUser(GoogleIdToken idToken, String provider);
 
     // 회원가입시 추가정보 입력
     User addInfoUser(addUserInfoRequestDto request);
@@ -35,7 +35,7 @@ public interface UserService {
     boolean checkPartner(checkPartnerRequestDto request);
 
     // 본인 회원 유저 정보 조회
-    GetMyInfoResponseDto getMyInfo(String email);
+    GetMyInfoResponseDto getMyInfo(UUID userId);
 
     // 본인 회원 유저 수정
     boolean modifyMyInfo(ModifyMyInfoRequestDto request, MultipartFile file);

@@ -160,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
               setHomeMenu(
                 context,
                 '이번 주 추천 장소',
-                WeekRecomListScreen( places: places),
+                WeekRecomListScreen(),
               ),
               Column(
                 children: [

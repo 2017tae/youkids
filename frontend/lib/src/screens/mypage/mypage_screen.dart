@@ -17,36 +17,37 @@ class MyPageScreen extends StatefulWidget {
 }
 
 class _MyPageScreenState extends State<MyPageScreen> {
+  // 모든 정보를 다 가지고 오고 false로 바꾸기
+  bool isLoading = true;
   String? email = ' ';
   String nickname = ' ';
   // String? profileImage;
 
+  // email을 UUID로 바꿔서 불러오기
   Future<String?> getEmail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('email');
   }
 
   void getMyInfo() async {
-    email = await getEmail();
-    if (email != null) {
-      String uri = 'http://10.0.2.2:8080/user/mypage/$email';
-      try {
-        final response = await http.get(
-          Uri.parse(uri),
-          headers: {'Content-Type': 'application/json'},
-        );
-        if (response.statusCode == 200) {
-          Map<String, dynamic> jsonMap = jsonDecode(response.body);
-          setState(() {
-            email = jsonMap['email'];
-            nickname = jsonMap['nickname'];
-          });
-        } else {
-          throw Exception('상태 코드 ${response.statusCode}');
-        }
-      } catch (err) {
-        print('에러 $err');
+    // email = await getEmail();
+    String uri = 'http://10.0.2.2:8080/user/mypage/$email';
+    try {
+      final response = await http.get(
+        Uri.parse(uri),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonMap = jsonDecode(response.body);
+        setState(() {
+          email = jsonMap['email'];
+          nickname = jsonMap['nickname'];
+        });
+      } else {
+        throw Exception('상태 코드 ${response.statusCode}');
       }
+    } catch (err) {
+      print('에러 $err');
     }
   }
 

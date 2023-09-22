@@ -11,9 +11,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 
 class RegistScreen extends StatefulWidget {
-  final String email;
+  final String userId;
 
-  RegistScreen({required this.email});
+  RegistScreen({required this.userId});
 
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
@@ -49,9 +49,9 @@ class RegistScreen extends StatefulWidget {
       }
 
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8080/user/addInfo'),
+        Uri.parse('https://j9a604.p.ssafy.io/api/user/addInfo'),
         headers: {'Content-Type':'application/json'},
-        body: jsonEncode({'email': widget.email,'nickname': nickname,'car':isCar,'parnerId':null, "description":description})
+        body: jsonEncode({'userId': widget.userId,'nickname': nickname,'car':isCar,'parnerId':null, "description":description})
       );
 
       if (response.statusCode == 200) {
@@ -71,7 +71,7 @@ class RegistScreen extends StatefulWidget {
         print("답은!!");
         print(token1);
 
-        saveEmail(widget.email);
+        saveUserId(widget.userId);
 
         print("Successfully sent data to server");
         Navigator.pushAndRemoveUntil(
@@ -84,9 +84,9 @@ class RegistScreen extends StatefulWidget {
       }
     }
 
-    saveEmail(String email) async {
+    saveUserId(String userId) async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('email', email);
+      prefs.setString('userId', userId);
     }
 
     String? isCarValue;
@@ -166,7 +166,7 @@ class RegistScreen extends StatefulWidget {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: const Text(
-                      '배우자',
+                      '배우자 (없다면 비우셔도 됩니다!)',
                       style: TextStyle(
                         fontSize: 15.0,
                       ),
@@ -308,7 +308,16 @@ class RegistScreen extends StatefulWidget {
                 SizedBox(height: 16),
                 SendButtonWidget(
                   onPressed: () {
-                    sendDataToServer();
+                    if(nicknameController.text.isEmpty || descriptionController.text.isEmpty ){
+                      // 경고 메시지 표시 로직
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("닉네임 또는 소개는 필수사항입니다!")),
+                      );
+                    }else{
+                      sendDataToServer();
+
+                    }
+
                     // '등록하기' 버튼이 눌렸을 때 수행할 로직
                   },
                   text: '등록하기',

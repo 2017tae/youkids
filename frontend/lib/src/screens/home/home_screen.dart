@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,6 +10,7 @@ import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:youkids/src/widgets/home_widgets/card_frame_widget.dart';
 import 'package:youkids/src/widgets/home_widgets/child_icon_widget.dart';
+import 'package:http/http.dart' as http;
 
 
 import '../../providers/auth_model.dart';
@@ -24,38 +27,77 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool _isLoggedIn = false;
 
+  List? places;
+
+  Future? loadDataFuture;
+
+  String picture = "";
+
   @override
   void initState() {
     super.initState();
-    _checkLoginStatus();
+    loadDataFuture = _checkLoginStatus();
   }
 
-  Future<String?> getEmail() async {
+  Future<String?> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('email'); // Returns 'john_doe' if it exists, otherwise returns null.
+    return prefs.getString('userId'); // Returns 'john_doe' if it exists, otherwise returns null.
   }
 
   void someFunction() async {
     await removeData();
-    print('Email removed from SharedPreferences');
+    print('UserId removed from SharedPreferences');
   }
 
   removeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove('email');
+    prefs.remove('userId');
   }
 
-  _checkLoginStatus() async {
-    String? email = await getEmail();
-    print(email);
+
+  Future<void> _checkLoginStatus() async {
+    String? userId = await getUserId();
+    print(userId);
     setState(() {
-      _isLoggedIn = email != null;  // 이메일이 null이 아니면 로그인된 것으로 판단
+      _isLoggedIn = userId != null;  // 이메일이 null이 아니면 로그인된 것으로 판단
     });
-  }
+
+    final response = await http.get(
+      Uri.parse('https://j9a604.p.ssafy.io/api/place/recomm'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    // 응답을 처리하는 코드 (예: 상태를 업데이트하는 등)를 여기에 추가합니다.
+    if (response.statusCode == 200) {
+      var jsonString = utf8.decode(response.bodyBytes);
+      Map<String, dynamic> decodedJson = jsonDecode(jsonString);
+      setState(() {
+        places = decodedJson['places'];
+      });
+
+        print(places);
+      }
+
+    }
 
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: loadDataFuture,
+      builder: (context, snapshot) {
+        // if (snapshot.connectionState == ConnectionState.done) {
+        if(places != null){
+          print(places);
+          return _buildMainContent();
+        } else {
+          return CircularProgressIndicator(); // 로딩 중을 나타내는 위젯
+        }
+      },
+    );
+  }
+
+  Widget _buildMainContent(){
     return Scaffold(
       drawer: const Drawer(),
       appBar: AppBar(
@@ -77,7 +119,19 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
                 height: 24),
           ),
-          _isLoggedIn == false ? IconButton(
+          // _isLoggedIn == false ? IconButton(
+          //   onPressed: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(builder: (context)=> LoginScreen()),
+          //     );
+          //   },
+          //   icon: const Icon(
+          //     Icons.account_circle_rounded,
+          //     size: 28,
+          //   ),
+          // ) : Container(),
+          IconButton(
             onPressed: () {
               Navigator.push(
                 context,
@@ -88,14 +142,14 @@ class _HomeScreenState extends State<HomeScreen> {
               Icons.account_circle_rounded,
               size: 28,
             ),
-          ) : Container(),
-          IconButton(
-            icon: Icon(Icons.delete),  // 예시 아이콘. 원하는 아이콘으로 변경하세요.
-            onPressed: () async {
-              await removeData();
-              print('Email removed from SharedPreferences');
-            },
-          )
+          ),
+          // IconButton(
+          //   icon: Icon(Icons.delete),  // 예시 아이콘. 원하는 아이콘으로 변경하세요.
+          //   onPressed: () async {
+          //     await removeData();
+          //     print('userId removed from SharedPreferences');
+          //   },
+          // )
         ],
       ),
       body: SingleChildScrollView(
@@ -118,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
               setHomeMenu(
                 context,
                 '이번 주 추천 장소',
-                const WeekRecomListScreen(),
+                WeekRecomListScreen(),
               ),
               Column(
                 children: [
@@ -127,11 +181,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ShopDetailScreen(),
+                          builder: (context) =>  ShopDetailScreen(
+                              placeId: places?[0]['placeId']
+                          ),
                         ),
                       );
                     },
-                    child: const CardFrame21Widget(),
+                      child: CardFrame21Widget(
+                        imageUrl: (places?.isNotEmpty ?? false)
+                            ? places![0]['imageUrl']
+                            : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
+
+                      )
                   ),
                   const SizedBox(
                     height: 10,
@@ -144,22 +205,34 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const ShopDetailScreen(),
+                              builder: (context) =>  ShopDetailScreen(
+                                  placeId: places?[1]['placeId']
+                              ),
                             ),
                           );
                         },
-                        child: const CardFrame11Widget(),
+                        child: CardFrame11Widget(
+                          imageUrl: (places?.isNotEmpty ?? false)
+                              ? places![1]['imageUrl']
+                              : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
+                        ),
                       ),
                       GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const ShopDetailScreen(),
+                              builder: (context) =>  ShopDetailScreen(
+                                  placeId: places?[2]['placeId']
+                              ),
                             ),
                           );
                         },
-                        child: const CardFrame11Widget(),
+                        child: CardFrame11Widget(
+                          imageUrl: (places?.isNotEmpty ?? false)
+                              ? places![2]['imageUrl']
+                              : "https://picturepractice.s3.a p-northeast-2.amazonaws.com/Park/1514459962%233.png",
+                        ),
                       ),
                     ],
                   ),
@@ -172,47 +245,47 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Column(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ShopDetailScreen(),
-                        ),
-                      );
-                    },
-                    child: const CardFrame21Widget(),
-                  ),
+                  // GestureDetector(
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (context) => const ShopDetailScreen(),
+                  //       ),
+                  //     );
+                  //   },
+                  //   child: const CardFrame21Widget(),
+                  // ),
                   const SizedBox(
                     height: 10,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ShopDetailScreen(),
-                            ),
-                          );
-                        },
-                        child: const CardFrame11Widget(),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ShopDetailScreen(),
-                            ),
-                          );
-                        },
-                        child: const CardFrame11Widget(),
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //     GestureDetector(
+                  //       onTap: () {
+                  //         Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //             builder: (context) => const ShopDetailScreen(),
+                  //           ),
+                  //         );
+                  //       },
+                  //       child: const CardFrame11Widget(),
+                  //     ),
+                  //     GestureDetector(
+                  //       onTap: () {
+                  //         Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //             builder: (context) => const ShopDetailScreen(),
+                  //           ),
+                  //         );
+                  //       },
+                  //       child: const CardFrame11Widget(),
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               ),
               setHomeMenu(
@@ -222,47 +295,47 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Column(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ShopDetailScreen(),
-                        ),
-                      );
-                    },
-                    child: const CardFrame21Widget(),
-                  ),
+                  // GestureDetector(
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (context) => const ShopDetailScreen(),
+                  //       ),
+                  //     );
+                  //   },
+                  //   child: const CardFrame21Widget(),
+                  // ),
                   const SizedBox(
                     height: 10,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ShopDetailScreen(),
-                            ),
-                          );
-                        },
-                        child: const CardFrame11Widget(),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ShopDetailScreen(),
-                            ),
-                          );
-                        },
-                        child: const CardFrame11Widget(),
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //     GestureDetector(
+                  //       onTap: () {
+                  //         Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //             builder: (context) => const ShopDetailScreen(),
+                  //           ),
+                  //         );
+                  //       },
+                  //       child: const CardFrame11Widget(),
+                  //     ),
+                  //     GestureDetector(
+                  //       onTap: () {
+                  //         Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //             builder: (context) => const ShopDetailScreen(),
+                  //           ),
+                  //         );
+                  //       },
+                  //       child: const CardFrame11Widget(),
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               ),
             ],

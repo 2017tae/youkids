@@ -48,6 +48,7 @@ dependencies:
   kakao_flutter_sdk_navi: ^1.5.0 # 카카오내비
   shared_preferences: ^2.0.6
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

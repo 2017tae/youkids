@@ -37,7 +37,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
     });
 
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8080/place/'+ '87dad60a-bfff-47e5-8e21-02cb49b23ba6' +'/'+widget.placeId.toString()),
+      Uri.parse('https://j9a604.p.ssafy.io/api/place/'+ '87dad60a-bfff-47e5-8e21-02cb49b23ba6' +'/'+widget.placeId.toString()),
       headers: {'Content-Type': 'application/json'},
     );
 

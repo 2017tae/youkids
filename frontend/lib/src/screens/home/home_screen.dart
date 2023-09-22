@@ -194,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>  ShopDetailScreen(
-                                  placeId: places?[0]['placeId']
+                                  placeId: places?[1]['placeId']
                               ),
                             ),
                           );
@@ -211,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>  ShopDetailScreen(
-                                  placeId: places?[0]['placeId']
+                                  placeId: places?[2]['placeId']
                               ),
                             ),
                           );

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 public class ModifyCourseRequestDto {
 
     private UUID courseId;
+    private UUID userId;
     private String courseName;
     private List<CoursePlaceRequestDto> places;
 

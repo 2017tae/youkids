@@ -14,6 +14,7 @@ import com.capsule.youkids.global.common.exception.RestApiException;
 import com.capsule.youkids.global.common.constant.Code;
 import com.capsule.youkids.place.entity.Place;
 import com.capsule.youkids.place.repository.PlaceRepository;
+import com.capsule.youkids.user.entity.Role;
 import com.capsule.youkids.user.entity.User;
 import com.capsule.youkids.user.repository.UserRepository;
 import java.util.ArrayList;
@@ -34,11 +35,15 @@ public class CourseServiceImpl implements CourseService {
 
     // 코스 저장하기
     @Transactional
-    public void save(CourseRequestDto courseRequestDto) {
+    @Override
+    public void save(CourseRequestDto courseRequestDto) throws RestApiException {
 
-        // 유저 정보 불러오기
-        User user = userRepository.findByUserId(courseRequestDto.getUserId())
-                .orElseThrow(() -> new RestApiException(Code.USER_NOT_FOUND));
+        // 삭제하지 않은 유저 정보 불러오기
+        User user = getLeader(courseRequestDto.getUserId());
+
+        if (!checkCount(user)) {
+            throw new RestApiException(Code.COURSE_COUNT_FULL);
+        }
 
         // mongoDB와 RDBMS에 UUID courseID를 동일하게 유지
         UUID courseId = UUID.randomUUID();
@@ -78,10 +83,15 @@ public class CourseServiceImpl implements CourseService {
 
 
     // 유저의 코스 불러오기
-    public List<DetailCourseResponseDto> getCourseIdsByUserId(UUID userId) {
+    @Override
+    public List<DetailCourseResponseDto> getCourseIdsByUserId(UUID userId)
+            throws RestApiException {
+
+        // 리더 유저 정보 갖고오기
+        User user = getLeader(userId);
 
         // 유저의 모든 코스 불러오기
-        List<Course> courses = courseRepository.findAllByUser_UserId(userId);
+        List<Course> courses = courseRepository.findAllByUser_UserId(user.getUserId());
 
         // 불러온 해당 유저의 코스가 비었으면
         if (courses.isEmpty()) {
@@ -135,7 +145,8 @@ public class CourseServiceImpl implements CourseService {
 
     // 코스 수정하기
     @Transactional
-    public void update(ModifyCourseRequestDto modifyCourseRequestDto) {
+    @Override
+    public void update(ModifyCourseRequestDto modifyCourseRequestDto) throws RestApiException {
 
         // mongoDB, RDBMS를 조회할 UUID courseId를 불러오기
         UUID courseId = modifyCourseRequestDto.getCourseId();
@@ -143,7 +154,10 @@ public class CourseServiceImpl implements CourseService {
         // RDBMS, mongoDB에서 해당 코스 조회
         Course course = getCourseByCourseId(courseId);
 
-        CourseMongo courseMongo = getCourseMongoByCourseId(courseId);
+        // 수정할 권한이 있는지 확인
+        if (!checkAuthority(modifyCourseRequestDto.getUserId(), course.getUser())) {
+            throw new RestApiException(Code.COURSE_AUTH_FAIL);
+        }
 
         // 요청받은 dto 중 place정보 리스트로 저장
         List<CoursePlaceRequestDto> placeRequestDtos = modifyCourseRequestDto.getPlaces();
@@ -167,16 +181,23 @@ public class CourseServiceImpl implements CourseService {
 
     // 코스 삭제하기
     @Transactional
-    public void delete(DeleteCourseRequestDto deleteCourseRequestDto) {
+    @Override
+    public void delete(DeleteCourseRequestDto deleteCourseRequestDto) throws RestApiException {
 
         // 삭제할 코스 정보 불러오기
         Course course = getCourseByCourseId(deleteCourseRequestDto.getCourseId());
 
+        // 불러온 코스 정보에서 유저 정보 불러오기
+        User user = course.getUser();
+
+        // 삭제할 권한이 있는지 확인
+        if (!checkAuthority(deleteCourseRequestDto.getUserId(), user)) {
+            throw new RestApiException(Code.COURSE_AUTH_FAIL);
+        }
+
         if (course.getFlag() == true) {
             throw new RestApiException(Code.COURSE_NOT_FOUND);
         }
-        // 불러온 코스 정보에서 유저 정보 불러오기
-        User user = course.getUser();
 
         // mongoDB에서 코스 정보 삭제
         courseMongoRepository.deleteByCourseId(deleteCourseRequestDto.getCourseId());
@@ -194,18 +215,18 @@ public class CourseServiceImpl implements CourseService {
         return course.getFlag() == true;
     }
 
-    private CourseMongo getCourseMongoByCourseId(UUID courseId) {
+    private CourseMongo getCourseMongoByCourseId(UUID courseId) throws RestApiException {
         return courseMongoRepository.findByCourseId(courseId)
                 .orElseThrow(() -> new RestApiException(Code.COURSE_PLACE_ITEM_NOT_FOUND));
     }
 
-    private Course getCourseByCourseId(UUID courseId) {
+    private Course getCourseByCourseId(UUID courseId) throws RestApiException {
         return courseRepository.findByCourseId(courseId)
                 .orElseThrow(() -> new RestApiException(Code.COURSE_NOT_FOUND));
     }
 
     private List<CourseMongo.PlaceItem> createPlaceItems(
-            List<CoursePlaceRequestDto> placeRequestDtos) {
+            List<CoursePlaceRequestDto> placeRequestDtos) throws RestApiException {
 
         // mongoDB에 저장할 placeItem 리스트 생성
         List<CourseMongo.PlaceItem> placeItems = new ArrayList<>();
@@ -231,5 +252,42 @@ public class CourseServiceImpl implements CourseService {
         }
 
         return placeItems;
+    }
+
+    private User getLeader(UUID userId) throws RestApiException {
+        // 삭제하지 않은 유저 정보 불러오기
+        User user = userRepository.findByUserIdAndRoleNot(userId, Role.DELETED)
+                .orElseThrow(() -> new RestApiException(Code.USER_NOT_FOUND));
+
+        // 리더가 false라면
+        if (!user.isLeader()) {
+            System.out.println("changeId");
+            // user 정보를 리더인 파트너 정보로 변경
+            user = userRepository.findById(user.getPartnerId()).get();
+        }
+        return user;
+    }
+
+    private boolean checkAuthority(UUID userId, User courseUser) throws RestApiException {
+        // 리더의 유저 정보 갖고옴
+        User user = getLeader(userId);
+
+        // 리더의 유저 정보와 게시글의 유저 정보 일치 확인
+        if (user == courseUser) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean checkCount(User user) throws RestApiException {
+
+        if (user.getCourseCount() < 10) {
+            // 코스 갯수 10개 미만인 경우 코스 생성 가능
+            return true;
+        } else {
+            // 코스 갯수가 10개 이상인 경우 코스 생성 불가
+            return false;
+        }
     }
 }

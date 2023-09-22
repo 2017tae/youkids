@@ -9,7 +9,5 @@ public interface CourseMongoRepository extends MongoRepository<CourseMongo, Inte
 
     Optional<CourseMongo> findByCourseId(UUID courseId);
 
-    Optional<CourseMongo> findCourseMongoByCourseId(UUID courseId);
-
     void deleteByCourseId(UUID courseId);
 }

@@ -1,5 +1,6 @@
 package com.capsule.youkids.group.entity;
 
+import com.capsule.youkids.global.time.BaseTimeEntity;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Table
 @NoArgsConstructor
 @IdClass(GroupPk.class)
-public class GroupJoin {
+public class GroupJoin extends BaseTimeEntity {
 
 //    @EmbeddedId
 //    // 유저가 이 그룹에 가입했는데

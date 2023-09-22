@@ -12,11 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface GroupJoinRepository extends JpaRepository<GroupJoin, GroupPk> {
 
-    List<GroupJoin> findByUserId(UUID userId);
+    List<GroupJoin> findByUserIdOrderByCreatedTime(UUID userId);
 
     Optional<GroupJoin> findByGroupIdAndUserId(UUID groupId, UUID userId);
 
-    List<GroupJoin> findByGroupId(UUID groupId);
+    List<GroupJoin> findByGroupIdOrderByCreatedTime(UUID groupId);
 
     @Transactional
     void deleteByGroupIdAndUserId(UUID groupId, UUID userId);

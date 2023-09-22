@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:auth_buttons/auth_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -11,13 +13,41 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginScreen extends StatefulWidget {
 
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
+
+
 class _LoginScreenState extends State<LoginScreen> {
+  bool _isLoggedIn = false;
+
   GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email'],
       serverClientId: dotenv.get("login_key"));
+
+  Future<String?> getUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('userId'); // Returns 'john_doe' if it exists, otherwise returns null.
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+  Future<void> _checkLoginStatus() async {
+    String? userId = await getUserId();
+    print(userId);
+    setState(() {
+      _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
+    });
+  }
+
+    removeData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('userId');
+  }
 
   _login() async {
     try {
@@ -28,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8080/user/verify-token'),
+        Uri.parse('https://j9a604.p.ssafy.io/api/user/verify-token'),
         headers: {
           'Authorization': 'Bearer $idToken',
           'Provider': 'Google'
@@ -37,14 +67,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
       String? token1 = await readToken();
 
-
       if (response.statusCode == 200) {
-        if (response.body == "new_user") {
+        var decodedJson = jsonDecode(response.body);
+        UserResponse userResponse = UserResponse.fromJson(decodedJson);
+
+        print(userResponse.newUser);
+        print(userResponse.userId);
+
+        if (userResponse.newUser == true) {
           //새로운 user
           print("new user!");
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => RegistScreen( email : account!.email)),
+            MaterialPageRoute(builder: (context) => RegistScreen( userId :userResponse.userId )),
           );
         } else {
           // 이미 회원가입한 유저
@@ -65,8 +100,8 @@ class _LoginScreenState extends State<LoginScreen> {
           print("답은!!");
           print(token1);
 
-          // email 저장
-          saveEmail(account!.email);
+          // uuid 저장
+          saveUserId(userResponse.userId);
 
           Navigator.pushAndRemoveUntil(
             context,
@@ -77,6 +112,8 @@ class _LoginScreenState extends State<LoginScreen> {
         }
         print('Server verified the token successfully');
       } else {
+
+
         print('Failed to verify the token on server');
       }
 
@@ -102,9 +139,9 @@ class _LoginScreenState extends State<LoginScreen> {
     return token;
   }
 
-  saveEmail(String email) async {
+  saveUserId(String userId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('email', email);
+    prefs.setString('userId', userId);
   }
 
 
@@ -148,12 +185,42 @@ class _LoginScreenState extends State<LoginScreen> {
                     .of(context)
                     .size
                     .height / 12),
-            GoogleAuthButton(
+            _isLoggedIn == false ? GoogleAuthButton(
               onPressed: _login,
-            ),
+            ):Container(),
+            _isLoggedIn == true ? MaterialButton(
+        color: Colors.red,
+        child: Text(
+          'Logout',
+          style: TextStyle(color: Colors.white),
+        ),
+        onPressed: () {
+          _logout();
+          removeData();
+          print('Logout button pressed.');
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+                (Route<dynamic> route) => false,
+          );
+        },
+      ): Container(),
           ],
         ),
       ),
+    );
+  }
+}
+class UserResponse {
+  final String userId;
+  final bool newUser;
+
+  UserResponse({required this.userId, required this.newUser});
+
+  factory UserResponse.fromJson(Map<String, dynamic> json) {
+    return UserResponse(
+      userId: json['userId'],
+      newUser: json['newUser'],
     );
   }
 }

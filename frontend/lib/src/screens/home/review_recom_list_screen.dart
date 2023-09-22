@@ -9,14 +9,14 @@ class ReviewRecomlistScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> dummy = [
-      const CardFrame21Widget(),
-      const CardFrame21Widget(),
-      const CardFrame21Widget(),
-      const CardFrame21Widget(),
-      const CardFrame21Widget(),
-      const CardFrame21Widget(),
-      const CardFrame21Widget(),
-      const CardFrame21Widget(),
+      // const CardFrame21Widget(),
+      // const CardFrame21Widget(),
+      // const CardFrame21Widget(),
+      // const CardFrame21Widget(),
+      // const CardFrame21Widget(),
+      // const CardFrame21Widget(),
+      // const CardFrame21Widget(),
+      // const CardFrame21Widget(),
     ];
     return Scaffold(
       appBar: AppBar(

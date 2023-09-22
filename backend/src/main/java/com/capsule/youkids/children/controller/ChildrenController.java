@@ -29,14 +29,14 @@ public class ChildrenController {
 
     private final ChildrenService childrenService;
 
-    @GetMapping("/parent/{email}")
+    @GetMapping("/parent/{id}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "부모의 아이 찾음"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 부모 정보"),
     })
-    // 부모 email로 아이 찾기
-    public ResponseEntity<?> getParentsChildren(@PathVariable("email") String email) throws Exception {
-        List<ChildrenResponse> children = childrenService.getParentsChildren(email);
+    // 부모 id로 아이 찾기
+    public ResponseEntity<?> getParentsChildren(@PathVariable("id") UUID id) throws Exception {
+        List<ChildrenResponse> children = childrenService.getParentsChildren(id);
         return new ResponseEntity<>(children, HttpStatus.OK);
     }
 

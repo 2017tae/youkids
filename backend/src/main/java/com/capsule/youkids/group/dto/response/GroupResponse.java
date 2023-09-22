@@ -7,14 +7,14 @@ import lombok.Getter;
 @Getter
 public class GroupResponse {
     private UUID groupId;
-    private String leaderEmail;
+    private UUID leaderId;
     private String groupName;
     private String groupImg;
 
     @Builder
-    public GroupResponse(UUID groupId, String leaderEmail, String groupName, String groupImg) {
+    public GroupResponse(UUID groupId, UUID leaderId, String groupName, String groupImg) {
         this.groupId = groupId;
-        this.leaderEmail = leaderEmail;
+        this.leaderId = leaderId;
         this.groupName = groupName;
         this.groupImg = groupImg;
     }

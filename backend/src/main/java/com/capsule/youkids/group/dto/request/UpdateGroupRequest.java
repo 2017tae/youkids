@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UpdateGroupRequest {
     private UUID groupId;
-    private String email;
+    private UUID userId;
     private String groupName;
 
 //    @Builder

@@ -34,7 +34,7 @@ public class GroupController {
             @ApiResponse(responseCode = "404", description = "정보가 존재하지 않음"),
             @ApiResponse(responseCode = "400", description = "이미 추가된 유저")
     })
-    // 리더 이메일과 등록 대상 유저 이메일을 받아와서 리더가 자신의 그룹에 유저를 등록함
+    // 리더 id와 등록 대상 유저 id를 받아와서 리더가 자신의 그룹에 유저를 등록함
     public ResponseEntity<?> addUserInGroup(@RequestBody GroupUserRequest groupUserRequest) throws Exception {
         groupService.addUserInGroup(groupUserRequest);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -46,7 +46,7 @@ public class GroupController {
             @ApiResponse(responseCode = "404", description = "정보가 존재하지 않음"),
             @ApiResponse(responseCode = "400", description = "그룹에 속해있지 않음")
     })
-    // 리더 이메일과 등록 대상 유저 이메일을 받아와서 리더가 자신의 그룹에서 유저를 추방함
+    // 리더 id와 등록 대상 유저 id를 받아와서 리더가 자신의 그룹에서 유저를 추방함
     public ResponseEntity<?> deleteUserFromGroup(@RequestBody GroupUserRequest groupUserRequest) throws Exception {
         groupService.deleteUserFromGroup(groupUserRequest);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -64,14 +64,14 @@ public class GroupController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/mygroup/{email}")
+    @GetMapping("/mygroup/{id}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "그룹 불러오기 성공"),
             @ApiResponse(responseCode = "404", description = "정보가 존재하지 않음"),
     })
-    // 내 email로 내가 속한 그룹 불러오기
-    public ResponseEntity<?> getAllJoinedGroup(@PathVariable("email") String email) throws Exception {
-        List<GroupResponse> groupResponseList = groupService.getAllJoinedGroup(email);
+    // 내 id로 내가 속한 그룹 불러오기
+    public ResponseEntity<?> getAllJoinedGroup(@PathVariable("id") UUID id) throws Exception {
+        List<GroupResponse> groupResponseList = groupService.getAllJoinedGroup(id);
         return new ResponseEntity<>(groupResponseList, HttpStatus.OK);
     }
 

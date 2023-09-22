@@ -1,6 +1,5 @@
 package com.capsule.youkids.place.repository;
 
-import com.capsule.youkids.place.dto.BookmarkListItemDto;
 import com.capsule.youkids.place.entity.ReviewImage;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;

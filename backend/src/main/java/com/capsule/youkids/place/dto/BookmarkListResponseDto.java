@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BookmarkListResponseDto {
 
-    List<BookmarkListItemDto> bookmarks;
+    private List<BookmarkListItemDto> bookmarks;
 
     @Builder
     public BookmarkListResponseDto(List<BookmarkListItemDto> bookmarks) {

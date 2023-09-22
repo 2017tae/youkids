@@ -1,7 +1,6 @@
 package com.capsule.youkids.place.dto;
 
 import com.capsule.youkids.place.entity.Place;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,12 +8,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BookmarkListItemDto {
 
-    int placeId;
-    String name;
-    String address;
-    Double latitude;
-    Double longitude;
-    String category;
+    private int placeId;
+    private String name;
+    private String address;
+    private Double latitude;
+    private Double longitude;
+    private String category;
 
     public BookmarkListItemDto(Place place) {
         this.placeId = place.getPlaceId();

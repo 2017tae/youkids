@@ -65,21 +65,21 @@ class _HomeScreenState extends State<HomeScreen> {
     //   headers: {'Content-Type': 'application/json'},
     // );
 
-    final response = await http.get(
-      Uri.parse('https://j9a604.p.ssafy.io/api/place/recomm'),
-      headers: {'Content-Type': 'application/json'},
-    );
+    // final response = await http.get(
+    //   Uri.parse('https://j9a604.p.ssafy.io/api/place/recomm'),
+    //   headers: {'Content-Type': 'application/json'},
+    // );
 
-    // 응답을 처리하는 코드 (예: 상태를 업데이트하는 등)를 여기에 추가합니다.
-    if (response.statusCode == 200) {
-      var jsonString = utf8.decode(response.bodyBytes);
-      Map<String, dynamic> decodedJson = jsonDecode(jsonString);
-      setState(() {
-        places = decodedJson['places'];
-      });
+    // // 응답을 처리하는 코드 (예: 상태를 업데이트하는 등)를 여기에 추가합니다.
+    // if (response.statusCode == 200) {
+    //   var jsonString = utf8.decode(response.bodyBytes);
+    //   Map<String, dynamic> decodedJson = jsonDecode(jsonString);
+    //   setState(() {
+    //     places = decodedJson['places'];
+    //   });
 
-      print(places);
-    }
+    //   print(places);
+    // }
   }
 
   @override
@@ -88,12 +88,13 @@ class _HomeScreenState extends State<HomeScreen> {
       future: loadDataFuture,
       builder: (context, snapshot) {
         // if (snapshot.connectionState == ConnectionState.done) {
-        if (places != null) {
-          print(places);
-          return _buildMainContent();
-        } else {
-          return const CircularProgressIndicator(); // 로딩 중을 나타내는 위젯
-        }
+        // if (places != null) {
+        //   print(places);
+        //   return _buildMainContent();
+        // } else {
+        //   return const CircularProgressIndicator(); // 로딩 중을 나타내는 위젯
+        // }
+        return _buildMainContent();
       },
     );
   }
@@ -153,199 +154,199 @@ class _HomeScreenState extends State<HomeScreen> {
           // )
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _isLoggedIn == true
-                  ? const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      child: Text(
-                        '아이 맞춤 형 장소',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    )
-                  : Container(),
-              _isLoggedIn == true ? const ChildIconWidget() : Container(),
-              setHomeMenu(
-                context,
-                '이번 주 추천 장소',
-                const WeekRecomListScreen(),
-              ),
-              Column(
-                children: [
-                  GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ShopDetailScreen(
-                                placeId: places?[0]['placeId']),
-                          ),
-                        );
-                      },
-                      child: CardFrame21Widget(
-                        imageUrl: (places?.isNotEmpty ?? false)
-                            ? places![0]['imageUrl']
-                            : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
-                        name: places![0]['name'],
-                        address: places![0]['address'],
-                      )),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ShopDetailScreen(
-                                  placeId: places?[1]['placeId']),
-                            ),
-                          );
-                        },
-                        child: CardFrame11Widget(
-                          imageUrl: (places?.isNotEmpty ?? false)
-                              ? places![1]['imageUrl']
-                              : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
-                          name: places![1]['name'],
-                          address: places![1]['address'],
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ShopDetailScreen(
-                                  placeId: places?[2]['placeId']),
-                            ),
-                          );
-                        },
-                        child: CardFrame11Widget(
-                          imageUrl: (places?.isNotEmpty ?? false)
-                              ? places![2]['imageUrl']
-                              : "https://picturepractice.s3.a p-northeast-2.amazonaws.com/Park/1514459962%233.png",
-                          name: places![2]['name'],
-                          address: places![2]['address'],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              setHomeMenu(
-                context,
-                '저번 주 리뷰 많은 장소',
-                const ReviewRecomlistScreen(),
-              ),
-              const Column(
-                children: [
-                  // GestureDetector(
-                  //   onTap: () {
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (context) => const ShopDetailScreen(),
-                  //       ),
-                  //     );
-                  //   },
-                  //   child: const CardFrame21Widget(),
-                  // ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   children: [
-                  //     GestureDetector(
-                  //       onTap: () {
-                  //         Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //             builder: (context) => const ShopDetailScreen(),
-                  //           ),
-                  //         );
-                  //       },
-                  //       child: const CardFrame11Widget(),
-                  //     ),
-                  //     GestureDetector(
-                  //       onTap: () {
-                  //         Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //             builder: (context) => const ShopDetailScreen(),
-                  //           ),
-                  //         );
-                  //       },
-                  //       child: const CardFrame11Widget(),
-                  //     ),
-                  //   ],
-                  // ),
-                ],
-              ),
-              setHomeMenu(
-                context,
-                '실내 장소',
-                const IndoorRecomlistScreen(),
-              ),
-              const Column(
-                children: [
-                  // GestureDetector(
-                  //   onTap: () {
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (context) => const ShopDetailScreen(),
-                  //       ),
-                  //     );
-                  //   },
-                  //   child: const CardFrame21Widget(),
-                  // ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   children: [
-                  //     GestureDetector(
-                  //       onTap: () {
-                  //         Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //             builder: (context) => const ShopDetailScreen(),
-                  //           ),
-                  //         );
-                  //       },
-                  //       child: const CardFrame11Widget(),
-                  //     ),
-                  //     GestureDetector(
-                  //       onTap: () {
-                  //         Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //             builder: (context) => const ShopDetailScreen(),
-                  //           ),
-                  //         );
-                  //       },
-                  //       child: const CardFrame11Widget(),
-                  //     ),
-                  //   ],
-                  // ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+      // body: SingleChildScrollView(
+      //   child: Padding(
+      //     padding: const EdgeInsets.all(20),
+      //     child: Column(
+      //       crossAxisAlignment: CrossAxisAlignment.start,
+      //       children: [
+      //         _isLoggedIn == true
+      //             ? const Padding(
+      //                 padding: EdgeInsets.symmetric(vertical: 10),
+      //                 child: Text(
+      //                   '아이 맞춤 형 장소',
+      //                   style: TextStyle(
+      //                     fontSize: 22,
+      //                     fontWeight: FontWeight.bold,
+      //                   ),
+      //                 ),
+      //               )
+      //             : Container(),
+      //         _isLoggedIn == true ? const ChildIconWidget() : Container(),
+      //         setHomeMenu(
+      //           context,
+      //           '이번 주 추천 장소',
+      //           const WeekRecomListScreen(),
+      //         ),
+      //         Column(
+      //           children: [
+      //             GestureDetector(
+      //                 onTap: () {
+      //                   Navigator.push(
+      //                     context,
+      //                     MaterialPageRoute(
+      //                       builder: (context) => ShopDetailScreen(
+      //                           placeId: places?[0]['placeId']),
+      //                     ),
+      //                   );
+      //                 },
+      //                 child: CardFrame21Widget(
+      //                   imageUrl: (places?.isNotEmpty ?? false)
+      //                       ? places![0]['imageUrl']
+      //                       : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
+      //                   name: places![0]['name'],
+      //                   address: places![0]['address'],
+      //                 )),
+      //             const SizedBox(
+      //               height: 10,
+      //             ),
+      //             Row(
+      //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //               children: [
+      //                 GestureDetector(
+      //                   onTap: () {
+      //                     Navigator.push(
+      //                       context,
+      //                       MaterialPageRoute(
+      //                         builder: (context) => ShopDetailScreen(
+      //                             placeId: places?[1]['placeId']),
+      //                       ),
+      //                     );
+      //                   },
+      //                   child: CardFrame11Widget(
+      //                     imageUrl: (places?.isNotEmpty ?? false)
+      //                         ? places![1]['imageUrl']
+      //                         : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
+      //                     name: places![1]['name'],
+      //                     address: places![1]['address'],
+      //                   ),
+      //                 ),
+      //                 GestureDetector(
+      //                   onTap: () {
+      //                     Navigator.push(
+      //                       context,
+      //                       MaterialPageRoute(
+      //                         builder: (context) => ShopDetailScreen(
+      //                             placeId: places?[2]['placeId']),
+      //                       ),
+      //                     );
+      //                   },
+      //                   child: CardFrame11Widget(
+      //                     imageUrl: (places?.isNotEmpty ?? false)
+      //                         ? places![2]['imageUrl']
+      //                         : "https://picturepractice.s3.a p-northeast-2.amazonaws.com/Park/1514459962%233.png",
+      //                     name: places![2]['name'],
+      //                     address: places![2]['address'],
+      //                   ),
+      //                 ),
+      //               ],
+      //             ),
+      //           ],
+      //         ),
+      //         setHomeMenu(
+      //           context,
+      //           '저번 주 리뷰 많은 장소',
+      //           const ReviewRecomlistScreen(),
+      //         ),
+      //         const Column(
+      //           children: [
+      //             // GestureDetector(
+      //             //   onTap: () {
+      //             //     Navigator.push(
+      //             //       context,
+      //             //       MaterialPageRoute(
+      //             //         builder: (context) => const ShopDetailScreen(),
+      //             //       ),
+      //             //     );
+      //             //   },
+      //             //   child: const CardFrame21Widget(),
+      //             // ),
+      //             SizedBox(
+      //               height: 10,
+      //             ),
+      //             // Row(
+      //             //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //             //   children: [
+      //             //     GestureDetector(
+      //             //       onTap: () {
+      //             //         Navigator.push(
+      //             //           context,
+      //             //           MaterialPageRoute(
+      //             //             builder: (context) => const ShopDetailScreen(),
+      //             //           ),
+      //             //         );
+      //             //       },
+      //             //       child: const CardFrame11Widget(),
+      //             //     ),
+      //             //     GestureDetector(
+      //             //       onTap: () {
+      //             //         Navigator.push(
+      //             //           context,
+      //             //           MaterialPageRoute(
+      //             //             builder: (context) => const ShopDetailScreen(),
+      //             //           ),
+      //             //         );
+      //             //       },
+      //             //       child: const CardFrame11Widget(),
+      //             //     ),
+      //             //   ],
+      //             // ),
+      //           ],
+      //         ),
+      //         setHomeMenu(
+      //           context,
+      //           '실내 장소',
+      //           const IndoorRecomlistScreen(),
+      //         ),
+      //         const Column(
+      //           children: [
+      //             // GestureDetector(
+      //             //   onTap: () {
+      //             //     Navigator.push(
+      //             //       context,
+      //             //       MaterialPageRoute(
+      //             //         builder: (context) => const ShopDetailScreen(),
+      //             //       ),
+      //             //     );
+      //             //   },
+      //             //   child: const CardFrame21Widget(),
+      //             // ),
+      //             SizedBox(
+      //               height: 10,
+      //             ),
+      //             // Row(
+      //             //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //             //   children: [
+      //             //     GestureDetector(
+      //             //       onTap: () {
+      //             //         Navigator.push(
+      //             //           context,
+      //             //           MaterialPageRoute(
+      //             //             builder: (context) => const ShopDetailScreen(),
+      //             //           ),
+      //             //         );
+      //             //       },
+      //             //       child: const CardFrame11Widget(),
+      //             //     ),
+      //             //     GestureDetector(
+      //             //       onTap: () {
+      //             //         Navigator.push(
+      //             //           context,
+      //             //           MaterialPageRoute(
+      //             //             builder: (context) => const ShopDetailScreen(),
+      //             //           ),
+      //             //         );
+      //             //       },
+      //             //       child: const CardFrame11Widget(),
+      //             //     ),
+      //             //   ],
+      //             // ),
+      //           ],
+      //         ),
+      //       ],
+      //     ),
+      //   ),
+      // ),
       bottomNavigationBar: const FooterWidget(
         currentIndex: 0,
       ),

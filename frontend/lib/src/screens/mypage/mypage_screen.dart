@@ -24,20 +24,21 @@ class _MyPageScreenState extends State<MyPageScreen> {
   // String? profileImage;
 
   // email을 UUID로 바꿔서 불러오기
-  Future<String?> getEmail() async {
+  Future<String?> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('email');
+    return prefs.getString('userId');
   }
 
-  void getMyInfo() async {
+  void getMyInfo(userId) async {
     // email = await getEmail();
-    String uri = 'http://10.0.2.2:8080/user/mypage/$email';
+    String uri = 'http://10.0.2.2:8080/user/mypage/$userId';
     try {
       final response = await http.get(
         Uri.parse(uri),
         headers: {'Content-Type': 'application/json'},
       );
       if (response.statusCode == 200) {
+        print(response.body);
         Map<String, dynamic> jsonMap = jsonDecode(response.body);
         setState(() {
           email = jsonMap['email'];
@@ -55,7 +56,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
   void initState() {
     super.initState();
     // setState를 하기 전에 눈으로 훼이크를 줘야함
-    getMyInfo();
+    getMyInfo(getUserId());
   }
 
   @override

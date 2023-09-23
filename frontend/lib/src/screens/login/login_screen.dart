@@ -56,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final idToken = (await _googleSignIn.currentUser!.authentication).idToken;
 
       final response = await http.post(
-        Uri.parse('https://j9a604.p.ssafy.io/api/user/verify-token'),
+        Uri.parse('http://10.0.2.2:8080/user/verify-token'),
         headers: {'Authorization': 'Bearer $idToken', 'Provider': 'Google'},
       );
 
@@ -65,6 +65,8 @@ class _LoginScreenState extends State<LoginScreen> {
       if (response.statusCode == 200) {
         var decodedJson = jsonDecode(response.body);
         UserResponse userResponse = UserResponse.fromJson(decodedJson);
+
+        print(userResponse);
 
         print(userResponse.newUser);
         print(userResponse.userId);

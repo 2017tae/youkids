@@ -12,7 +12,6 @@ import 'package:youkids/src/widgets/home_widgets/card_frame_widget.dart';
 import 'package:youkids/src/widgets/home_widgets/child_icon_widget.dart';
 import 'package:http/http.dart' as http;
 
-
 import '../../providers/auth_model.dart';
 import '../login/login_screen.dart';
 
@@ -24,7 +23,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   bool _isLoggedIn = false;
 
   List? places;
@@ -41,7 +39,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<String?> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('userId'); // Returns 'john_doe' if it exists, otherwise returns null.
+    return prefs.getString(
+        'userId'); // Returns 'john_doe' if it exists, otherwise returns null.
   }
 
   void someFunction() async {
@@ -54,13 +53,17 @@ class _HomeScreenState extends State<HomeScreen> {
     prefs.remove('userId');
   }
 
-
   Future<void> _checkLoginStatus() async {
     String? userId = await getUserId();
     print(userId);
     setState(() {
-      _isLoggedIn = userId != null;  // 이메일이 null이 아니면 로그인된 것으로 판단
+      _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
     });
+
+    // final response = await http.get(
+    //   Uri.parse('https://j9a604.p.ssafy.io/api/place/recomm'),
+    //   headers: {'Content-Type': 'application/json'},
+    // );
 
     final response = await http.get(
       Uri.parse('https://j9a604.p.ssafy.io/api/place/recomm'),
@@ -75,11 +78,9 @@ class _HomeScreenState extends State<HomeScreen> {
         places = decodedJson['places'];
       });
 
-        print(places);
-      }
-
+      print(places);
     }
-
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,17 +88,17 @@ class _HomeScreenState extends State<HomeScreen> {
       future: loadDataFuture,
       builder: (context, snapshot) {
         // if (snapshot.connectionState == ConnectionState.done) {
-        if(places != null){
+        if (places != null) {
           print(places);
           return _buildMainContent();
         } else {
-          return CircularProgressIndicator(); // 로딩 중을 나타내는 위젯
+          return const CircularProgressIndicator(); // 로딩 중을 나타내는 위젯
         }
       },
     );
   }
 
-  Widget _buildMainContent(){
+  Widget _buildMainContent() {
     return Scaffold(
       drawer: const Drawer(),
       appBar: AppBar(
@@ -135,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context)=> LoginScreen()),
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
               );
             },
             icon: const Icon(
@@ -158,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-               const Padding(
+              const Padding(
                 padding: EdgeInsets.symmetric(vertical: 10),
                 child: Text(
                   '아이 맞춤 형 장소',
@@ -172,28 +173,25 @@ class _HomeScreenState extends State<HomeScreen> {
               setHomeMenu(
                 context,
                 '이번 주 추천 장소',
-                WeekRecomListScreen(),
+                const WeekRecomListScreen(),
               ),
               Column(
                 children: [
                   GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>  ShopDetailScreen(
-                              placeId: places?[0]['placeId']
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ShopDetailScreen(
+                                placeId: places?[0]['placeId']),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
                       child: CardFrame21Widget(
                         imageUrl: (places?.isNotEmpty ?? false)
                             ? places![0]['imageUrl']
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
-
-                      )
-                  ),
+                      )),
                   const SizedBox(
                     height: 10,
                   ),
@@ -205,9 +203,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>  ShopDetailScreen(
-                                  placeId: places?[1]['placeId']
-                              ),
+                              builder: (context) => ShopDetailScreen(
+                                  placeId: places?[1]['placeId']),
                             ),
                           );
                         },
@@ -222,9 +219,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>  ShopDetailScreen(
-                                  placeId: places?[2]['placeId']
-                              ),
+                              builder: (context) => ShopDetailScreen(
+                                  placeId: places?[2]['placeId']),
                             ),
                           );
                         },
@@ -243,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 '저번 주 리뷰 많은 장소',
                 const ReviewRecomlistScreen(),
               ),
-              Column(
+              const Column(
                 children: [
                   // GestureDetector(
                   //   onTap: () {
@@ -256,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   //   },
                   //   child: const CardFrame21Widget(),
                   // ),
-                  const SizedBox(
+                  SizedBox(
                     height: 10,
                   ),
                   // Row(
@@ -293,7 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 '실내 장소',
                 const IndoorRecomlistScreen(),
               ),
-              Column(
+              const Column(
                 children: [
                   // GestureDetector(
                   //   onTap: () {
@@ -306,7 +302,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   //   },
                   //   child: const CardFrame21Widget(),
                   // ),
-                  const SizedBox(
+                  SizedBox(
                     height: 10,
                   ),
                   // Row(

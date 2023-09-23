@@ -159,17 +159,19 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Text(
-                  '아이 맞춤 형 장소',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const ChildIconWidget(),
+              _isLoggedIn == true
+                  ? const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        '아이 맞춤 형 장소',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
+                  : Container(),
+              _isLoggedIn == true ? const ChildIconWidget() : Container(),
               setHomeMenu(
                 context,
                 '이번 주 추천 장소',
@@ -191,6 +193,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         imageUrl: (places?.isNotEmpty ?? false)
                             ? places![0]['imageUrl']
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
+                        name: places![0]['name'],
+                        address: places![0]['address'],
                       )),
                   const SizedBox(
                     height: 10,
@@ -212,6 +216,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           imageUrl: (places?.isNotEmpty ?? false)
                               ? places![1]['imageUrl']
                               : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
+                          name: places![1]['name'],
+                          address: places![1]['address'],
                         ),
                       ),
                       GestureDetector(
@@ -228,6 +234,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           imageUrl: (places?.isNotEmpty ?? false)
                               ? places![2]['imageUrl']
                               : "https://picturepractice.s3.a p-northeast-2.amazonaws.com/Park/1514459962%233.png",
+                          name: places![2]['name'],
+                          address: places![2]['address'],
                         ),
                       ),
                     ],

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:youkids/src/models/home_models/child_icon_model.dart';
+import 'package:youkids/src/models/mypage_models/user_model.dart';
 
 class SmallMemberWidget extends StatelessWidget {
-  final String memberName;
+  final UserModel member;
   const SmallMemberWidget({
     super.key,
-    required this.memberName,
+    required this.member,
   });
 
   @override
@@ -29,7 +30,7 @@ class SmallMemberWidget extends StatelessWidget {
           const SizedBox(
             height: 3,
           ),
-          Text(memberName),
+          Text(member.nickname),
         ],
       ),
     );

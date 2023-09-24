@@ -66,8 +66,6 @@ class _LoginScreenState extends State<LoginScreen> {
         var decodedJson = jsonDecode(response.body);
         UserResponse userResponse = UserResponse.fromJson(decodedJson);
 
-        print(userResponse);
-
         print(userResponse.newUser);
         print(userResponse.userId);
 

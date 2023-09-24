@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:youkids/src/models/home_models/child_icon_model.dart';
+import 'package:youkids/src/models/mypage_models/children_model.dart';
 import 'package:youkids/src/screens/mypage/children_update_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 
 class ChildrenScreen extends StatelessWidget {
   // initState로 애기 정보를 받아오기
-  final String childrenName;
-  const ChildrenScreen({super.key, required this.childrenName});
+  final ChildrenModel children;
+  const ChildrenScreen({super.key, required this.children});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          childrenName,
+          children.name,
           style: const TextStyle(
             fontSize: 22,
             color: Colors.black,
@@ -31,7 +32,7 @@ class ChildrenScreen extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          ChildrenUpdateScreen(childrenName: childrenName),
+                          ChildrenUpdateScreen(children: children),
                     ));
               },
               style: ElevatedButton.styleFrom(

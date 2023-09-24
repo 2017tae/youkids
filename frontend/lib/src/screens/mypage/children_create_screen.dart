@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class ChildrenCreateScreen extends StatefulWidget {
   const ChildrenCreateScreen({super.key});
@@ -12,23 +17,24 @@ class ChildrenCreateScreen extends StatefulWidget {
 
 class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
   // input으로 받을 아이 정보
-  String childrenName = '';
-  String childrenGender = '남';
-  DateTime childrenBirth = DateTime.now();
+  String name = '';
+  String gender = '남';
+  DateTime? birthday;
   File? childrenImage;
+  String uri = 'http://10.0.2.2:8080';
 
   bool dateChanged = false;
   Future<void> selectDate(BuildContext context) async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: childrenBirth,
+      initialDate: DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
 
     if (picked != null) {
       setState(() {
-        childrenBirth = picked;
+        birthday = picked;
         dateChanged = true;
       });
     }
@@ -48,6 +54,37 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
     setState(() {
       childrenImage = null;
     });
+  }
+
+  Future<String?> getUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('userId');
+  }
+
+  Future<void> registChild() async {
+    String? parentId = await getUserId();
+    try {
+      if (parentId == null || name == '' || birthday == null) {
+        print('there is null');
+      } else {
+        final response = await http.post(Uri.parse('$uri/children'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'parentId': parentId,
+              'name': name,
+              'gender': gender == '남' ? 0 : 1,
+              'birthday': DateFormat('yyyy-MM-dd').format(birthday!),
+              'childrenImage': childrenImage
+            }));
+        if (response.statusCode == 200) {
+          print('success');
+        } else {
+          print('fail ${response.statusCode}');
+        }
+      }
+    } catch (err) {
+      print('error $err');
+    }
   }
 
   @override
@@ -78,8 +115,8 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
                   context: context,
                   builder: (BuildContext context) {
                     return SimpleDialog(
-                      title: Text(
-                        '$childrenName, ${childrenBirth.year}-${childrenBirth.month}-${childrenBirth.day}, $childrenGender 아이를 등록하시겠습니까?',
+                      title: const Text(
+                        '아이를 등록하시겠습니까?',
                         textAlign: TextAlign.center,
                       ),
                       children: <Widget>[
@@ -97,6 +134,7 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
                                     child: ElevatedButton(
                                       onPressed: () {
                                         // 아이 등록 요청을 보내고 응답이 오면 결과를 Dialog에 넣기
+                                        registChild();
                                         // await(등록)
                                         // 응답이 오면 일단 이전거 닫고
                                         Navigator.of(context).pop();
@@ -256,7 +294,7 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
                             TextField(
                               onChanged: (value) {
                                 setState(() {
-                                  childrenName = value;
+                                  name = value;
                                 });
                               },
                               decoration: const InputDecoration(
@@ -309,7 +347,7 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
                                     borderRadius: BorderRadius.circular(5)),
                                 child: dateChanged
                                     ? Text(
-                                        '${childrenBirth.year.toString()}.${childrenBirth.month.toString()}.${childrenBirth.day.toString()}')
+                                        '${birthday!.year.toString()}.${birthday!.month.toString()}.${birthday!.day.toString()}')
                                     : const Text('생년월일'),
                               ),
                             ],
@@ -338,7 +376,7 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
                                 child: DropdownButton(
                                   underline: const SizedBox.shrink(),
                                   isExpanded: true,
-                                  value: childrenGender,
+                                  value: gender,
                                   items: <String>['남', '여']
                                       .map<DropdownMenuItem<String>>(
                                           (String value) {
@@ -347,9 +385,9 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
                                       child: Text(value),
                                     );
                                   }).toList(),
-                                  onChanged: (String? gender) {
+                                  onChanged: (String? newGender) {
                                     setState(() {
-                                      childrenGender = gender!; // 새로운 값으로 업데이트
+                                      gender = newGender!;
                                     });
                                   },
                                 ))

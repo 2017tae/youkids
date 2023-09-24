@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:youkids/src/models/mypage_models/children_model.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 class ChildrenUpdateScreen extends StatefulWidget {
-  final String childrenName;
-  const ChildrenUpdateScreen({super.key, required this.childrenName});
+  final ChildrenModel children;
+  const ChildrenUpdateScreen({super.key, required this.children});
 
   @override
   State<ChildrenUpdateScreen> createState() => _ChildrenUpdateScreenState();
@@ -69,7 +70,7 @@ class _ChildrenUpdateScreenState extends State<ChildrenUpdateScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.childrenName,
+          widget.children.name,
           style: const TextStyle(
             fontSize: 22,
             color: Colors.black,

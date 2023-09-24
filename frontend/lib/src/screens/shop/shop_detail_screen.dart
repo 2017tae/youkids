@@ -101,10 +101,13 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
               CarouselSlider.builder(
                 itemCount: _place!.images.length,
                 itemBuilder: (BuildContext context, int index, int realIndex) {
-                  return Image.network(
-                    _place!.images[index],
-                    fit: BoxFit.cover,
-                  ); // 이미지 로드
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(5.0),  // BorderRadius 추가
+                    child: Image.network(
+                      _place!.images[index],
+                      fit: BoxFit.cover,
+                    ),
+                  );
                 },
                 options: CarouselOptions(
                   autoPlay: false,
@@ -117,6 +120,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                   scrollDirection: Axis.horizontal,
                 ),
               ),
+
             // 지도 들어올 자리
             Padding(
               padding: const EdgeInsets.all(15),

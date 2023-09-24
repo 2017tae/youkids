@@ -14,6 +14,7 @@ import 'package:http/http.dart' as http;
 
 
 import '../../providers/auth_model.dart';
+import '../../widgets/main_widgets/RankingWidgetCardFrame11.dart';
 import '../login/login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -246,52 +247,70 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Column(
                 children: [
-                  // GestureDetector(
-                  //   onTap: () {
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (context) => const ShopDetailScreen(),
-                  //       ),
-                  //     );
-                  //   },
-                  //   child: const CardFrame21Widget(),
-                  // ),
+                  GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>  ShopDetailScreen(
+                                placeId: places?[3]['placeId']
+                            ),
+                          ),
+                        );
+                      },
+                      child: RankingWidgetCardFrame11(
+                        imageUrl: (places?.isNotEmpty ?? false)
+                            ? places![3]['imageUrl']
+                            : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png", name: places![3]['name'], address: places![3]['address'], rank: '1',
+
+                      )
+                  ),
                   const SizedBox(
                     height: 10,
                   ),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   children: [
-                  //     GestureDetector(
-                  //       onTap: () {
-                  //         Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //             builder: (context) => const ShopDetailScreen(),
-                  //           ),
-                  //         );
-                  //       },
-                  //       child: const CardFrame11Widget(),
-                  //     ),
-                  //     GestureDetector(
-                  //       onTap: () {
-                  //         Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //             builder: (context) => const ShopDetailScreen(),
-                  //           ),
-                  //         );
-                  //       },
-                  //       child: const CardFrame11Widget(),
-                  //     ),
-                  //   ],
-                  // ),
+                  GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>  ShopDetailScreen(
+                                placeId: places?[4]['placeId']
+                            ),
+                          ),
+                        );
+                      },
+                      child: RankingWidgetCardFrame11(
+                        imageUrl: (places?.isNotEmpty ?? false)
+                            ? places![4]['imageUrl']
+                            : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png", name: places![4]['name'], address: places![4]['address'], rank: '2',
+                      )
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>  ShopDetailScreen(
+                                placeId: places?[5]['placeId']
+                            ),
+                          ),
+                        );
+                      },
+                      child: RankingWidgetCardFrame11(
+                        imageUrl: (places?.isNotEmpty ?? false)
+                            ? places![5]['imageUrl']
+                            : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png", name: places![5]['name'], address: places![5]['address'], rank: '3',
+
+                      )
+                  ),
                 ],
               ),
               setHomeMenu(
                 context,
-                '실내 장소',
+                '공연 예약',
                 const IndoorRecomlistScreen(),
               ),
               Column(

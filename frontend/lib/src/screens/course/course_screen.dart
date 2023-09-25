@@ -250,8 +250,7 @@ class _CourseScreenState extends State<CourseScreen> {
       // 해당 코스 마커 렌더링
       int i = 0;
       final marker = NMarker(
-        icon:
-        NOverlayImage.fromAssetImage("lib/src/assets/icons/mapMark.png"),
+        icon: NOverlayImage.fromAssetImage("lib/src/assets/icons/mapMark.png"),
         size: NMarker.autoSize,
         id: i.toString(),
         position: NLatLng(x, y),
@@ -363,7 +362,9 @@ class _CourseScreenState extends State<CourseScreen> {
                               ...(bookmarks ?? []).map((bookmark) {
                                 return GestureDetector(
                                   onTap: () => {
-                                    _onBookmarkClicked(bookmark.latitude, bookmark.longitude)
+                                    _onBookmarkClicked(
+                                        bookmark['latitude'] ?? 36,
+                                        bookmark['longitude'] ?? 127)
                                   },
                                   child: Container(
                                     margin:
@@ -378,10 +379,12 @@ class _CourseScreenState extends State<CourseScreen> {
                                               child: ListTile(
                                                 title: Text(
                                                   bookmark?['name'] ?? '',
-                                                  style: TextStyle(fontSize: 20),
+                                                  style:
+                                                      TextStyle(fontSize: 20),
                                                 ),
                                                 subtitle: Padding(
-                                                  padding: EdgeInsets.only(top: 8.0),
+                                                  padding:
+                                                      EdgeInsets.only(top: 8.0),
                                                   child: Row(
                                                     children: [
                                                       SvgPicture.asset(
@@ -389,7 +392,9 @@ class _CourseScreenState extends State<CourseScreen> {
                                                         height: 16,
                                                       ),
                                                       SizedBox(width: 5.0),
-                                                      Text(bookmark?['address'] ?? ''),
+                                                      Text(bookmark?[
+                                                              'address'] ??
+                                                          ''),
                                                     ],
                                                   ),
                                                 ),
@@ -398,7 +403,8 @@ class _CourseScreenState extends State<CourseScreen> {
                                           ],
                                         ),
                                         Container(
-                                          margin: EdgeInsets.symmetric(horizontal: 10),
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 10),
                                           child: Divider(
                                             color: Color(0xFF949494),
                                             thickness: 0.5,

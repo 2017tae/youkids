@@ -1,7 +1,7 @@
 class Course_detail_model {
   late String courseId;
   late String courseName;
-  late List<PlaceModel> places; // Define places as a list of PlaceModel
+  late List<PlaceModel> places;
 
   Course_detail_model({
     required this.courseId,
@@ -10,11 +10,11 @@ class Course_detail_model {
   });
 
   Course_detail_model.fromMap(Map<String, dynamic>? map) {
-    courseId = map?['courseId'] ?? '';
-    courseName = map?['courseName'] ?? '';
-    places = (map?['places'] as List<dynamic> ?? []).map((placeData) {
+    courseId = map?['courseId'] as String? ?? '';
+    courseName = map?['courseName'] as String? ?? '';
+    places = (map?['places'] as List<dynamic>?)?.map((placeData) {
       return PlaceModel.fromMap(placeData);
-    }).toList();
+    }).toList() ?? [];
   }
 }
 

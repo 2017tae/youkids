@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:youkids/src/screens/capsule/capsule_detail_screen.dart';
-import 'package:youkids/src/screens/home/home_screen.dart';
+import 'package:youkids/src/screens/capsule/capsule_list_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 
 class CapsuleScreen extends StatelessWidget {
-  const CapsuleScreen({super.key});
+  const CapsuleScreen();
 
   @override
   Widget build(BuildContext context) {
@@ -32,44 +31,9 @@ class CapsuleScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CapsuleDetailScreen(
-                      place: 'place',
-                      date: 'date',
-                      imgUrl: 'imgUrl',
-                      content: 'content',
-                    ),
-                  ),
-                );
-              },
-              child: const Text(
-                '더보기',
-                style: TextStyle(
-                  color: Color(0xffFF7E76),
-                  fontSize: 16,
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HomeScreen(),
-                  ),
-                );
-              },
-              child: const Text('home'),
-            )
-          ],
-        ),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        child: CapsuleListScreen(),
       ),
       bottomNavigationBar: const FooterWidget(
         currentIndex: 3,

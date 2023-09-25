@@ -69,6 +69,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: const Text(
           'YouKids',
           style: TextStyle(

@@ -8,19 +8,19 @@ import 'package:youkids/src/screens/shop/create_shop_review_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:http/http.dart' as http;
 
-
 class ShopDetailScreen extends StatefulWidget {
   final int placeId;
 
-
-  const ShopDetailScreen({required this.placeId});
+  const ShopDetailScreen({
+    super.key,
+    required this.placeId,
+  });
 
   @override
   State<ShopDetailScreen> createState() => _ShopDetailScreenState();
 }
 
 class _ShopDetailScreenState extends State<ShopDetailScreen> {
-
   bool _isLoggedIn = false;
   Place? _place;
 
@@ -34,11 +34,12 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
     String? email = await getEmail();
     print(email);
     setState(() {
-      _isLoggedIn = email != null;  // 이메일이 null이 아니면 로그인된 것으로 판단
+      _isLoggedIn = email != null; // 이메일이 null이 아니면 로그인된 것으로 판단
     });
 
     final response = await http.get(
-      Uri.parse('https://j9a604.p.ssafy.io/api/place/'+ '87dad60a-bfff-47e5-8e21-02cb49b23ba6' +'/'+widget.placeId.toString()),
+      Uri.parse(
+          'https://j9a604.p.ssafy.io/api/place/87dad60a-bfff-47e5-8e21-02cb49b23ba6/${widget.placeId}'),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -46,25 +47,23 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
     if (response.statusCode == 200) {
       var jsonString = utf8.decode(response.bodyBytes);
       Map<String, dynamic> decodedJson = jsonDecode(jsonString);
-      Place place = Place.fromJson(decodedJson['place']);
+      Place place = Place.fromJson(decodedJson['result']['place']);
       print(decodedJson);
       setState(() {
         _place = place;
       });
 
       print(_place);
-    }else{
+    } else {
       print("error");
     }
-
   }
 
   Future<String?> getEmail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('email'); // Returns 'john_doe' if it exists, otherwise returns null.
+    return prefs.getString(
+        'email'); // Returns 'john_doe' if it exists, otherwise returns null.
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -93,16 +92,12 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-
-
-
-
             if (_place?.images != null && _place!.images.isNotEmpty)
               CarouselSlider.builder(
                 itemCount: _place!.images.length,
                 itemBuilder: (BuildContext context, int index, int realIndex) {
                   return ClipRRect(
-                    borderRadius: BorderRadius.circular(5.0),  // BorderRadius 추가
+                    borderRadius: BorderRadius.circular(5.0), // BorderRadius 추가
                     child: Image.network(
                       _place!.images[index],
                       fit: BoxFit.cover,
@@ -127,9 +122,8 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
               child: Column(
                 children: [
                   shopInfo(
-                    imgUrl: 'lib/src/assets/icons/shop_address.png',
-                    info: _place != null ? _place!.name : 'Loading...'
-                  ),
+                      imgUrl: 'lib/src/assets/icons/shop_address.png',
+                      info: _place != null ? _place!.name : 'Loading...'),
                   shopInfo(
                     imgUrl: 'lib/src/assets/icons/shop_phone.png',
                     info: _place != null ? _place!.phoneNumber : 'Loading...',

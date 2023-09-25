@@ -63,8 +63,8 @@ class _UploadImgWidgetState extends State<UploadImgWidget> {
           width: 10,
         ),
         SizedBox(
-          height: MediaQuery.of(context).size.width * 0.2,
           width: MediaQuery.of(context).size.width * 0.8 - 50,
+          height: MediaQuery.of(context).size.width * 0.2,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {

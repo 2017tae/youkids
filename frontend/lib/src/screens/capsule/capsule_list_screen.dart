@@ -32,9 +32,7 @@ class _CapsuleListScreenState extends State<CapsuleListScreen> {
   Widget build(BuildContext context) {
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        childAspectRatio: 0.7
-      ),
+          crossAxisCount: 3, childAspectRatio: 0.7),
       itemCount: capsules.length,
       itemBuilder: (BuildContext context, int index) {
         final capsuleImage =
@@ -50,16 +48,27 @@ class _CapsuleListScreenState extends State<CapsuleListScreen> {
           },
           child: Card(
             elevation: 0,
-            margin: EdgeInsets.all(5.0),
+            margin: EdgeInsets.symmetric(vertical: 5.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Flexible(
-                  child: Image.asset(
-                    'lib/src/assets/icons/$capsuleImage',
-                    width: 120,
-                    height: 120,
-                    fit: BoxFit.fitHeight,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Image.asset(
+                        'lib/src/assets/icons/logo_foreground.png',
+                        width: 120,
+                        height: 120,
+                        fit: BoxFit.fitHeight,
+                      ),
+                      Image.asset(
+                        'lib/src/assets/icons/$capsuleImage',
+                        width: 120,
+                        height: 120,
+                        fit: BoxFit.fitHeight,
+                      ),
+                    ],
                   ),
                   flex: 5,
                 ),
@@ -71,7 +80,7 @@ class _CapsuleListScreenState extends State<CapsuleListScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  flex:1
+                  flex: 1,
                 ),
               ],
             ),

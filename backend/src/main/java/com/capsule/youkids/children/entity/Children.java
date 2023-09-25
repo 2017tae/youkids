@@ -1,11 +1,9 @@
 package com.capsule.youkids.children.entity;
 
 import com.capsule.youkids.capsule.entity.MemoryChildren;
-import com.capsule.youkids.capsule.entity.MemoryImage;
 import com.capsule.youkids.user.entity.User;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,7 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -59,7 +56,7 @@ public class Children {
     // 애기 성향
 
     // 애기와 연결된 이미지 리스트
-    @OneToMany(mappedBy = "children", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "children", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<MemoryChildren> memoryChildrenList;
 
     @Builder

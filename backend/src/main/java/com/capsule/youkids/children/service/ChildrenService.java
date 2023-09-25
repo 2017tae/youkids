@@ -13,7 +13,7 @@ public interface ChildrenService {
     public ChildrenResponse findChildren(long childrenId) throws Exception;
 
     // 부모 email로 애기들 검색하기
-    public List<ChildrenResponse> getParentsChildren(String email) throws Exception;
+    public List<ChildrenResponse> getParentsChildren(UUID id) throws Exception;
 
     // 애기 등록하기
     public void registChildren(ChildrenRegistRequest childrenRegistRequest) throws Exception;

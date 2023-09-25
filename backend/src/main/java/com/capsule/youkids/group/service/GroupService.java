@@ -16,7 +16,7 @@ public interface GroupService {
     public void deleteUserFromGroup(GroupUserRequest groupUserRequest) throws Exception;
 
     // 유저가 속한 모든 그룹 불러오기
-    public List<GroupResponse> getAllJoinedGroup(String email) throws Exception;
+    public List<GroupResponse> getAllJoinedGroup(UUID id) throws Exception;
 
     // 그룹에 속한 모든 유저 불러오기
     public List<UserResponse> getAllJoinedUser(UUID groupId) throws Exception;

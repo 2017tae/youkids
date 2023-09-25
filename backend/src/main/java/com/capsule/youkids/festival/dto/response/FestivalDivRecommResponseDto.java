@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class FestivalDivRecommResponseDto {
-    List<FestivalRecommItemDto> onGoingFestivals;
-    List<FestivalRecommItemDto> upCommingFestivals;
-    List<FestivalRecommItemDto> closedFestivals;
+    private List<FestivalRecommItemDto> onGoingFestivals;
+    private List<FestivalRecommItemDto> upCommingFestivals;
+    private List<FestivalRecommItemDto> closedFestivals;
 
     @Builder
     public FestivalDivRecommResponseDto(List<FestivalRecommItemDto> onGoingFestivals,

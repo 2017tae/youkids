@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class FestivalRecommResponseDto {
-    List<FestivalRecommItemDto> festivals;
+    private List<FestivalRecommItemDto> festivals;
 
     @Builder
     public FestivalRecommResponseDto(List<FestivalRecommItemDto> festivals) {

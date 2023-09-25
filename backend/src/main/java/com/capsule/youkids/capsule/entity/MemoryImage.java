@@ -1,6 +1,8 @@
 package com.capsule.youkids.capsule.entity;
 
+import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,12 +29,12 @@ public class MemoryImage {
     @Column
     private String memoryUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "memory_id")
     private Memory memory;
 
-    @OneToMany(mappedBy = "memoryImage", fetch = FetchType.LAZY)
-    private List<MemoryChildren> memoryChildrenList;
+    @OneToMany(mappedBy = "memoryImage", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<MemoryChildren> memoryChildrenList = new ArrayList<>();
 
     @Builder
     public MemoryImage(String memoryUrl, Memory memory){

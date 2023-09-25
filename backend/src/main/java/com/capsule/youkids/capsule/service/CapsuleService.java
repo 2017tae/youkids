@@ -40,7 +40,7 @@ public interface CapsuleService {
      * @return 생성이 잘 되었는지 안 됐는지
      */
 
-    boolean createMemory(CreateMemoryRequestDto createMemoryRequestDto,
+    void createMemory(CreateMemoryRequestDto createMemoryRequestDto,
             List<MultipartFile> multipartFileList);
 
     /**
@@ -51,6 +51,14 @@ public interface CapsuleService {
      * @return 캡슐이 생성 되었다면 캡슐을 리턴한다.
      */
     Capsule createCapsule(User user, String url);
+
+    /**
+     * 컨트롤러 단에서는 실행되지 않는 함수. 메모리 생성하는 함수에서 실행된다. 캡슐을 생성한다.
+     *
+     * @param user 현재 사용중인 유저
+     * @return 캡슐이 생성 되었다면 캡슐을 리턴한다.
+     */
+    Capsule createCapsule(User user);
 
     /**
      * 메모리 수정 하는 함수
@@ -72,7 +80,8 @@ public interface CapsuleService {
      * 특정 메모리 상세 정보를 리턴하는 함수
      *
      * @param memoryId
-     * @return MemoryDetailResponseDto : {year, month, day, description, location, images[], childrenImageList[]}
+     * @return MemoryDetailResponseDto : {year, month, day, description, location, images[],
+     * childrenImageList[]}
      */
     MemoryDetailResponseDto getMemoryDetail(long memoryId);
 }

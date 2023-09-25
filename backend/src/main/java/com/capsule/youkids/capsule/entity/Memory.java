@@ -55,7 +55,7 @@ public class Memory extends BaseTimeEntity {
     @JoinColumn(name = "capsule_id")
     private Capsule capsule;
 
-    @OneToMany(mappedBy = "memory", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "memory", cascade = CascadeType.ALL)
     private List<MemoryImage> memoryImages;
 
     @Builder

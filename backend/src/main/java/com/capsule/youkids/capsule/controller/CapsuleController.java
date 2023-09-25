@@ -35,10 +35,15 @@ public class CapsuleController {
 
     private final CapsuleService capsuleService;
 
-    @GetMapping("/all/{email}")
+    /**
+     * 유저 아이디를 통해서 아이디에 해당하는 모든 캡슐을 가져온다.
+     *
+     * @param userId
+     * @return
+     */
+    @GetMapping("/all/{userId}")
     public BaseResponse getAllCapsuleList(@PathVariable UUID userId) {
 
-        // 에러처리 해야한다.
         try {
             CapsuleListResponseDto response = capsuleService.getCapsuleList(userId);
             return BaseResponse.success(Code.SUCCESS, response);
@@ -48,6 +53,12 @@ public class CapsuleController {
 
     }
 
+    /**
+     * 캡슐 아이디를 통해서 캡슐에 해당하는 모든 메모리를 가져온다.
+     *
+     * @param capsuleId
+     * @return
+     */
     @GetMapping("/images/{capsuleId}")
     public BaseResponse getAllMemoryByCapsule(@PathVariable int capsuleId) {
 
@@ -59,11 +70,17 @@ public class CapsuleController {
         }
     }
 
+    /**
+     * 메모리를 생성한다.
+     *
+     * @param request
+     * @param fileList
+     * @return
+     */
     @PostMapping("/upload")
     public BaseResponse createMemory(@RequestPart CreateMemoryRequestDto request,
             @RequestPart(required = false) List<MultipartFile> fileList) {
 
-        // 에러처리 해야한다.
         try {
             capsuleService.createMemory(request, fileList);
             return BaseResponse.success(Code.SUCCESS);
@@ -74,7 +91,7 @@ public class CapsuleController {
     }
 
     @GetMapping("/memory/{memoryId}")
-    public BaseResponse getMemory(@RequestParam long memoryId) {
+    public BaseResponse getMemory(@PathVariable long memoryId) {
 
         try {
             MemoryDetailResponseDto response = capsuleService.getMemoryDetail(memoryId);
@@ -85,10 +102,15 @@ public class CapsuleController {
 
     }
 
+    /**
+     * 메모리를 수정한다.
+     *
+     * @param request
+     * @return
+     */
     @PutMapping("/memory")
     public BaseResponse updateMemory(@RequestBody MemoryUpdateRequestDto request) {
 
-        // 에러 처리 해야한다.
         try {
             capsuleService.updateMemory(request);
             return BaseResponse.success(Code.SUCCESS);
@@ -99,6 +121,12 @@ public class CapsuleController {
 
     }
 
+    /**
+     * 메모리를 삭제한다.
+     *
+     * @param request
+     * @return
+     */
     @DeleteMapping("/memory")
     public BaseResponse deleteMemory(@RequestBody MemoryDeleteRequestDto request) {
 

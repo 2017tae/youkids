@@ -44,11 +44,13 @@ public class Capsule {
     private List<Memory> memories = new ArrayList<>();
 
     @Builder
-    public Capsule(int year, String url, User user){
+    public Capsule(int year, String url, User user) {
         this.year = year;
         this.url = url;
         this.user = user;
     }
 
-
+    public void setUrl(String url) {
+        this.url = url;
+    }
 }

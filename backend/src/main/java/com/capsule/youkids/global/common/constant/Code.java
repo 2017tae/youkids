@@ -22,6 +22,7 @@ public enum Code {
 
     // 유저 에러 (1011 ~ 1020)
     USER_NOT_FOUND(false, 1011, "존재하지 않는 유저입니다."),
+    CHILDREN_NOT_FOUND(false, 1012, "존재하지 않는 아이입니다."),
 
     // 장소 에러 (1021 ~ 1030)
     PLACE_NOT_FOUND(false, 1021, "해당 장소를 찾을 수 없습니다."),
@@ -41,8 +42,8 @@ public enum Code {
     MEMORY_UPDATE_NOT_PERMITTED(false, 1033, "메모리를 수정할 권한이 없습니다."),
     MEMORY_UPDATE_TIME_LIMIT_EXPIRED(false, 1034, "메모리를 수정할 수 있는 기간이 지났습니다."),
     MEMORY_DELETE_NOT_PERMITTED(false, 1035, "메모리를 삭제할 권한이 없습니다."),
-    MEMORY_DELETE_TIME_LIMIT_EXPIRED(false, 1036, "메모리를 삭제할 수 있는 기간이 지났습니다.");
-
+    MEMORY_DELETE_TIME_LIMIT_EXPIRED(false, 1036, "메모리를 삭제할 수 있는 기간이 지났습니다."),
+    MEMORY_SAVE_ERROR(false,1037,"메모리를 저장하지 못했습니다."),
     // (1041 ~ 1050)
     FESTIVAL_EMPTY(false, 1041, "추천하는 공연 정보가 없습니다.");
 

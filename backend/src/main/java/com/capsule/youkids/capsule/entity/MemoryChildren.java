@@ -25,16 +25,16 @@ public class MemoryChildren {
     @Column
     private long memoryChildrenId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "memory_image_id")
     private MemoryImage memoryImage;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "children_id")
     private Children children;
 
     @Builder
-    public MemoryChildren(MemoryImage memoryImage, Children children){
+    public MemoryChildren(MemoryImage memoryImage, Children children) {
         this.memoryImage = memoryImage;
         this.children = children;
     }

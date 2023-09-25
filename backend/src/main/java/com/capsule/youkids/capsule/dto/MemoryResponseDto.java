@@ -12,7 +12,7 @@ public class MemoryResponseDto {
     private List<MemoryImageDto> memoryImageDtoList;
 
     @Builder
-    public MemoryResponseDto(int month, int day, List<MemoryImageDto> memoryImageDtoList){
+    public MemoryResponseDto(int month, int day, List<MemoryImageDto> memoryImageDtoList) {
         this.month = month;
         this.day = day;
         this.memoryImageDtoList = memoryImageDtoList;
@@ -23,10 +23,17 @@ public class MemoryResponseDto {
         String url;
         List<Long> childrenList;
 
-        public MemoryImageDto(String url, List<Long> childrenList){
+        public MemoryImageDto(String url, List<Long> childrenList) {
             this.url = url;
             this.childrenList = childrenList;
         }
 
+        public String getUrl() {
+            return url;
+        }
+
+        public List<Long> getChildrenList() {
+            return childrenList;
+        }
     }
 }

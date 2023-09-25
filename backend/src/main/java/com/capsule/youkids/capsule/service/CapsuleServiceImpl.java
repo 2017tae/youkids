@@ -56,7 +56,6 @@ public class CapsuleServiceImpl implements CapsuleService {
     private final MemoryChildrenRepository memoryChildrenRepository;
     private final UserRepository userRepository;
     private final GroupJoinRepository groupJoinRepository;
-    private final GroupInfoRepository groupInfoRepository;
     private final ChildrenRepository childrenRepository;
     private final AwsS3Service awsS3Service;
 
@@ -70,31 +69,36 @@ public class CapsuleServiceImpl implements CapsuleService {
     public CapsuleListResponseDto getCapsuleList(UUID userId) {
 
         // userId를 통해서 탈퇴되지 않은 유저인지 확인 후 User 리턴
-        User user = userRepository.findByIdAndRoleNot(userId, Role.DELETED)
+        User user = userRepository.findByUserIdAndRoleNot(userId, Role.DELETED)
                 .orElseThrow(() -> new RestApiException(Code.USER_NOT_FOUND));
 
-        // user
+        // 유저의 그룹을 가져온다.
         List<GroupJoin> groups = groupJoinRepository.findByUserIdOrderByCreatedTime(userId);
 
+        // 반환할 리스트를 선언해준다.
         List<CapsuleResponseDto> capsuleResponseDtos = new LinkedList<>();
 
         for (GroupJoin group : groups) {
+            // 그룹의 그룹 리더를 가져온다.
             UUID groupLeader = group.getGroupId();
 
             // leader의 객체를 가져온다.
             // 유저를 가져올 때 유효한 role인지도 확인 해줘야함.
-            Optional<User> leader = userRepository.findByIdAndRoleNot(groupLeader, Role.DELETED);
+            Optional<User> leader = userRepository.findByUserIdAndRoleNot(groupLeader,
+                    Role.DELETED);
 
-            // 만약 그룹장이 탈퇴했다면
+            // 만약 그룹장이 탈퇴했다면 캡슐을 읽어오지 않는다.
             if (leader.isEmpty()) {
                 continue;
             }
+
             // 만약 그룹장이 리더가 아니라면 (파트너에게 종속 되어 버렸다면)
             else if (!leader.get().isLeader()) {
+                // 만약 본인이라면 파트너 아이디로 바꿔서 가져오고 아니라면 그냥 다른 그룹을 확인한다.
                 if (!leader.get().equals(user)) {
                     continue;
                 } else {
-                    leader = userRepository.findByIdAndRoleNot(leader.get().getPartnerId(),
+                    leader = userRepository.findByUserIdAndRoleNot(leader.get().getPartnerId(),
                             Role.DELETED);
                 }
             }
@@ -107,7 +111,6 @@ public class CapsuleServiceImpl implements CapsuleService {
 
             for (Capsule capsule : capsules) {
 
-                // url을 넣을지 말지 생각해봐야해.
                 // Capsule entity를 DTO로 변환 시켜준다.
                 CapsuleDto capsuleDto = CapsuleDto.builder()
                         .capsuleId(capsule.getCapsuleId())
@@ -191,7 +194,7 @@ public class CapsuleServiceImpl implements CapsuleService {
     }
 
     /**
-     * 메모리를 생성한다. 여기 다 변경해야할거 같음.
+     * 메모리를 생성한다.
      *
      * @param request
      * @param multipartFileList
@@ -199,51 +202,53 @@ public class CapsuleServiceImpl implements CapsuleService {
      */
     @Override
     @Transactional
-    public boolean createMemory(CreateMemoryRequestDto request,
+    public void createMemory(CreateMemoryRequestDto request,
             List<MultipartFile> multipartFileList) {
 
         // 우선 메모리를 생성한다.
         Memory memory = Memory.builder()
                 .date()
                 .description(request.getDescription())
-                .location(request.getLocation())
+                .location(request.getLocation() == null ? "" : request.getLocation())
                 .build();
 
         // -----------------------------
         // 유저가 없으면 에러 발생~~~~~~~
         // -----------------------------
-        User user = userRepository.findByIdAndRoleNot(request.getUserId(), Role.DELETED)
+        User user = userRepository.findByUserIdAndRoleNot(request.getUserId(), Role.DELETED)
                 .orElseThrow(() -> new RestApiException(Code.USER_NOT_FOUND));
 
         if (!user.isLeader()) {
-            user = userRepository.findByIdAndRoleNot(user.getPartnerId(), Role.DELETED)
+            user = userRepository.findByUserIdAndRoleNot(user.getPartnerId(), Role.DELETED)
                     .orElseThrow(() -> new RestApiException(Code.USER_NOT_FOUND));
         }
 
         // 생성된 메모리에 메모리 이미지를 연결한다.
         // S3에 저장한다.
         List<MemoryImage> memoryImages = new ArrayList<>();
-        for (MultipartFile multipartFile : multipartFileList) {
-            // S3를 사용해서 파일 저장 해야한다.
-            // 변경해줘야해.
-            try {
-                String fileUrl = awsS3Service.uploadFile(multipartFile);
-                MemoryImage memoryImage = MemoryImage.builder()
-                        .memoryUrl(fileUrl)
-                        .memory(memory)
-                        .build();
+        if (multipartFileList != null) {
+            for (MultipartFile multipartFile : multipartFileList) {
+                // S3를 사용해서 파일 저장 해야한다.
+                try {
+                    // S3에 저장하고 파일을 업로드 한다.
+                    String fileUrl = awsS3Service.uploadFile(multipartFile);
+                    MemoryImage memoryImage = MemoryImage.builder()
+                            .memoryUrl(fileUrl)
+                            .memory(memory)
+                            .build();
 
-                memoryImageRepository.save(memoryImage);
-                memoryImages.add(memoryImage);
-            } catch (IOException e) {
-                throw new RestApiException(Code.)
+                    memoryImageRepository.save(memoryImage);
+                    memoryImages.add(memoryImage);
+                } catch (IOException e) {
+                    throw new RestApiException(Code.S3_SAVE_ERROR);
+                }
             }
         }
 
         // 사진에 하나 하나에 대한 아이 태그 확인
         // 사진에 태그를 연결 및 아이에게 사진을 연결
-
         List<List<Long>> childrenList = request.getChildrenList();
+
         // 만약 아이 리스트가 없다면 실행하지 않는다.
         if (childrenList != null && !childrenList.isEmpty()) {
             for (int idx = 0; idx < childrenList.size(); ++idx) {
@@ -252,8 +257,11 @@ public class CapsuleServiceImpl implements CapsuleService {
                     continue;
                 }
                 for (Long child : childrenList.get(idx)) {
-                    Children children = childrenRepository.findById(child).orElse(null);
+                    // 아이를 찾는다.
+                    Children children = childrenRepository.findById(child)
+                            .orElseThrow(() -> new RestApiException(Code.CHILDREN_NOT_FOUND));
 
+                    // 메모리와 아이를 매핑한다.
                     MemoryChildren memoryChildren = MemoryChildren.builder()
                             .memoryImage(memoryImages.get(idx))
                             .children(children)
@@ -261,7 +269,6 @@ public class CapsuleServiceImpl implements CapsuleService {
 
                     memoryChildrenRepository.save(memoryChildren);
 
-                    // 추가해야함
                     // children.add(memoryChildren) 해줘야한다.
                     children.getMemoryChildrenList().add(memoryChildren);
                     memoryImages.get(idx).getMemoryChildrenList().add(memoryChildren);
@@ -270,20 +277,30 @@ public class CapsuleServiceImpl implements CapsuleService {
         }
 
         // 캡슐이 있는지 확인 후 있다면 캡슐에 메모리 저장
-        // 여기 유저 부분 변경해야된다.
-        // 변경점
         Capsule capsule = capsuleRepository
-                .findByUserAndYear(user, memory.getYear())
+                .findByUserAndYear(user, LocalDate.now().getYear())
                 .orElse(null);
 
-        if (capsule.equals(null)) {
-            // 유저 변경해야해.
-            capsule = createCapsule(new User(), memoryImages.get(0).getMemoryUrl());
+        // 캡슐이 없다면 새로 생성하고, 캡슐에 이미지가 없다면 처음에 들어간 이미지를 추가해준다.
+        if (capsule == null) {
+            if (memoryImages == null) {
+                capsule = createCapsule(user, memoryImages.get(0).getMemoryUrl());
+            } else {
+                capsule = createCapsule(user);
+            }
+        } else if (capsule.getUrl() == null) {
+            if (multipartFileList != null) {
+                capsule.setUrl(memoryImages.get(0).getMemoryUrl());
+            }
         }
 
+        memory.setCapsule(capsule);
+        memory.setMemoryImages(memoryImages);
         capsule.getMemories().add(memory);
 
-        return memory.equals(memoryRepository.save(memory));
+        if (!memory.equals(memoryRepository.save(memory))) {
+            throw new RestApiException(Code.MEMORY_SAVE_ERROR);
+        }
     }
 
     /**
@@ -311,6 +328,22 @@ public class CapsuleServiceImpl implements CapsuleService {
         return capsuleRepository.save(capsule);
     }
 
+    @Override
+    @Transactional
+    public Capsule createCapsule(User user) {
+
+        int year = LocalDate.now((ZoneId.of("Asia/Seoul"))).getYear();
+
+        // 여기에서 파트너 아이디랑 확인해서 생성 해야한다.
+        // 캡슐을 생성한다.
+        Capsule capsule = Capsule.builder()
+                .year(year)
+                .user(user)
+                .build();
+
+        return capsuleRepository.save(capsule);
+    }
+
     /**
      * 메모리 수정 하는 함수
      *
@@ -318,6 +351,7 @@ public class CapsuleServiceImpl implements CapsuleService {
      * @return 업데이트가 잘 되었는지 확인
      */
     @Override
+    @Transactional
     public void updateMemory(MemoryUpdateRequestDto request) throws RestApiException {
 
         LocalDate ld = LocalDate.now((ZoneId.of("Asia/Seoul")));
@@ -326,11 +360,11 @@ public class CapsuleServiceImpl implements CapsuleService {
         Memory memory = memoryRepository.findById(request.getMemoryId())
                 .orElseThrow(() -> new RestApiException(Code.MEMORY_NOT_FOUND));
 
-        User user = userRepository.findByIdAndRoleNot(request.getUserId(), Role.DELETED)
+        User user = userRepository.findByUserIdAndRoleNot(request.getUserId(), Role.DELETED)
                 .orElseThrow(() -> new RestApiException(Code.MEMORY_UPDATE_NOT_PERMITTED));
 
         if (!user.isLeader()) {
-            user = userRepository.findByIdAndRoleNot(user.getPartnerId(), Role.DELETED)
+            user = userRepository.findByUserIdAndRoleNot(user.getPartnerId(), Role.DELETED)
                     .orElseThrow(() -> new RestApiException(Code.MEMORY_UPDATE_NOT_PERMITTED));
         }
 
@@ -338,9 +372,8 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         long dayDiff = ChronoUnit.DAYS.between(memoryDay, ld);
 
+        // 수정 날짜가 지났다면 오류
         if (dayDiff > 7) {
-            // 이거 에러  처리 해줘야하나?
-            // 수정 가능 날짜가 지나버림!
             throw new RestApiException(Code.MEMORY_UPDATE_TIME_LIMIT_EXPIRED);
         }
 
@@ -354,18 +387,21 @@ public class CapsuleServiceImpl implements CapsuleService {
      * @return 삭제가 됐는지 안됐는지 리턴
      */
     @Override
+    @Transactional
     public void deleteMemory(MemoryDeleteRequestDto request) throws RestApiException {
 
-        // 유저가 없어. 그러면 삐이ㅏ이잉익 에러
-        User user = userRepository.findByIdAndRoleNot(request.getUserId(), Role.DELETED)
+        // 유저가 없으면 오류
+        User user = userRepository.findByUserIdAndRoleNot(request.getUserId(), Role.DELETED)
                 .orElseThrow(() -> new RestApiException(Code.USER_NOT_FOUND));
 
-        // 메모리가 없으면 오류!!!! 보내줘야해
+        // 메모리가 없으면 오류
         Memory memory = memoryRepository.findById(request.getMemoryId())
                 .orElseThrow(() -> new RestApiException(Code.MEMORY_NOT_FOUND));
 
+        // 메모리와 유저의 관계가 있는지 확인해서 없다면 오류
+
         if (!user.isLeader()) {
-            user = userRepository.findByIdAndRoleNot(user.getPartnerId(), Role.DELETED)
+            user = userRepository.findByUserIdAndRoleNot(user.getPartnerId(), Role.DELETED)
                     .orElseThrow(() -> new RestApiException(Code.MEMORY_DELETE_NOT_PERMITTED));
         }
 
@@ -381,9 +417,8 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         long dayDiff = ChronoUnit.DAYS.between(memoryDay, ld);
 
+        // 수정 날짜가 지났다면 오류
         if (dayDiff > 7) {
-            // 이거 에러  처리 해줘야하나?
-            // 수정 가능 날짜가 지나버림!
             throw new RestApiException(Code.MEMORY_DELETE_TIME_LIMIT_EXPIRED);
         }
 
@@ -407,11 +442,13 @@ public class CapsuleServiceImpl implements CapsuleService {
         // 모든 사진들에 대한 아이의 중복을 없애기 위해 사용
         Set<String> child = new HashSet<>();
 
+        // 메모리 이미지들 가져오기
         List<MemoryImage> memoryImageList = memory.getMemoryImages();
 
         List<String> childrenImageList;
         List<String> imageList = new ArrayList<>();
 
+        // 이미지에 대한 아이들 리스트 가져오기
         for (MemoryImage memoryImage : memoryImageList) {
             imageList.add(memoryImage.getMemoryUrl());
             for (MemoryChildren memoryChildren : memoryImage.getMemoryChildrenList()) {

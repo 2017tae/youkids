@@ -99,6 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       drawer: const Drawer(),
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: const Text(
           'YouKids',
           style: TextStyle(

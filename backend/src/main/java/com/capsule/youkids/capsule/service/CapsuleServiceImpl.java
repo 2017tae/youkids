@@ -283,7 +283,7 @@ public class CapsuleServiceImpl implements CapsuleService {
 
         // 캡슐이 없다면 새로 생성하고, 캡슐에 이미지가 없다면 처음에 들어간 이미지를 추가해준다.
         if (capsule == null) {
-            if (memoryImages == null) {
+            if (memoryImages != null) {
                 capsule = createCapsule(user, memoryImages.get(0).getMemoryUrl());
             } else {
                 capsule = createCapsule(user);

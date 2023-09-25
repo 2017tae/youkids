@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:youkids/src/screens/mypage/mypage_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -61,11 +62,12 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
     return prefs.getString('userId');
   }
 
-  Future<void> registChild() async {
+  Future<bool> registChild() async {
     String? parentId = await getUserId();
     try {
       if (parentId == null || name == '' || birthday == null) {
         print('there is null');
+        return false;
       } else {
         final response = await http.post(Uri.parse('$uri/children'),
             headers: {'Content-Type': 'application/json'},
@@ -78,12 +80,15 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
             }));
         if (response.statusCode == 200) {
           print('success');
+          return true;
         } else {
           print('fail ${response.statusCode}');
+          return false;
         }
       }
     } catch (err) {
       print('error $err');
+      return false;
     }
   }
 
@@ -134,44 +139,26 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
                                     child: ElevatedButton(
                                       onPressed: () {
                                         // 아이 등록 요청을 보내고 응답이 오면 결과를 Dialog에 넣기
-                                        registChild();
-                                        // await(등록)
-                                        // 응답이 오면 일단 이전거 닫고
-                                        Navigator.of(context).pop();
-                                        // 실패시
-                                        // 성공시 dialog를 띄우고 mypage로 리다이렉트
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return SimpleDialog(
-                                              title: const Text(
-                                                "아이를 등록했습니다",
-                                                textAlign: TextAlign.center,
-                                              ),
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Expanded(
-                                                      child: GestureDetector(
-                                                        onTap: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                        child: const Text(
-                                                          "확인",
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ],
+                                        registChild().then((result) {
+                                          // 이전 dialog 닫고
+                                          Navigator.of(context).pop();
+                                          // 실패시
+                                          if (!result) {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return const FailDialog();
+                                              },
                                             );
-                                          },
-                                        );
+                                          } else {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return const SuccessDialog();
+                                              },
+                                            );
+                                          }
+                                        });
                                       },
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor:
@@ -403,6 +390,80 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
         ),
       ),
       bottomNavigationBar: const FooterWidget(currentIndex: 4),
+    );
+  }
+}
+
+class SuccessDialog extends StatelessWidget {
+  const SuccessDialog({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+      title: const Text(
+        "아이를 등록했습니다",
+        textAlign: TextAlign.center,
+      ),
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const MyPageScreen(),
+                    ),
+                  );
+                },
+                child: const Text(
+                  "확인",
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            )
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class FailDialog extends StatelessWidget {
+  const FailDialog({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+      title: const Text(
+        "아이 등록에 실패했습니다.",
+        textAlign: TextAlign.center,
+      ),
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text(
+                  "확인",
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            )
+          ],
+        ),
+      ],
     );
   }
 }

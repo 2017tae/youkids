@@ -1,12 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/models/mypage_models/group_model.dart';
 import 'package:youkids/src/screens/mypage/group_screen.dart';
 import 'package:youkids/src/widgets/mypage_widgets/smallmember_widget.dart';
 
-class MyGroup extends StatelessWidget {
+class MyGroup extends StatefulWidget {
   final GroupModel group;
   final bool myGroup;
   const MyGroup({super.key, required this.group, required this.myGroup});
+
+  @override
+  State<MyGroup> createState() => _MyGroupState();
+}
+
+class _MyGroupState extends State<MyGroup> {
+  String? userId;
+  String groupName = ' ';
+
+  Future<void> getUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userId = prefs.getString('userId');
+      if (userId == widget.group.groupId) {
+        groupName = '${widget.group.groupName}(내 그룹)';
+      } else {
+        groupName = widget.group.groupName;
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserId();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +47,7 @@ class MyGroup extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => GroupScreen(groupName: group.groupName),
+                  builder: (context) => GroupScreen(group: widget.group),
                 ),
               );
             },
@@ -28,7 +55,7 @@ class MyGroup extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  group.groupName,
+                  groupName,
                   style: const TextStyle(fontSize: 20),
                 ),
                 const Icon(
@@ -48,14 +75,17 @@ class MyGroup extends StatelessWidget {
                   ListView.builder(
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
-                    itemCount: group.groupMember.length,
+                    itemCount: widget.group.groupMember.length,
                     itemBuilder: (context, index) {
-                      return SmallMemberWidget(
-                          member: group.groupMember[index]);
+                      if (userId != widget.group.groupMember[index].userId) {
+                        return SmallMemberWidget(
+                            member: widget.group.groupMember[index]);
+                      }
+                      return Container();
                     },
                   ),
                   // 내 그룹이면
-                  myGroup ? const AddGroupMember() : Container(),
+                  widget.myGroup ? const AddGroupMember() : Container(),
                 ],
               ),
             ),
@@ -66,10 +96,17 @@ class MyGroup extends StatelessWidget {
   }
 }
 
-class AddGroupMember extends StatelessWidget {
+class AddGroupMember extends StatefulWidget {
   const AddGroupMember({
     super.key,
   });
+
+  @override
+  State<AddGroupMember> createState() => _AddGroupMemberState();
+}
+
+class _AddGroupMemberState extends State<AddGroupMember> {
+  String? email;
 
   @override
   Widget build(BuildContext context) {
@@ -87,22 +124,22 @@ class AddGroupMember extends StatelessWidget {
                 const SizedBox(
                   height: 5,
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: TextField(
                     decoration: InputDecoration(
-                      labelText: "이메일",
-                      focusedBorder: OutlineInputBorder(
+                      labelText: email,
+                      focusedBorder: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(5.0)),
                         borderSide:
                             BorderSide(width: 1, color: Color(0XFFF6766E)),
                       ),
-                      enabledBorder: OutlineInputBorder(
+                      enabledBorder: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(5.0)),
                         borderSide:
                             BorderSide(width: 1, color: Color(0XFFF6766E)),
                       ),
-                      contentPadding: EdgeInsets.symmetric(
+                      contentPadding: const EdgeInsets.symmetric(
                         horizontal: 10,
                       ),
                       floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -119,6 +156,7 @@ class AddGroupMember extends StatelessWidget {
                           Expanded(
                             child: ElevatedButton(
                               onPressed: () {
+                                // 추가 요청 보내기
                                 Navigator.of(context).pop();
                                 showDialog(
                                   context: context,
@@ -180,13 +218,6 @@ class AddGroupMember extends StatelessWidget {
                       ),
                     ],
                   ),
-
-                  // SimpleDialogOption(
-                  //   onPressed: () {
-                  //     Navigator.of(context).pop(); // 모달 닫기
-                  //   },
-                  //   child: const Text('닫기'),
-                  // ),
                 ),
               ],
             );

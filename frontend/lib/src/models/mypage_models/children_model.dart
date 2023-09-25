@@ -1,6 +1,7 @@
 class ChildrenModel {
   final int childrenId, gender;
-  final String name, birthday;
+  final String name;
+  final DateTime birthday;
   final String? childrenImage;
 
   ChildrenModel(
@@ -14,6 +15,6 @@ class ChildrenModel {
       : childrenId = json['childrenId'],
         name = json['name'],
         gender = json['gender'],
-        birthday = json['birthday'],
+        birthday = DateTime.parse(json['birthday']),
         childrenImage = json['childrenImage'] ?? 'no image';
 }

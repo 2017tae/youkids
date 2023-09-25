@@ -5,7 +5,6 @@ import 'package:youkids/src/screens/mypage/children_update_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 
 class ChildrenScreen extends StatelessWidget {
-  // initState로 애기 정보를 받아오기
   final ChildrenModel children;
   const ChildrenScreen({super.key, required this.children});
 
@@ -100,7 +99,7 @@ class ChildrenScreen extends StatelessWidget {
                                   border: Border.all(
                                       color: const Color(0XFFF6766E)),
                                   borderRadius: BorderRadius.circular(5)),
-                              child: const Text("은우"),
+                              child: Text(children.name),
                             )
                           ],
                         )),
@@ -128,7 +127,8 @@ class ChildrenScreen extends StatelessWidget {
                                   border: Border.all(
                                       color: const Color(0XFFF6766E)),
                                   borderRadius: BorderRadius.circular(5)),
-                              child: const Text("1994.08.26"),
+                              child: Text(
+                                  '${children.birthday.year}.${children.birthday.month}.${children.birthday.day}'),
                             )
                           ],
                         )),
@@ -152,7 +152,7 @@ class ChildrenScreen extends StatelessWidget {
                                   border: Border.all(
                                       color: const Color(0XFFF6766E)),
                                   borderRadius: BorderRadius.circular(5)),
-                              child: const Text("남"),
+                              child: Text(children.gender == 0 ? '남' : '여'),
                             )
                           ],
                         )),

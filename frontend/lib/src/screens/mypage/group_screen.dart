@@ -1,24 +1,198 @@
-import 'package:flutter/material.dart';
-import 'package:youkids/src/widgets/mypage_widgets/groupmember_widget.dart';
+import 'dart:convert';
 
-class GroupScreen extends StatelessWidget {
-  final String groupName;
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:youkids/src/models/mypage_models/group_model.dart';
+import 'package:youkids/src/screens/mypage/mypage_screen.dart';
+import 'package:youkids/src/widgets/mypage_widgets/groupmember_widget.dart';
+import 'package:http/http.dart' as http;
+
+class GroupScreen extends StatefulWidget {
+  final GroupModel group;
 
   const GroupScreen({
     super.key,
-    required this.groupName,
+    required this.group,
   });
+
+  @override
+  State<GroupScreen> createState() => _GroupScreenState();
+}
+
+class _GroupScreenState extends State<GroupScreen> {
+  String? userId;
+  String? newName;
+  String uri = 'http://10.0.2.2:8080';
+  String groupName = ' ';
+
+  Future<void> getUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userId = prefs.getString('userId');
+      newName = widget.group.groupName;
+      if (userId == widget.group.groupId) {
+        groupName = '${widget.group.groupName}(내 그룹)';
+      } else {
+        groupName = widget.group.groupName;
+      }
+    });
+  }
+
+  Future<bool> updateGroup() async {
+    try {
+      if (newName == null) {
+        print('there is null');
+        return false;
+      } else {
+        print(newName);
+        final response = await http.put(Uri.parse('$uri/group'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'groupId': widget.group.groupId,
+              'userId': userId,
+              'groupName': newName
+            }));
+        print(response.statusCode);
+        if (response.statusCode == 200) {
+          print('success');
+          return true;
+        } else {
+          print('fail ${response.statusCode}');
+          return false;
+        }
+      }
+    } catch (err) {
+      print('error $err');
+      return false;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserId();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          groupName,
-          style: const TextStyle(
-            fontSize: 22,
-            color: Colors.black,
-            fontWeight: FontWeight.w500,
+        title: GestureDetector(
+          onTap: () {
+            // 그룹 이름 바꾸는 모달 창 띄우기
+            print('change name');
+            showDialog(
+              context: context,
+              builder: (context) {
+                return SimpleDialog(
+                    title: const Text(
+                      '그룹 이름을 입력하세요',
+                      textAlign: TextAlign.center,
+                    ),
+                    children: [
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: TextField(
+                            onChanged: (value) {
+                              setState(() {
+                                newName = value;
+                              });
+                            },
+                            decoration: InputDecoration(
+                              labelText: newName,
+                              focusedBorder: const OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5.0)),
+                                borderSide: BorderSide(
+                                    width: 1, color: Color(0XFFF6766E)),
+                              ),
+                              enabledBorder: const OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5.0)),
+                                borderSide: BorderSide(
+                                    width: 1, color: Color(0XFFF6766E)),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                              ),
+                              floatingLabelBehavior:
+                                  FloatingLabelBehavior.never,
+                            )),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                    child: ElevatedButton(
+                                  onPressed: () {
+                                    // put요청 보내기
+                                    updateGroup().then((result) {
+                                      Navigator.of(context).pop();
+                                      if (result) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return const SuccessDialog();
+                                          },
+                                        );
+                                      } else {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return const FailDialog();
+                                          },
+                                        );
+                                      }
+                                    });
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0XFFF6766E),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
+                                      padding: const EdgeInsets.all(2)),
+                                  child: const Text(
+                                    "이름 변경하기",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                )),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text("닫기"),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      )
+                    ]);
+              },
+            );
+          },
+          child: Text(
+            groupName,
+            style: const TextStyle(
+              fontSize: 22,
+              color: Colors.black,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
         backgroundColor: Colors.white,
@@ -26,39 +200,40 @@ class GroupScreen extends StatelessWidget {
           color: Colors.black,
         ),
         actions: [
-          // 근데 내가 내 그룹에 있는데 탈퇴를 띄우는게 맞는건가
-          ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0XFFF6766E),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5)),
-                  padding: const EdgeInsets.all(2)),
-              child: const Text(
-                "탈퇴",
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              )),
+          userId != widget.group.groupId
+              ? ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0XFFF6766E),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5)),
+                      padding: const EdgeInsets.all(2)),
+                  child: const Text(
+                    "탈퇴",
+                    style: TextStyle(fontSize: 20, color: Colors.white),
+                  ))
+              : Container(),
           const SizedBox(
             width: 20,
           ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        scrollDirection: Axis.vertical,
         child: Column(children: [
-          const GroupMember(
-            memberName: "은우 아빠",
-            memberDesc:
-                "은우 아빠은우 아빠은우 아빠은우 아빠은우 아빠은우 아빠은우 아빠은우 아빠은우 아빠은우 아빠은우 아빠은우 아빠은우 아빠은우 아빠은우 아빠은우 아빠은우 아빠은우 아빠은우 아빠",
+          ListView.builder(
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            itemCount: widget.group.groupMember.length,
+            itemBuilder: (context, index) {
+              if (widget.group.groupMember[index].userId != userId) {
+                return GroupMember(
+                    member: widget.group.groupMember[index],
+                    leader: userId == widget.group.groupId);
+              }
+              return Container();
+            },
           ),
-          const GroupMember(memberName: "은우 삼촌"),
-          const GroupMember(
-            memberName: "은우 이모",
-            memberDesc: "은우 이모입니다.",
-          ),
-          const GroupMember(memberName: "은우 할아버지"),
-          const GroupMember(memberName: "은우 할머니"),
-          // 내가 그룹짱일 경우에만
           GestureDetector(
             onTap: () {
               showDialog(
@@ -200,6 +375,80 @@ class GroupScreen extends StatelessWidget {
           )
         ]),
       ),
+    );
+  }
+}
+
+class SuccessDialog extends StatelessWidget {
+  const SuccessDialog({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+      title: const Text(
+        "그룹 이름을 변경했습니다",
+        textAlign: TextAlign.center,
+      ),
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const MyPageScreen(),
+                    ),
+                  );
+                },
+                child: const Text(
+                  "확인",
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            )
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class FailDialog extends StatelessWidget {
+  const FailDialog({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+      title: const Text(
+        "그룹명 변경에 실패했습니다.",
+        textAlign: TextAlign.center,
+      ),
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text(
+                  "확인",
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            )
+          ],
+        ),
+      ],
     );
   }
 }

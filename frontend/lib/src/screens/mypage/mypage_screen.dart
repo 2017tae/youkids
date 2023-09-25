@@ -33,7 +33,6 @@ class _MyPageScreenState extends State<MyPageScreen> {
   List<ChildrenModel> children = [];
   List<GroupModel> group = [];
 
-  // email을 UUID로 바꿔서 불러오기
   Future<String?> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('userId');

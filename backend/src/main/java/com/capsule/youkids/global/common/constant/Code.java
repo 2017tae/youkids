@@ -33,9 +33,12 @@ public enum Code {
     PLACE_REVIEW_NOT_FOUND(false, 1026, "해당 리뷰를 찾을 수 없습니다."),
     PLACE_REVIEW_DELETE_FAILED(false, 1027, "리뷰 삭제 실패"),
     PLACE_REVIEW_IMAGE_DELETE_FAILED(false, 1028, "리뷰 이미지 삭제 실패"),
-    PlACE_DIFFERENT_USER(false, 1029, "리뷰 작성자가 아닙니다.");
+    PlACE_DIFFERENT_USER(false, 1029, "리뷰 작성자가 아닙니다."),
 
     // (1031 ~ 1040)
+
+    // (1041 ~ 1050)
+    FESTIVAL_EMPTY(false, 1041, "추천하는 공연 정보가 없습니다.");
 
 
     private final boolean isSuccess;

@@ -1,6 +1,6 @@
 package com.capsule.youkids.place.dto;
 
-import lombok.Builder;
+import com.capsule.youkids.place.entity.ReviewImage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,10 +12,9 @@ public class ReviewImageInfoDto {
     private String imageUrl;
     private int reviewId;
 
-    @Builder
-    public ReviewImageInfoDto(int reviewImageId, String imageUrl, int reviewId) {
-        this.reviewImageId = reviewImageId;
-        this.imageUrl = imageUrl;
-        this.reviewId = reviewId;
+    public ReviewImageInfoDto(ReviewImage reviewImage) {
+        this.reviewImageId = reviewImage.getReviewImageId();
+        this.imageUrl = reviewImage.getImageUrl();
+        this.reviewId = reviewImage.getReview().getReviewId();
     }
 }

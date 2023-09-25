@@ -2,7 +2,7 @@ package com.capsule.youkids.place.entity;
 
 import com.capsule.youkids.global.time.BaseTimeEntity;
 import lombok.*;
-
+import org.hibernate.annotations.Index;
 import javax.persistence.*;
 import java.util.UUID;
 
@@ -17,6 +17,7 @@ public class Bookmark extends BaseTimeEntity {
     private int bookmarkId;
 
     @Column(columnDefinition = "BINARY(16)")
+    @Index(name = "idx_user_id")
     private UUID userId;
 
     @Column

@@ -3,7 +3,6 @@ package com.capsule.youkids.place.entity;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.*;
-
 import javax.persistence.*;
 
 @Entity

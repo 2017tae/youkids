@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReviewUpdateRequestDto {
     private int reviewId;
+    private UUID userId;
     private double score;
     private String description;
     private List<Integer> deletedImageIds;
@@ -20,6 +21,7 @@ public class ReviewUpdateRequestDto {
         this.reviewId = reviewId;
         this.score = score;
         this.description = description;
+        this.userId = userId;
         this.deletedImageIds = deletedImageIds;
     }
 }

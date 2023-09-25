@@ -3,7 +3,6 @@ package com.capsule.youkids.place.entity;
 import com.capsule.youkids.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -57,5 +56,5 @@ public class Review {
     public void UpdateReview(double score, String description) {
         this.score = score;
         this.description = description;
-    }
+    }   
 }

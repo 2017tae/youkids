@@ -314,8 +314,8 @@ class _CourseScreenState extends State<CourseScreen> {
                 toggleButtonText();
               },
               style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.white,
+                foregroundColor: Color(0xFFF6766E),
+                backgroundColor: Color(0xFFF6766E),
                 elevation: 2.0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50.0),
@@ -328,7 +328,7 @@ class _CourseScreenState extends State<CourseScreen> {
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 13,
-                  color: Colors.black,
+                  color: Colors.white,
                 ),
               ),
             ),

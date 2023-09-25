@@ -273,7 +273,7 @@ public class CourseServiceImpl implements CourseService {
         User user = getLeader(userId);
 
         // 리더의 유저 정보와 게시글의 유저 정보 일치 확인
-        if (user == courseUser) {
+        if (user.equals(courseUser)) {
             return true;
         } else {
             return false;

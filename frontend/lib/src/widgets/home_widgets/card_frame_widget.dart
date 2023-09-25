@@ -9,16 +9,17 @@ class CardFrame21Widget extends StatelessWidget {
   String getFirstTwoWords(String text) {
     List<String> words = text.split(' ');
     if (words.length >= 2) {
-      return words[0] + ' ' + words[1];
+      return '${words[0]} ${words[1]}';
     } else {
-      return text;  // 단어가 2개 미만이면 원래 문자열 반환
+      return text; // 단어가 2개 미만이면 원래 문자열 반환
     }
   }
 
   const CardFrame21Widget({
+    super.key,
     required this.imageUrl,
     required this.name,
-    required this.address
+    required this.address,
   });
   @override
   Widget build(BuildContext context) {
@@ -61,7 +62,7 @@ class CardFrame21Widget extends StatelessWidget {
             children: [
               Text(
                 name,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -74,13 +75,13 @@ class CardFrame21Widget extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 1),
+              const SizedBox(height: 1),
               const SizedBox(
                 width: 15,
-              ),// 제목과 주소 사이 간격
+              ), // 제목과 주소 사이 간격
               Text(
                 getFirstTwoWords(address),
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                   shadows: [
@@ -108,17 +109,17 @@ class CardFrame11Widget extends StatelessWidget {
   String getFirstTwoWords(String text) {
     List<String> words = text.split(' ');
     if (words.length >= 2) {
-      return words[0] + ' ' + words[1];
+      return '${words[0]} ${words[1]}';
     } else {
-      return text;  // 단어가 2개 미만이면 원래 문자열 반환
+      return text; // 단어가 2개 미만이면 원래 문자열 반환
     }
   }
 
-  const CardFrame11Widget({
-    required this.imageUrl,
-    required this.name,
-    required this.address
-  });
+  const CardFrame11Widget(
+      {super.key,
+      required this.imageUrl,
+      required this.name,
+      required this.address});
 
   @override
   Widget build(BuildContext context) {
@@ -128,13 +129,12 @@ class CardFrame11Widget extends StatelessWidget {
           height: MediaQuery.of(context).size.width * 0.44,
           width: MediaQuery.of(context).size.width * 0.44,
           decoration: BoxDecoration(
-            color: const Color(0xffF5EEEC),
-            borderRadius: BorderRadius.circular(10),
+              color: const Color(0xffF5EEEC),
+              borderRadius: BorderRadius.circular(10),
               image: DecorationImage(
                 image: NetworkImage(imageUrl),
                 fit: BoxFit.cover,
-              )
-          ),
+              )),
         ),
         Positioned(
           top: 0,
@@ -159,7 +159,7 @@ class CardFrame11Widget extends StatelessWidget {
             children: [
               Text(
                 name,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -172,10 +172,10 @@ class CardFrame11Widget extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 1), // 제목과 주소 사이 간격
+              const SizedBox(height: 1), // 제목과 주소 사이 간격
               Text(
                 getFirstTwoWords(address),
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 13,
                   shadows: [

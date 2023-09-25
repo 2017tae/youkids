@@ -46,7 +46,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
     if (response.statusCode == 200) {
       var jsonString = utf8.decode(response.bodyBytes);
       Map<String, dynamic> decodedJson = jsonDecode(jsonString);
-      Place place = Place.fromJson(decodedJson['place']);
+      Place place = Place.fromJson(decodedJson['result']['place']);
       print(decodedJson);
       setState(() {
         _place = place;

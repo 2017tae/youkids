@@ -1,5 +1,8 @@
 package com.capsule.youkids.place.controller;
 
+import com.capsule.youkids.global.common.constant.Code;
+import com.capsule.youkids.global.common.exception.RestApiException;
+import com.capsule.youkids.global.common.response.BaseResponse;
 import com.capsule.youkids.place.dto.BookmarkListResponseDto;
 import com.capsule.youkids.place.dto.BookmarkRequestDto;
 import com.capsule.youkids.place.dto.DetailPlaceResponseDto;
@@ -33,88 +36,72 @@ public class PlaceController {
 
     // 장소 상세보기
     @GetMapping("/{userId}/{placeId}")
-    public ResponseEntity<?> viewDetailPlace(@PathVariable UUID userId, @PathVariable int placeId) {
-        DetailPlaceResponseDto response = placeService.viewPlace(userId, placeId);
-
-        if (response == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.OK);
+    public BaseResponse<?> viewDetailPlace(@PathVariable UUID userId, @PathVariable int placeId) {
+        try {
+            return BaseResponse.success(Code.SUCCESS, placeService.viewPlace(userId, placeId));
+        } catch (RestApiException e) {
+            return BaseResponse.error(e.getErrorCode());
         }
     }
 
     // 찜하기 / 취소하기
     @PostMapping("/bookmark")
-    public ResponseEntity<?> doBookmark(@RequestBody BookmarkRequestDto bookmarkRequestDto) {
-        String result = placeService.doBookmark(bookmarkRequestDto);
-        if (result.equals("success")) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public BaseResponse<?> doBookmark(@RequestBody BookmarkRequestDto bookmarkRequestDto) {
+        try {
+            placeService.doBookmark(bookmarkRequestDto);
+            return BaseResponse.success(Code.SUCCESS);
+        } catch (RestApiException e) {
+            return BaseResponse.error(e.getErrorCode());
         }
     }
 
     // 찜한 장소 리스트 조회하기
     @GetMapping("/bookmark/{userId}")
-    public ResponseEntity<?> getBookmarkList(@PathVariable UUID userId) {
-        BookmarkListResponseDto response = placeService.getBookmarkList(userId);
-        if (response == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } else {
-            return new ResponseEntity<BookmarkListResponseDto>(response, HttpStatus.OK);
+    public BaseResponse<?> getBookmarkList(@PathVariable UUID userId) {
+        try {
+            return BaseResponse.success(Code.SUCCESS, placeService.getBookmarkList(userId));
+        } catch (RestApiException e) {
+            return BaseResponse.error(e.getErrorCode());
         }
     }
 
     // 리뷰 작성하기
     @PostMapping("/review")
-    public ResponseEntity<?> writeReview(@RequestPart ReviewWriteRequestDto reviewWriteRequestDto, @RequestPart(required = false)
+    public BaseResponse<?> writeReview(@RequestPart ReviewWriteRequestDto reviewWriteRequestDto, @RequestPart(required = false)
     List<MultipartFile> files) {
-        String result = null;
         try {
-            result = placeService.writeReview(reviewWriteRequestDto, files);
-        } catch (IOException e) {
-            return new ResponseEntity<>("리뷰 작성 중 에러 발생", HttpStatus.INTERNAL_SERVER_ERROR);
+            placeService.writeReview(reviewWriteRequestDto, files);
+            return BaseResponse.success(Code.SUCCESS);
+        } catch (RestApiException e) {
+            return BaseResponse.error(e.getErrorCode());
         }
-        if(result.equals("success"))
-            return new ResponseEntity<>("리뷰 작성 성공", HttpStatus.CREATED);
-        else if(result.equals("empty"))
-            return new ResponseEntity<>("일치하는 장소 또는 유저 정보가 없습니다.", HttpStatus.BAD_REQUEST);
-        else
-            return new ResponseEntity<>("리뷰 작성 중 에러 발생", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     // 리뷰 삭제하기
     @DeleteMapping("/review")
-    public ResponseEntity<?> deleteReview(@RequestBody ReviewDeleteRequestDto reviewDeleteRequestDto) {
-        String result = placeService.deleteReview(reviewDeleteRequestDto);
-        if(result.equals("bad request"))
-            return new ResponseEntity<>("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
-        else if(result.equals("error"))
-            return new ResponseEntity<>("삭제 과정 중 에러 발생", HttpStatus.INTERNAL_SERVER_ERROR);
-        else
-            return new ResponseEntity<>("삭제 성공", HttpStatus.OK);
+    public BaseResponse<?> deleteReview(@RequestBody ReviewDeleteRequestDto reviewDeleteRequestDto) {
+        try {
+            placeService.deleteReview(reviewDeleteRequestDto);
+            return BaseResponse.success(Code.SUCCESS);
+        } catch (RestApiException e) {
+            return BaseResponse.error(e.getErrorCode());
+        }
     }
 
     // 리뷰 수정하기
     @PutMapping("/review")
-    public ResponseEntity<?> updateReview(@RequestPart ReviewUpdateRequestDto reviewUpdateRequestDto, @RequestPart(required = false)
+    public BaseResponse<?> updateReview(@RequestPart ReviewUpdateRequestDto reviewUpdateRequestDto, @RequestPart(required = false)
     List<MultipartFile> files) {
-        String result = null;
         try {
-            result = placeService.updateReview(reviewUpdateRequestDto, files);
-        } catch (IOException e) {
-            return new ResponseEntity<>("리뷰 수정 중 에러 발생", HttpStatus.INTERNAL_SERVER_ERROR);
+            placeService.updateReview(reviewUpdateRequestDto, files);
+            return BaseResponse.success(Code.SUCCESS);
+        } catch (RestApiException e) {
+            return BaseResponse.error(e.getErrorCode());
         }
-        if(result.equals("success"))
-            return new ResponseEntity<>("리뷰 수정 성공", HttpStatus.CREATED);
-        else if(result.equals("error"))
-            return new ResponseEntity<>("리뷰 수정 중 에러 발생", HttpStatus.INTERNAL_SERVER_ERROR);
-        else
-            return new ResponseEntity<>("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/recomm")
-    public ResponseEntity<?> recommPlaces() {
-        return new ResponseEntity<>(placeService.recommPlace(), HttpStatus.OK);
+    public BaseResponse<?> recommPlaces() {
+        return BaseResponse.success(Code.SUCCESS, placeService.recommPlace());
     }
 }

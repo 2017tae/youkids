@@ -25,6 +25,15 @@ public enum Code {
 
     // 장소 에러 (1021 ~ 1030)
     PLACE_NOT_FOUND(false, 1021, "해당 장소를 찾을 수 없습니다."),
+    PLACE_BOOKMARK_FAILED(false, 1022, "Bookmark 삽입 또는 삭제 실패."),
+    PLACE_BOOKMARK_MONGO_FAILED(false, 1023, "Bookmark Mongo 저장 실패"),
+    PLACE_BOOKMARK_NOT_FOUND(false, 1023, "찜한 장소가 없습니다."),
+    PLACE_BOOKMARK_FULL(false, 1024, "찜 리스트가 최대치입니다."),
+    S3_SAVE_ERROR(false, 1025, "S3 저장 실패"),
+    PLACE_REVIEW_NOT_FOUND(false, 1026, "해당 리뷰를 찾을 수 없습니다."),
+    PLACE_REVIEW_DELETE_FAILED(false, 1027, "리뷰 삭제 실패"),
+    PLACE_REVIEW_IMAGE_DELETE_FAILED(false, 1028, "리뷰 이미지 삭제 실패"),
+    PlACE_DIFFERENT_USER(false, 1029, "리뷰 작성자가 아닙니다."),
 
     // 캡슐 에러 (1031 ~ 1040)
     CAPSULE_NOT_FOUND(false, 1031, "캡슐을 찾을 수 없습니다."),

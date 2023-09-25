@@ -7,8 +7,6 @@ import com.capsule.youkids.place.dto.PlaceRecommDto;
 import com.capsule.youkids.place.dto.ReviewDeleteRequestDto;
 import com.capsule.youkids.place.dto.ReviewUpdateRequestDto;
 import com.capsule.youkids.place.dto.ReviewWriteRequestDto;
-import com.capsule.youkids.place.entity.Review;
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,21 +17,19 @@ public interface PlaceService {
     public DetailPlaceResponseDto viewPlace(UUID userId, int placeId);
 
     // 찜 하기 / 취소하기
-    public String doBookmark(BookmarkRequestDto bookmarkRequestDto);
+    public void doBookmark(BookmarkRequestDto bookmarkRequestDto);
 
     // 유저의 찜 리스트 조회하기
     public BookmarkListResponseDto getBookmarkList(UUID userId);
 
     // 리뷰 작성하기
-    public String writeReview(ReviewWriteRequestDto reviewWriteRequestDto, List<MultipartFile> files)
-            throws IOException;
+    public void writeReview(ReviewWriteRequestDto reviewWriteRequestDto, List<MultipartFile> files);
 
     // 리뷰 삭제하기
-    public String deleteReview(ReviewDeleteRequestDto reviewDeleteRequestDto);
+    public void deleteReview(ReviewDeleteRequestDto reviewDeleteRequestDto);
 
     // 리뷰 수정하기
-    public String updateReview(ReviewUpdateRequestDto reviewUpdateRequestDto, List<MultipartFile> files)
-            throws IOException;
+    public void updateReview(ReviewUpdateRequestDto reviewUpdateRequestDto, List<MultipartFile> files);
 
     // 추천 장소 뿌리기 (일단 랜덤으로 100개)
     public PlaceRecommDto recommPlace();

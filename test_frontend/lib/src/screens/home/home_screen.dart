@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/screens/home/indoor_recom_list_screen.dart';
+import 'package:youkids/src/screens/home/rank_recom_list_screen.dart';
 import 'package:youkids/src/screens/home/review_recom_list_screen.dart';
 import 'package:youkids/src/screens/home/week_recom_list_screen.dart';
 import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
@@ -368,7 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
               setHomeMenu(
                 context,
                 '저번 주 리뷰 많은 장소',
-                const ReviewRecomlistScreen(),
+                const RankRecomlistScreen(),
               ),
               Column(
                 children: [
@@ -487,7 +488,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ShopMoreScreen()),
+                MaterialPageRoute(builder: (context) => routingPage),
               );
             },
             child: const Text(

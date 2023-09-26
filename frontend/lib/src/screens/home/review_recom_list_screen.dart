@@ -20,6 +20,7 @@ class ReviewRecomlistScreen extends StatelessWidget {
     ];
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         centerTitle: true,
         title: const Text(
           '저번 주 리뷰 많은 장소',

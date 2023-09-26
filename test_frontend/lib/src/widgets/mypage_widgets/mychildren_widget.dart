@@ -125,12 +125,20 @@ class Child extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            child.childrenImage != 'no image'
-                ? Image.network(
-                    child.childrenImage!,
-                    height: 100,
+            child.childrenImage != null
+                ? Container(
                     width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black12),
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: NetworkImage(child.childrenImage!),
+                          fit: BoxFit.cover,
+                          alignment: Alignment.center,
+                        )),
                   )
+
                 // 없을때
                 : Container(
                     width: 100,

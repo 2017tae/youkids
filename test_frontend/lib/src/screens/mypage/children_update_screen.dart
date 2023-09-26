@@ -19,7 +19,6 @@ class ChildrenUpdateScreen extends StatefulWidget {
 }
 
 class _ChildrenUpdateScreenState extends State<ChildrenUpdateScreen> {
-  // 애기 id로 넘어오면 initState해서 애기 정보를 저장하기
   int? childrenId;
   String? parentId;
   String? newName;
@@ -28,7 +27,7 @@ class _ChildrenUpdateScreenState extends State<ChildrenUpdateScreen> {
   String? originalImage;
   File? newImage;
 
-  String uri = 'https://j9a604.p.ssafy.io/api/';
+  String uri = 'https://j9a604.p.ssafy.io/api';
 
   Future<void> selectDate(BuildContext context) async {
     final picked = await showDatePicker(

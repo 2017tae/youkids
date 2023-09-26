@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/screens/mypage/mypage_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
@@ -22,7 +23,7 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
   String gender = '남';
   DateTime? birthday;
   File? childrenImage;
-  String uri = 'https://j9a604.p.ssafy.io/api/';
+  String uri = 'https://j9a604.p.ssafy.io/api';
 
   bool dateChanged = false;
   Future<void> selectDate(BuildContext context) async {
@@ -66,28 +67,49 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
     String? parentId = await getUserId();
     try {
       if (parentId == null || name == '' || birthday == null) {
-        print('there is null');
         return false;
       } else {
-        final response = await http.post(Uri.parse('$uri/children'),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({
-              'parentId': parentId,
-              'name': name,
-              'gender': gender == '남' ? 0 : 1,
-              'birthday': DateFormat('yyyy-MM-dd').format(birthday!),
-              'childrenImage': childrenImage
-            }));
+        final request =
+            http.MultipartRequest('POST', Uri.parse('$uri/children'));
+        // 애기 사진이 있으면 넣는다
+        if (childrenImage != null) {
+          request.files.add(await http.MultipartFile.fromPath(
+            'file',
+            childrenImage!.path,
+            // contentType: MediaType('image', 'jpeg'),
+          ));
+        }
+        request.fields['childrenRegistRequest'] = jsonEncode({
+          'parentId': parentId,
+          'name': name,
+          'gender': gender == '남' ? 0 : 1,
+          'birthday': DateFormat('yyyy-MM-dd').format(birthday!),
+        });
+        request.headers["Content-Type"] = "application/json";
+
+        // request.fields['parentId'] = parentId;
+        // request.fields['name'] = name;
+        // request.fields['gender'] = gender == '남' ? '0' : '1';
+        // request.fields['birthday'] = DateFormat('yyyy-MM-dd').format(birthday!);
+
+        // final response = await http.post(Uri.parse('$uri/children'),
+        //     headers: {'Content-Type': 'application/json'},
+        //     body: jsonEncode({
+        //       'parentId': parentId,
+        //       'name': name,
+        //       'gender': gender == '남' ? 0 : 1,
+        //       'birthday': DateFormat('yyyy-MM-dd').format(birthday!),
+        //       'childrenImage': childrenImage
+        //     }));
+        final response = await request.send();
         if (response.statusCode == 200) {
-          print('success');
           return true;
         } else {
-          print('fail ${response.statusCode}');
+          print(response.statusCode);
           return false;
         }
       }
     } catch (err) {
-      print('error $err');
       return false;
     }
   }

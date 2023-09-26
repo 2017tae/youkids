@@ -12,6 +12,8 @@ public class GetMyInfoDto {
 
     private String nickname;
 
+    private boolean leader;
+
     private String profileImage;
 
     private String description;
@@ -19,6 +21,7 @@ public class GetMyInfoDto {
     public GetMyInfoDto(User user) {
         this.email = user.getEmail();
         this.nickname = user.getNickname();
+        this.leader = user.isLeader();
         this.profileImage = user.getProfileImage();
         this.description = user.getDescription();
     }

@@ -16,5 +16,4 @@ public class ChildrenRegistRequest {
     private String name;
     private int gender;
     private LocalDate birthday;
-    private String childrenImage;
 }

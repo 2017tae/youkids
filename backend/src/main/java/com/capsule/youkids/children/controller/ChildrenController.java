@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @CrossOrigin
 @RestController
@@ -51,16 +53,16 @@ public class ChildrenController {
         return new ResponseEntity<>(child, HttpStatus.OK);
     }
 
-    @PostMapping("")
+    @PostMapping()
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "아이 등록 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 부모"),
             @ApiResponse(responseCode = "400", description = "알 수 없음"),
     })
     // 애기 등록하기
-    public ResponseEntity<?> registChildren(@RequestBody ChildrenRegistRequest childrenRegistRequest)
+    public ResponseEntity<?> registChildren(@RequestPart ChildrenRegistRequest childrenRegistRequest, @RequestPart(required = false) MultipartFile file)
             throws Exception {
-        childrenService.registChildren(childrenRegistRequest);
+        childrenService.registChildren(childrenRegistRequest, file);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -71,9 +73,9 @@ public class ChildrenController {
             @ApiResponse(responseCode = "400", description = "알 수 없음"),
     })
     // 애기 정보 수정하기
-    public ResponseEntity<?> updateChildren(@RequestBody ChildrenRequest childrenRequest)
+    public ResponseEntity<?> updateChildren(@RequestPart ChildrenRequest childrenRequest, @RequestPart(required = false) MultipartFile file)
             throws Exception {
-        childrenService.updateChildren(childrenRequest);
+        childrenService.updateChildren(childrenRequest, file);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

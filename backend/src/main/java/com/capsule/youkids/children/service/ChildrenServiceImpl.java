@@ -15,7 +15,9 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import com.capsule.youkids.global.s3.service.AwsS3Service;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class ChildrenServiceImpl implements ChildrenService {
 
     private final UserRepository userRepository;
     private final ChildrenRepository childrenRepository;
+    private final AwsS3Service awsS3Service;
 
     @Override
     public ChildrenResponse findChildren(long childrenId) throws Exception {
@@ -85,20 +88,30 @@ public class ChildrenServiceImpl implements ChildrenService {
     }
 
     @Override
-    public void registChildren(ChildrenRegistRequest childrenRegistRequest) throws Exception {
+    public void registChildren(ChildrenRegistRequest childrenRegistRequest, MultipartFile file) throws Exception {
         // 부모 찾기
         Optional<User> user = userRepository.findById(childrenRegistRequest.getParentId());
         // 부모가 있으면
         if (user.isPresent()) {
             try {
-                // 애기를 만들어서 repository에 등록하세요
-                Children children = Children.builder().
-                        parent(user.get()).
-                        name(childrenRegistRequest.getName()).
-                        gender(childrenRegistRequest.getGender()).
-                        birthday(childrenRegistRequest.getBirthday()).
-                        childrenImage(childrenRegistRequest.getChildrenImage()).
-                        build();
+                Children children;
+                if (file != null) {
+                    children = Children.builder().
+                            parent(user.get()).
+                            name(childrenRegistRequest.getName()).
+                            gender(childrenRegistRequest.getGender()).
+                            birthday(childrenRegistRequest.getBirthday()).
+                            childrenImage(awsS3Service.uploadFile(file)).
+                            build();
+
+                } else {
+                    children = Children.builder().
+                            parent(user.get()).
+                            name(childrenRegistRequest.getName()).
+                            gender(childrenRegistRequest.getGender()).
+                            birthday(childrenRegistRequest.getBirthday()).
+                            build();
+                }
                 childrenRepository.save(children);
                 // 등록된 애기에서 애기 아이디 받는 법을 모름;
             } catch (Exception e) {
@@ -112,12 +125,18 @@ public class ChildrenServiceImpl implements ChildrenService {
     }
 
     @Override
-    public void updateChildren(ChildrenRequest childrenRequest) throws Exception {
+    public void updateChildren(ChildrenRequest childrenRequest, MultipartFile file) throws Exception {
         Optional<Children> children = childrenRepository.findById(childrenRequest.getChildrenId());
         // 애기가 있으면 고치고
         if (children.isPresent()) {
             try {
-                children.get().updateChildren(childrenRequest.getName(), childrenRequest.getGender(), childrenRequest.getBirthday(), childrenRequest.getChildrenImage());
+                // 파일이 들어왔으면 새로운 사진으로 업데이트
+                if (file != null) {
+                    children.get().updateChildren(childrenRequest.getName(), childrenRequest.getGender(), childrenRequest.getBirthday(), awsS3Service.uploadFile(file));
+                // 파일이 없으면 기존 사진 or 사진 삭제
+                } else {
+                    children.get().updateChildren(childrenRequest.getName(), childrenRequest.getGender(), childrenRequest.getBirthday(), childrenRequest.getProfileImage());
+                }
                 childrenRepository.save(children.get());
             } catch (Exception e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "unknown");

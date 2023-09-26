@@ -44,6 +44,17 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
+
+
+  Future<bool> _onBackPressed() async {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => HomeScreen()),
+          (Route<dynamic> route) => false,
+    );
+    return false; // 실제로 화면에서 뒤로 갈 수 없게 설정합니다. 이미 Navigator.pop으로 전 화면으로 돌아갔기 때문입니다.
+  }
+
     removeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('userId');
@@ -147,65 +158,68 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login Page'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start, // 상단에 배치
-          children: [
-            // IconButton(
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(builder: (context) => RegistScreen()),
-            //     );
-            //   },
-            //   icon: const Icon(
-            //     Icons.account_circle_rounded,
-            //     size: 28,
-            //   ),
-            // ),
-            SizedBox(
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height / 3.3),
-            const Text(
-              'YouKids',
-              style: TextStyle(
-                fontSize: 48.0, // 크기를 24로 설정
-              ),
-            ),
-            SizedBox(
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height / 12),
-            _isLoggedIn == false ? GoogleAuthButton(
-              onPressed: _login,
-            ):Container(),
-            _isLoggedIn == true ? MaterialButton(
-        color: Colors.red,
-        child: Text(
-          'Logout',
-          style: TextStyle(color: Colors.white),
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Login Page'),
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
         ),
-        onPressed: () {
-          _logout();
-          removeData();
-          print('Logout button pressed.');
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
-                (Route<dynamic> route) => false,
-          );
-        },
-      ): Container(),
-          ],
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start, // 상단에 배치
+            children: [
+              // IconButton(
+              //   onPressed: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(builder: (context) => RegistScreen()),
+              //     );
+              //   },
+              //   icon: const Icon(
+              //     Icons.account_circle_rounded,
+              //     size: 28,
+              //   ),
+              // ),
+              SizedBox(
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height / 3.3),
+              const Text(
+                'YouKids',
+                style: TextStyle(
+                  fontSize: 48.0, // 크기를 24로 설정
+                ),
+              ),
+              SizedBox(
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height / 12),
+              _isLoggedIn == false ? GoogleAuthButton(
+                onPressed: _login,
+              ):Container(),
+              _isLoggedIn == true ? MaterialButton(
+          color: Colors.red,
+          child: Text(
+            'Logout',
+            style: TextStyle(color: Colors.white),
+          ),
+          onPressed: () {
+            _logout();
+            removeData();
+            print('Logout button pressed.');
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => HomeScreen()),
+                  (Route<dynamic> route) => false,
+            );
+          },
+        ): Container(),
+            ],
+          ),
         ),
       ),
     );

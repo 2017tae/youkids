@@ -15,7 +15,7 @@ void main() async {
   } else {
     print('카카오내비 미설치');
     // 카카오내비 설치 페이지로 이동
-    launchBrowserTab(Uri.parse(NaviApi.webNaviInstall));
+    // launchBrowserTab(Uri.parse(NaviApi.webNaviInstall));
   }
   runApp(const YouKids());
 }

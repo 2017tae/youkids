@@ -10,25 +10,23 @@ import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-
 class LoginScreen extends StatefulWidget {
-
+  const LoginScreen({super.key});
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-
-
 class _LoginScreenState extends State<LoginScreen> {
   bool _isLoggedIn = false;
 
-  GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email'],
-      serverClientId: dotenv.get("login_key"));
+  final GoogleSignIn _googleSignIn =
+      GoogleSignIn(scopes: ['email'], serverClientId: dotenv.get("login_key"));
 
   Future<String?> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('userId'); // Returns 'john_doe' if it exists, otherwise returns null.
+    return prefs.getString(
+        'userId'); // Returns 'john_doe' if it exists, otherwise returns null.
   }
 
   @override
@@ -36,6 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     _checkLoginStatus();
   }
+
   Future<void> _checkLoginStatus() async {
     String? userId = await getUserId();
     print(userId);
@@ -44,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-    removeData() async {
+  removeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('userId');
   }
@@ -56,13 +55,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final idToken = (await _googleSignIn.currentUser!.authentication).idToken;
 
-
       final response = await http.post(
-        Uri.parse('https://j9a604.p.ssafy.io/api/user/verify-token'),
-        headers: {
-          'Authorization': 'Bearer $idToken',
-          'Provider': 'Google'
-        },
+        Uri.parse('http://10.0.2.2:8080/user/verify-token'),
+        headers: {'Authorization': 'Bearer $idToken', 'Provider': 'Google'},
       );
 
       String? token1 = await readToken();
@@ -79,7 +74,9 @@ class _LoginScreenState extends State<LoginScreen> {
           print("new user!");
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => RegistScreen( userId :userResponse.userId )),
+            MaterialPageRoute(
+                builder: (context) =>
+                    RegistScreen(userId: userResponse.userId)),
           );
         } else {
           // 이미 회원가입한 유저
@@ -87,13 +84,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
           String? rawCookie = response.headers['set-cookie'];
           int? index = rawCookie?.indexOf(';');
-          String? token = (index == -1) ? rawCookie : rawCookie?.substring(
-              0, index);
+          String? token =
+              (index == -1) ? rawCookie : rawCookie?.substring(0, index);
 
           print("JWT Token : $token");
 
           saveToken(token!);
-
 
           String? token1 = await readToken();
 
@@ -105,15 +101,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
-                (Route<dynamic> route) => false,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            (Route<dynamic> route) => false,
           );
-
         }
         print('Server verified the token successfully');
       } else {
-
-
         print('Failed to verify the token on server');
       }
 
@@ -129,12 +122,12 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void saveToken(String token) async {
-    final storage = new FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     await storage.write(key: 'jwt_token', value: token);
   }
 
   Future<String?> readToken() async {
-    final storage = new FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     String? token = await storage.read(key: 'jwt_token');
     return token;
   }
@@ -143,7 +136,6 @@ class _LoginScreenState extends State<LoginScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('userId', userId);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -169,48 +161,46 @@ class _LoginScreenState extends State<LoginScreen> {
             //     size: 28,
             //   ),
             // ),
-            SizedBox(
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height / 3.3),
+            SizedBox(height: MediaQuery.of(context).size.height / 3.3),
             const Text(
               'YouKids',
               style: TextStyle(
                 fontSize: 48.0, // 크기를 24로 설정
               ),
             ),
-            SizedBox(
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height / 12),
-            _isLoggedIn == false ? GoogleAuthButton(
-              onPressed: _login,
-            ):Container(),
-            _isLoggedIn == true ? MaterialButton(
-        color: Colors.red,
-        child: Text(
-          'Logout',
-          style: TextStyle(color: Colors.white),
-        ),
-        onPressed: () {
-          _logout();
-          removeData();
-          print('Logout button pressed.');
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
-                (Route<dynamic> route) => false,
-          );
-        },
-      ): Container(),
+            SizedBox(height: MediaQuery.of(context).size.height / 12),
+            _isLoggedIn == false
+                ? GoogleAuthButton(
+                    onPressed: _login,
+                  )
+                : Container(),
+            _isLoggedIn == true
+                ? MaterialButton(
+                    color: Colors.red,
+                    child: const Text(
+                      'Logout',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      _logout();
+                      removeData();
+                      print('Logout button pressed.');
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomeScreen()),
+                        (Route<dynamic> route) => false,
+                      );
+                    },
+                  )
+                : Container(),
           ],
         ),
       ),
     );
   }
 }
+
 class UserResponse {
   final String userId;
   final bool newUser;

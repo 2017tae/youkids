@@ -60,7 +60,7 @@ public class ChildrenController {
             @ApiResponse(responseCode = "400", description = "알 수 없음"),
     })
     // 애기 등록하기
-    public ResponseEntity<?> registChildren(@RequestBody ChildrenRegistRequest childrenRegistRequest, @RequestPart(required = false) MultipartFile file)
+    public ResponseEntity<?> registChildren(@RequestPart ChildrenRegistRequest childrenRegistRequest, @RequestPart(required = false) MultipartFile file)
             throws Exception {
         childrenService.registChildren(childrenRegistRequest, file);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -73,7 +73,7 @@ public class ChildrenController {
             @ApiResponse(responseCode = "400", description = "알 수 없음"),
     })
     // 애기 정보 수정하기
-    public ResponseEntity<?> updateChildren(@RequestBody ChildrenRequest childrenRequest, @RequestPart(required = false) MultipartFile file)
+    public ResponseEntity<?> updateChildren(@RequestPart ChildrenRequest childrenRequest, @RequestPart(required = false) MultipartFile file)
             throws Exception {
         childrenService.updateChildren(childrenRequest, file);
         return new ResponseEntity<>(HttpStatus.OK);

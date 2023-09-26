@@ -10,4 +10,5 @@ public class UserResponse {
     private UUID userId;
     private String nickname;
     private String profileImage;
+    private String description;
 }

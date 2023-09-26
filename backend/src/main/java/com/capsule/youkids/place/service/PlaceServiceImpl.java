@@ -176,7 +176,7 @@ public class PlaceServiceImpl implements PlaceService {
                 bookmarkRepository.save(bookmark);
             } else {
                 // RDB에서 삭제
-                bookmarkRepository.delete(bookmark);
+                bookmarkRepository.deleteByUserIdAndPlaceId(userId, placeId);
             }
         } catch (Exception e) {
             throw new RestApiException(Code.PLACE_BOOKMARK_FAILED);

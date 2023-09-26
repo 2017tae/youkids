@@ -29,6 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List? places;
 
+  List? festivals;
+
   Future? loadDataFuture;
 
   String picture = "";
@@ -67,6 +69,11 @@ class _HomeScreenState extends State<HomeScreen> {
       headers: {'Content-Type': 'application/json'},
     );
 
+    final response2 = await http.get(
+      Uri.parse('https://j9a604.p.ssafy.io/api/festival/recommdiv'),
+      headers: {'Content-Type':'application/json'}
+    );
+
     // 응답을 처리하는 코드 (예: 상태를 업데이트하는 등)를 여기에 추가합니다.
     if (response.statusCode == 200) {
       var jsonString = utf8.decode(response.bodyBytes);
@@ -75,8 +82,22 @@ class _HomeScreenState extends State<HomeScreen> {
         places = decodedJson['result']['places'];
       });
 
-      print(places);
+      // print(places);
     }
+
+    if (response2.statusCode == 200) {
+      var jsonString2 = utf8.decode(response2.bodyBytes);
+      Map<String, dynamic> decodedJson2 = jsonDecode(jsonString2);
+      print(decodedJson2['result']['onGoingFestivals']);
+      setState(() {
+        festivals = decodedJson2['result']['onGoingFestivals'];
+      });
+
+      print(festivals);
+    }else{
+      print("not");
+    }
+
   }
 
   @override
@@ -87,6 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
         // if (snapshot.connectionState == ConnectionState.done) {
         if (places != null) {
           print(places);
+          print(festivals?[0]);
           return _buildMainContent();
         } else {
           return _buildLoadingMainContent();
@@ -416,8 +438,27 @@ class _HomeScreenState extends State<HomeScreen> {
                 '공연 예약',
                 const IndoorRecomlistScreen(),
               ),
-              const ShowCarouselWidget(itemCount: 6, imgUrls: ['imgUrls'])
-            ],
+              ShowCarouselWidget(itemCount: 6, imgUrls: [(festivals?.isNotEmpty ?? false)
+                  ? festivals![0]['poster']
+                  : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
+                  (festivals?.isNotEmpty ?? false)
+                    ? festivals![1]['poster']
+                    : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
+                (festivals?.isNotEmpty ?? false)
+                    ? festivals![2]['poster']
+                    : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
+                (festivals?.isNotEmpty ?? false)
+                    ? festivals![3]['poster']
+                    : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
+                (festivals?.isNotEmpty ?? false)
+                    ? festivals![4]['poster']
+                    : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
+                (festivals?.isNotEmpty ?? false)
+                    ? festivals![5]['poster']
+                    : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
+              ]
+              )
+          ],
           ),
         ),
       ),

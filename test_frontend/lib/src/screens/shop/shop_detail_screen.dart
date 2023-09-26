@@ -98,13 +98,20 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                 itemBuilder: (BuildContext context, int index, int realIndex) {
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(5.0), // BorderRadius 추가
-                    child: Image.network(
+                    child:
+                    // CachedNetworkImage(
+                    //   imageUrl: "https://example.com/path/to/your/image.png",
+                    //   placeholder: (context, url) => CircularProgressIndicator(),
+                    //   errorWidget: (context, url, error) => Icon(Icons.error),
+                    // ),
+                    Image.network(
                       _place!.images[index],
                       fit: BoxFit.cover,
                     ),
                   );
                 },
                 options: CarouselOptions(
+                  height: 300,
                   autoPlay: false,
                   aspectRatio: 1.0,
                   enlargeCenterPage: false,

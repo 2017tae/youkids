@@ -7,6 +7,7 @@ import 'package:youkids/src/screens/home/indoor_recom_list_screen.dart';
 import 'package:youkids/src/screens/home/review_recom_list_screen.dart';
 import 'package:youkids/src/screens/home/week_recom_list_screen.dart';
 import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
+import 'package:youkids/src/screens/shop/shop_more_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:youkids/src/widgets/home_widgets/card_frame_widget.dart';
 import 'package:youkids/src/widgets/home_widgets/child_icon_widget.dart';
@@ -297,7 +298,7 @@ class _HomeScreenState extends State<HomeScreen> {
               setHomeMenu(
                 context,
                 '이번 주 추천 장소',
-                const WeekRecomListScreen(),
+                const ShopMoreScreen(),
               ),
               Column(
                 children: [
@@ -486,9 +487,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => routingPage,
-                ),
+                MaterialPageRoute(builder: (context) => ShopMoreScreen()),
               );
             },
             child: const Text(

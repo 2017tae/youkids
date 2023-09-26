@@ -9,6 +9,7 @@ import 'package:youkids/src/models/mypage_models/group_model.dart';
 import 'package:youkids/src/models/mypage_models/myinfo_model.dart';
 import 'package:youkids/src/models/mypage_models/partner_model.dart';
 import 'package:youkids/src/models/mypage_models/user_model.dart';
+import 'package:youkids/src/screens/login/login_screen.dart';
 import 'package:youkids/src/widgets/mypage_widgets/mychildren_widget.dart';
 import 'package:youkids/src/widgets/mypage_widgets/mygroup_widget.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
@@ -38,66 +39,75 @@ class _MyPageScreenState extends State<MyPageScreen> {
     return prefs.getString('userId');
   }
 
-  Future<void> getMyInfo() async {
+  Future<void> getMyInfo(BuildContext context) async {
     String? id = await getUserId();
-    setState(() {
-      userId = id;
-    });
-    try {
-      final response = await http.get(
-        Uri.parse('$uri/user/mypage/$userId'),
-        headers: {'Content-Type': 'application/json'},
+    if (id == null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginScreen(),
+        ),
       );
-      if (response.statusCode == 200) {
-        var jsonString = utf8.decode(response.bodyBytes);
-        Map<String, dynamic> jsonMap = jsonDecode(jsonString);
-        setState(() {
-          myInfo = MyinfoModel.fromJson(jsonMap['getMyInfoDto']);
-          if (jsonMap['partnerInfoDto'] != null) {
-            partnerInfo = PartnerModel.fromJson(jsonMap['partnerInfoDto']);
-          }
-          isLoading = false;
-        });
-        // 만약에 내가 리더이면 내 아이를 불러오고
-        if (myInfo.leader) {
-          getMyChildren(userId);
-          // 리더가 아니면 파트너의 아이를 불러옴
-        } else {
-          getMyChildren(partnerInfo!.partnerId);
-        }
-
-        // 내가 리더가 아니면
-        if (!myInfo.leader) {
-          String pid = partnerInfo!.partnerId;
-          String pname = partnerInfo!.nickname;
-          // 파트너의 그룹을 가져와서 넣는다
-          final response = await http.get(
-            Uri.parse('$uri/group/member/$pid'),
-            headers: {'Content-Type': 'application/json'},
-          );
-          GroupModel g = GroupModel(
-              groupId: pid,
-              leaderId: pid,
-              groupName: '$pname님의 그룹',
-              groupMember: []);
-          if (response.statusCode == 200) {
-            var jsonString = utf8.decode(response.bodyBytes);
-            List<dynamic> groupMemberList = jsonDecode(jsonString);
-            for (var gm in groupMemberList) {
-              final member = UserModel.fromJson(gm);
-              g.groupMember.add(member);
-            }
-          }
+    } else {
+      setState(() {
+        userId = id;
+      });
+      try {
+        final response = await http.get(
+          Uri.parse('$uri/user/mypage/$userId'),
+          headers: {'Content-Type': 'application/json'},
+        );
+        if (response.statusCode == 200) {
+          var jsonString = utf8.decode(response.bodyBytes);
+          Map<String, dynamic> jsonMap = jsonDecode(jsonString);
           setState(() {
-            group = [g];
+            myInfo = MyinfoModel.fromJson(jsonMap['getMyInfoDto']);
+            if (jsonMap['partnerInfoDto'] != null) {
+              partnerInfo = PartnerModel.fromJson(jsonMap['partnerInfoDto']);
+            }
+            isLoading = false;
           });
+          // 만약에 내가 리더이면 내 아이를 불러오고
+          if (myInfo.leader) {
+            getMyChildren(userId);
+            // 리더가 아니면 파트너의 아이를 불러옴
+          } else {
+            getMyChildren(partnerInfo!.partnerId);
+          }
+
+          // 내가 리더가 아니면
+          if (!myInfo.leader) {
+            String pid = partnerInfo!.partnerId;
+            String pname = partnerInfo!.nickname;
+            // 파트너의 그룹을 가져와서 넣는다
+            final response = await http.get(
+              Uri.parse('$uri/group/member/$pid'),
+              headers: {'Content-Type': 'application/json'},
+            );
+            GroupModel g = GroupModel(
+                groupId: pid,
+                leaderId: pid,
+                groupName: '$pname님의 그룹',
+                groupMember: []);
+            if (response.statusCode == 200) {
+              var jsonString = utf8.decode(response.bodyBytes);
+              List<dynamic> groupMemberList = jsonDecode(jsonString);
+              for (var gm in groupMemberList) {
+                final member = UserModel.fromJson(gm);
+                g.groupMember.add(member);
+              }
+            }
+            setState(() {
+              group = [g];
+            });
+          }
+          getMyGroup(userId);
+        } else {
+          throw Exception('상태 코드 ${response.statusCode}');
         }
-        getMyGroup(userId);
-      } else {
-        throw Exception('상태 코드 ${response.statusCode}');
+      } catch (err) {
+        print('에러 $err');
       }
-    } catch (err) {
-      print('에러 $err');
     }
   }
 
@@ -171,7 +181,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
   void initState() {
     super.initState();
     // setState를 하기 전에 눈으로 훼이크를 줘야함
-    getMyInfo();
+    getMyInfo(context);
   }
 
   @override

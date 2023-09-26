@@ -44,7 +44,7 @@ class _GroupMemberState extends State<GroupMember> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -86,107 +86,112 @@ class _GroupMemberState extends State<GroupMember> {
             width: 10,
           ),
           // 내가 그룹장일 경우에만 보여주기
-          InkWell(
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return SimpleDialog(
-                    title: Text(
-                      '${widget.member.nickname}님을 내 그룹에서 \n삭제하시겠습니까?',
-                      textAlign: TextAlign.center,
-                    ),
-                    children: <Widget>[
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      // 삭제 후 mypage로 가기
-                                      deleteMember().then((result) {
-                                        Navigator.of(context).pop();
-                                        if (!result) {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return const FailDialog();
-                                            },
-                                          );
-                                        } else {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return const SuccessDialog();
-                                            },
-                                          );
-                                        }
-                                      });
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            const Color(0XFFF6766E),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5)),
-                                        padding: const EdgeInsets.all(2)),
-                                    child: const Text(
-                                      "삭제하기",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+          !widget.leader
+              ? Container()
+              : InkWell(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return SimpleDialog(
+                          title: Text(
+                            '${widget.member.nickname}님을 내 그룹에서 \n삭제하시겠습니까?',
+                            textAlign: TextAlign.center,
+                          ),
+                          children: <Widget>[
                             const SizedBox(
                               height: 5,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text(
-                                    "닫기",
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            // 삭제 후 mypage로 가기
+                                            deleteMember().then((result) {
+                                              Navigator.of(context).pop();
+                                              if (!result) {
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return const FailDialog();
+                                                  },
+                                                );
+                                              } else {
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return const SuccessDialog();
+                                                  },
+                                                );
+                                              }
+                                            });
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  const Color(0XFFF6766E),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5)),
+                                              padding: const EdgeInsets.all(2)),
+                                          child: const Text(
+                                            "삭제하기",
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                )
-                              ],
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text(
+                                          "닫기",
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
-                        ),
+                        );
+                      },
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 8,
+                    ), // 원하는 패딩 값으로 설정
+                    decoration: BoxDecoration(
+                      color: const Color(0XFFF6766E), // 버튼 배경색
+                      borderRadius: BorderRadius.circular(5.0), // 버튼 모서리 둥글기
+                    ),
+                    child: const Center(
+                      child: Text(
+                        '삭제',
+                        style: TextStyle(
+                            fontSize: 15, color: Colors.white), // 버튼 텍스트 스타일
                       ),
-                    ],
-                  );
-                },
-              );
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 8,
-              ), // 원하는 패딩 값으로 설정
-              decoration: BoxDecoration(
-                color: const Color(0XFFF6766E), // 버튼 배경색
-                borderRadius: BorderRadius.circular(5.0), // 버튼 모서리 둥글기
-              ),
-              child: const Center(
-                child: Text(
-                  '삭제',
-                  style: TextStyle(
-                      fontSize: 15, color: Colors.white), // 버튼 텍스트 스타일
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
         ],
       ),
     );

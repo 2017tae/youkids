@@ -6,6 +6,7 @@ import com.capsule.youkids.children.dto.response.ChildrenResponse;
 import com.capsule.youkids.children.entity.Children;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface ChildrenService {
 
@@ -16,8 +17,8 @@ public interface ChildrenService {
     public List<ChildrenResponse> getParentsChildren(UUID id) throws Exception;
 
     // 애기 등록하기
-    public void registChildren(ChildrenRegistRequest childrenRegistRequest) throws Exception;
+    public void registChildren(ChildrenRegistRequest childrenRegistRequest, MultipartFile file) throws Exception;
 
     // 애기 수정하기
-    public void updateChildren(ChildrenRequest childrenRequest) throws Exception;
+    public void updateChildren(ChildrenRequest childrenRequest, MultipartFile file) throws Exception;
 }

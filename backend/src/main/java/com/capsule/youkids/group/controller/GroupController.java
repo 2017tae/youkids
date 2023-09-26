@@ -1,6 +1,7 @@
 package com.capsule.youkids.group.controller;
 
 import com.capsule.youkids.group.dto.request.GroupUserRequest;
+import com.capsule.youkids.group.dto.request.RegistUserRequest;
 import com.capsule.youkids.group.dto.request.UpdateGroupRequest;
 import com.capsule.youkids.group.dto.response.GroupResponse;
 import com.capsule.youkids.group.dto.response.UserResponse;
@@ -34,9 +35,9 @@ public class GroupController {
             @ApiResponse(responseCode = "404", description = "정보가 존재하지 않음"),
             @ApiResponse(responseCode = "400", description = "이미 추가된 유저")
     })
-    // 리더 id와 등록 대상 유저 id를 받아와서 리더가 자신의 그룹에 유저를 등록함
-    public ResponseEntity<?> addUserInGroup(@RequestBody GroupUserRequest groupUserRequest) throws Exception {
-        groupService.addUserInGroup(groupUserRequest);
+    // 리더 id와 등록 대상 유저 email을 받아와서 리더가 자신의 그룹에 유저를 등록함
+    public ResponseEntity<?> addUserInGroup(@RequestBody RegistUserRequest registUserRequest) throws Exception {
+        groupService.addUserInGroup(registUserRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -58,7 +59,7 @@ public class GroupController {
             @ApiResponse(responseCode = "404", description = "정보가 존재하지 않음"),
             @ApiResponse(responseCode = "400", description = "그룹에 속해있지 않음")
     })
-    // 그룹 id, 내 email, 새 이름을 보내서 내가 부르는 그룹 이름을 바꿈
+    // 그룹 id, 내 id, 새 이름을 보내서 내가 부르는 그룹 이름을 바꿈
     public ResponseEntity<?> updateGroupName(@RequestBody UpdateGroupRequest updateGroupRequest) throws Exception {
         groupService.updateGroupName(updateGroupRequest);
         return new ResponseEntity<>(HttpStatus.OK);

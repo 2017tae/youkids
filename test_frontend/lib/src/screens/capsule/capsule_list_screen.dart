@@ -56,12 +56,12 @@ class _CapsuleListScreenState extends State<CapsuleListScreen> {
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      Image.asset(
-                        'lib/src/assets/icons/logo_foreground.png',
-                        width: 120,
-                        height: 120,
-                        fit: BoxFit.fitHeight,
-                      ),
+                      // Image.asset(
+                      //   'lib/src/assets/icons/logo_foreground.png',
+                      //   width: 120,
+                      //   height: 120,
+                      //   fit: BoxFit.fitHeight,
+                      // ),
                       Image.asset(
                         'lib/src/assets/icons/$capsuleImage',
                         width: 120,

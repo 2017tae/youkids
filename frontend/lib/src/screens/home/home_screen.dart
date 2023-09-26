@@ -121,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => LoginScreen()),
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
               );
             },
             icon: const Icon(
@@ -236,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => LoginScreen()),
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
               );
             },
             icon: const Icon(
@@ -502,12 +502,12 @@ class _LoadingCardFrame21WidgetState extends State<LoadingCardFrame21Widget>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 180),
+      duration: const Duration(milliseconds: 180),
     )..repeat(reverse: true);
 
     _colorAnimation = ColorTween(
-      begin: Color(0xffd0d0d0),
-      end: Color(0xffababab),
+      begin: const Color(0xffd0d0d0),
+      end: const Color(0xffababab),
     ).animate(_controller);
   }
 
@@ -555,12 +555,12 @@ class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 180),
+      duration: const Duration(milliseconds: 180),
     )..repeat(reverse: true);
 
     _colorAnimation = ColorTween(
-      begin: Color(0xffd0d0d0),
-      end: Color(0xffababab),
+      begin: const Color(0xffd0d0d0),
+      end: const Color(0xffababab),
     ).animate(_controller);
   }
 

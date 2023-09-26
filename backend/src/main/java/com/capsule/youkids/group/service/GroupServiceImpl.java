@@ -1,6 +1,7 @@
 package com.capsule.youkids.group.service;
 
 import com.capsule.youkids.group.dto.request.GroupUserRequest;
+import com.capsule.youkids.group.dto.request.RegistUserRequest;
 import com.capsule.youkids.group.dto.request.UpdateGroupRequest;
 import com.capsule.youkids.group.dto.response.GroupResponse;
 import com.capsule.youkids.group.dto.response.UserResponse;
@@ -29,9 +30,9 @@ public class GroupServiceImpl implements GroupService {
     private final UserRepository userRepository;
 
     @Override
-    public void addUserInGroup(GroupUserRequest groupUserRequest) throws Exception {
-        Optional<User> leader = userRepository.findById(groupUserRequest.getLeaderId());
-        Optional<User> user = userRepository.findById(groupUserRequest.getUserId());
+    public void addUserInGroup(RegistUserRequest registUserRequest) throws Exception {
+        Optional<User> leader = userRepository.findById(registUserRequest.getLeaderId());
+        Optional<User> user = userRepository.findByEmailAndRoleNot(registUserRequest.getUserEmail(), Role.DELETED);
 
         // 유저가 없으면 에러~
         if (leader.isEmpty() || user.isEmpty()) {
@@ -162,6 +163,7 @@ public class GroupServiceImpl implements GroupService {
                     .userId(u.get().getUserId())
                     .nickname(u.get().getNickname())
                     .profileImage(u.get().getProfileImage())
+                    .description(u.get().getDescription())
                     .build();
             userResponseList.add(ur);
         }

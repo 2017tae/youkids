@@ -18,7 +18,7 @@ public class ChildrenRequest {
     private String name;
     private int gender;
     private LocalDate birthday;
-    private String childrenImage;
+    private String profileImage;
 
     // 애기 성향
 }

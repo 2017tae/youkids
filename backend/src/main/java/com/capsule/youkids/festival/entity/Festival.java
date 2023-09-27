@@ -1,12 +1,15 @@
 package com.capsule.youkids.festival.entity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -74,13 +77,18 @@ public class Festival {
     private String whenTime;
 
     @Column
-    private String member;
+    private String cast_member;
+
+    @Column String crew_member;
+
+    @OneToMany(mappedBy = "festival")
+    List<FestivalImage> images = new ArrayList<>();
 
     @Builder
-    public Festival(Long festivalChildId, String eachId, String name, LocalDate startDate, LocalDate endDate,
-            String state, String category, String openRun, String poster, String placeName,
-            String placeFacilId, String runTime, String age, String enterprise, String price,
-            String story, String whenTime, String member) {
+    public Festival(Long festivalChildId, String eachId, String name, LocalDate startDate,
+            LocalDate endDate, String state, String category, String openRun, String poster,
+            String placeName, String placeFacilId, String runTime, String age, String enterprise,
+            String price, String story, String whenTime, String cast_member, String crew_member) {
         this.festivalChildId = festivalChildId;
         this.eachId = eachId;
         this.name = name;
@@ -98,6 +106,7 @@ public class Festival {
         this.price = price;
         this.story = story;
         this.whenTime = whenTime;
-        this.member = member;
+        this.cast_member = cast_member;
+        this.crew_member = crew_member;
     }
 }

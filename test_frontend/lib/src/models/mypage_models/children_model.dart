@@ -16,5 +16,5 @@ class ChildrenModel {
         name = json['name'],
         gender = json['gender'],
         birthday = DateTime.parse(json['birthday']),
-        childrenImage = json['childrenImage'] ?? 'no image';
+        childrenImage = json['childrenImage'];
 }

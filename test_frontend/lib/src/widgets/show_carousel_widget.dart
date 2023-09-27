@@ -3,12 +3,15 @@ import 'dart:io';
 
 import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
 
+import '../screens/shop/festival_detail_screen.dart';
+
 class ShowCarouselWidget extends StatefulWidget {
   final int itemCount;
   final List<String> imgUrls;
   final List<String> festivalName;
   final List<String> festivalPlace;
   final List<String> festivalDate;
+  final List<int> festivalChildId;
 
   const ShowCarouselWidget({
     super.key,
@@ -16,7 +19,8 @@ class ShowCarouselWidget extends StatefulWidget {
     required this.imgUrls,
     required this.festivalName,
     required this.festivalPlace,
-    required this.festivalDate
+    required this.festivalDate,
+    required this.festivalChildId
   });
 
   @override
@@ -28,7 +32,7 @@ class _ShowCarouselWidgetState extends State<ShowCarouselWidget> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width - 40,
-      height: (MediaQuery.of(context).size.width - 40) * 0.65, // 전체 높이 조절
+      height: (MediaQuery.of(context).size.width - 40) * 0.8, // 전체 높이 조절
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
@@ -37,7 +41,7 @@ class _ShowCarouselWidgetState extends State<ShowCarouselWidget> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ShopDetailScreen(placeId: 1),
+                  builder: (context) => FestivalDetailScreen(festivalId: widget.festivalChildId[index]),
                 ),
               );
             },

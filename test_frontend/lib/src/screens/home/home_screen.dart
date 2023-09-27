@@ -41,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<String> festivalName = [];
   List<String> festivalPlace = [];
   List<String> festivalDate = [];
+  List<int> festivalChildId = [];
 
   @override
   void initState() {
@@ -101,16 +102,14 @@ class _HomeScreenState extends State<HomeScreen> {
         festivals = decodedJson2['result']['onGoingFestivals'];
       });
 
-      for (int i = 0; i < festivals!.length; i++) {
-        if (festivals != null &&
-            festivals!.length > i &&
-            festivals![i]['poster'] != null) {
+      for (int i = 0; i < festivals!.length ; i++) {
+        if (festivals != null && festivals!.length > i && festivals![i]['poster'] != null) {
           imgUrls.add(festivals![i]['poster']);
           festivalPlace.add(festivals![i]['placeName']);
           festivalDate.add(festivals![i]['startDate']);
+          festivalChildId.add(festivals![i]['festivalChildId']);
         } else {
-          imgUrls.add(
-              "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png");
+          imgUrls.add("https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png");
         }
       }
 
@@ -123,6 +122,8 @@ class _HomeScreenState extends State<HomeScreen> {
           festivalName.add("오류!");
         }
       }
+
+
 
       print(imgUrls);
       print(festivalName);
@@ -490,11 +491,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 const IndoorRecomlistScreen(),
               ),
               ShowCarouselWidget(
-                itemCount: 6,
-                imgUrls: imgUrls,
-                festivalName: festivalName,
-                festivalPlace: festivalPlace,
-                festivalDate: festivalDate,
+                  itemCount: 6,
+                  festivalChildId: festivalChildId,
+                  imgUrls: imgUrls,
+                  festivalName: festivalName,
+                  festivalPlace: festivalPlace,
+                  festivalDate: festivalDate
               )
             ],
           ),

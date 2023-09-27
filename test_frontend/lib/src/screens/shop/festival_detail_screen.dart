@@ -9,21 +9,21 @@ import 'package:youkids/src/screens/shop/create_shop_review_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:http/http.dart' as http;
 
-class ShopDetailScreen extends StatefulWidget {
-  final int placeId;
+class FestivalDetailScreen extends StatefulWidget {
+  final int festivalId;
 
-  const ShopDetailScreen({
+  const FestivalDetailScreen({
     super.key,
-    required this.placeId,
+    required this.festivalId,
   });
 
   @override
-  State<ShopDetailScreen> createState() => _ShopDetailScreenState();
+  State<FestivalDetailScreen> createState() => _FestivalDetailScreen();
 }
 
-class _ShopDetailScreenState extends State<ShopDetailScreen> {
+class _FestivalDetailScreen extends State<FestivalDetailScreen> {
   bool _isLoggedIn = false;
-  Place? _place;
+  Festival? _festival;
 
   @override
   void initState() {
@@ -38,9 +38,11 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
       _isLoggedIn = email != null; // 이메일이 null이 아니면 로그인된 것으로 판단
     });
 
+    print(widget.festivalId);
+
     final response = await http.get(
       Uri.parse(
-          'https://j9a604.p.ssafy.io/api/place/87dad60a-bfff-47e5-8e21-02cb49b23ba6/${widget.placeId}'),
+          'https://j9a604.p.ssafy.io/api/festival/detail/${widget.festivalId.toString()}'),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -48,13 +50,13 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
     if (response.statusCode == 200) {
       var jsonString = utf8.decode(response.bodyBytes);
       Map<String, dynamic> decodedJson = jsonDecode(jsonString);
-      Place place = Place.fromJson(decodedJson['result']['place']);
+      Festival festival = Festival.fromJson(decodedJson['result']);
       print(decodedJson);
       setState(() {
-        _place = place;
+        _festival = festival;
       });
 
-      print(_place);
+      print(_festival?.images);
     } else {
       print("error");
     }
@@ -90,12 +92,13 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
+      body:
+      SingleChildScrollView(
         child: Column(
           children: [
-            if (_place?.images != null && _place!.images.isNotEmpty)
+            if (_festival?.images != null && _festival!.images.isNotEmpty)
               CarouselSlider.builder(
-                itemCount: _place!.images.length,
+                itemCount: 1,
                 itemBuilder: (BuildContext context, int index, int realIndex) {
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(5.0), // BorderRadius 추가
@@ -106,7 +109,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                     //   errorWidget: (context, url, error) => Icon(Icons.error),
                     // ),
                     Image.network(
-                      _place!.images[index],
+                      _festival!.poster,
                       fit: BoxFit.cover,
                     ),
                   );
@@ -131,34 +134,44 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                 children: [
                   shopInfo(
                       imgUrl: 'lib/src/assets/icons/shop_address.png',
-                      info: _place != null ? _place!.name : 'Loading...'),
+                      info: _festival != null ? _festival!.name : 'Loading...'),
                   shopInfo(
                     imgUrl: 'lib/src/assets/icons/shop_phone.png',
-                    info: _place != null ? _place!.phoneNumber : 'Loading...',
+                    info: _festival != null ? _festival!.startDate : 'Loading...',
                   ),
                   shopInfo(
                     imgUrl: 'lib/src/assets/icons/shop_url.png',
-                    info: _place != null ? _place!.homepage : 'Loading...',
+                    info: _festival != null ? _festival!.endDate : 'Loading...',
                   ),
                   shopInfo(
                     imgUrl: 'lib/src/assets/icons/shop_info.png',
-                    info: _place != null ? _place!.description : 'Loading...',
+                    info: _festival != null ? _festival!.placeName : 'Loading...',
                   ),
-                  // const Divider(
-                  //   thickness: 1,
-                  //   color: Color(0xff707070),
-                  // ),
-                  // const Divider(
-                  //   thickness: 1,
-                  //   color: Color(0xff707070),
-                  // ),
-                  // const Divider(
-                  //   thickness: 1,
-                  //   color: Color(0xff707070),
-                  // ),
                 ],
               ),
-            )
+            ),
+            // 기존 ListView.builder 대신 이렇게 변경
+            Column(
+              children: _festival!.images.map((imagePath) {
+                return Image.network(
+                  imagePath,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    );
+                  },
+                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                    return const Center(child: Text('이미지 로드 실패'));
+                  },
+                );
+              }).toList(),
+            ),
           ],
         ),
       ),
@@ -212,57 +225,42 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
   }
 }
 
-class Place {
-  final int placeId;
+class Festival {
   final String name;
-  final String address;
-  final Double? latitude;
-  final Double? longitude;
-  final String phoneNumber;
+  final String startDate;
+  final String endDate;
   final String category;
-  final String homepage;
-  final String description;
-  final int reviewSum;
-  final int reviewNum;
-  final bool subwayFlag;
-  final int? subwayId;
-  final String? subwayDistance;
+  final String placeName;
+  final String age;
+  final String price;
+  final String? whenTime;
+  final String poster;
   final List<String> images;
 
-  Place({
-    required this.placeId,
+  Festival({
     required this.name,
-    required this.address,
-    this.latitude,
-    this.longitude,
-    required this.phoneNumber,
+    required this.startDate,
+    required this.endDate,
     required this.category,
-    required this.homepage,
-    required this.description,
-    required this.reviewSum,
-    required this.reviewNum,
-    required this.subwayFlag,
-    this.subwayId,
-    this.subwayDistance,
+    required this.placeName,
+    required this.age,
+    required this.price,
+    this.whenTime,
+    required this.poster,
     required this.images,
   });
 
-  factory Place.fromJson(Map<String, dynamic> json) {
-    return Place(
-      placeId: json['placeId'],
+  factory Festival.fromJson(Map<String, dynamic> json) {
+    return Festival(
       name: json['name'],
-      address: json['address'],
-      latitude: json['latitude'],
-      longitude: json['longitude'],
-      phoneNumber: json['phoneNumber'],
+      startDate: json['startDate'],
+      endDate: json['endDate'],
       category: json['category'],
-      homepage: json['homepage'],
-      description: json['description'],
-      reviewSum: json['reviewSum'],
-      reviewNum: json['reviewNum'],
-      subwayFlag: json['subwayFlag'],
-      subwayId: json['subwayId'],
-      subwayDistance: json['subwayDistance'],
+      placeName: json['placeName'],
+      age: json['age'],
+      price: json['price'],
+      whenTime: json['whenTime'],
+      poster: json['poster'],
       images: List<String>.from(json['images']),
     );
   }

@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:youkids/src/widgets/bookmark_button_widget.dart';
 
 // 2:1 ratio card
 class CardFrame21Widget extends StatelessWidget {
-  final String imageUrl;
-  final String name;
-  final String address;
+  final String imageUrl, name, address, userId;
+  final int placeId;
+
+  const CardFrame21Widget({
+    super.key,
+    required this.imageUrl,
+    required this.name,
+    required this.address,
+    required this.userId,
+    required this.placeId,
+  });
 
   String getFirstTwoWords(String text) {
     List<String> words = text.split(' ');
@@ -15,12 +24,6 @@ class CardFrame21Widget extends StatelessWidget {
     }
   }
 
-  const CardFrame21Widget({
-    super.key,
-    required this.imageUrl,
-    required this.name,
-    required this.address,
-  });
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -43,13 +46,9 @@ class CardFrame21Widget extends StatelessWidget {
           right: 0,
           child: Container(
             padding: const EdgeInsets.all(10),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.favorite_border_outlined,
-                size: 30,
-                color: Color(0xffF6766E),
-              ),
+            child: BookmarkButtonWidget(
+              placeId: placeId,
+              userId: userId,
             ),
           ),
         ),
@@ -68,14 +67,19 @@ class CardFrame21Widget extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   shadows: [
                     Shadow(
-                      offset: Offset(1.5, 1.5), // 더 큰 그림자 간격
+                      offset: Offset(
+                        1.5,
+                        1.5,
+                      ), // 더 큰 그림자 간격
                       blurRadius: 2.0, // 더 큰 블러 정도
                       color: Colors.black87, // 더 진한 그림자 색상
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 1),
+              const SizedBox(
+                height: 1,
+              ),
               const SizedBox(
                 width: 15,
               ), // 제목과 주소 사이 간격
@@ -86,7 +90,10 @@ class CardFrame21Widget extends StatelessWidget {
                   fontSize: 18,
                   shadows: [
                     Shadow(
-                      offset: Offset(1.5, 1.5), // 더 큰 그림자 간격
+                      offset: Offset(
+                        1.5,
+                        1.5,
+                      ), // 더 큰 그림자 간격
                       blurRadius: 2.0, // 더 큰 블러 정도
                       color: Colors.black87, // 더 진한 그림자 색상
                     ),
@@ -102,9 +109,17 @@ class CardFrame21Widget extends StatelessWidget {
 }
 
 class CardFrame11Widget extends StatelessWidget {
-  final String imageUrl;
-  final String name;
-  final String address;
+  final String imageUrl, name, address, userId;
+  final int placeId;
+
+  const CardFrame11Widget({
+    super.key,
+    required this.imageUrl,
+    required this.name,
+    required this.address,
+    required this.userId,
+    required this.placeId,
+  });
 
   String getFirstTwoWords(String text) {
     List<String> words = text.split(' ');
@@ -115,12 +130,6 @@ class CardFrame11Widget extends StatelessWidget {
     }
   }
 
-  const CardFrame11Widget(
-      {super.key,
-      required this.imageUrl,
-      required this.name,
-      required this.address});
-
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -129,25 +138,22 @@ class CardFrame11Widget extends StatelessWidget {
           height: MediaQuery.of(context).size.width * 0.44,
           width: MediaQuery.of(context).size.width * 0.44,
           decoration: BoxDecoration(
-              color: const Color(0xffF5EEEC),
-              borderRadius: BorderRadius.circular(10),
-              image: DecorationImage(
-                image: NetworkImage(imageUrl),
-                fit: BoxFit.cover,
-              )),
+            color: const Color(0xffF5EEEC),
+            borderRadius: BorderRadius.circular(10),
+            image: DecorationImage(
+              image: NetworkImage(imageUrl),
+              fit: BoxFit.cover,
+            ),
+          ),
         ),
         Positioned(
           top: 0,
           right: 0,
           child: Container(
             padding: const EdgeInsets.all(10),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.favorite_border_outlined,
-                size: 30,
-                color: Color(0xffF6766E),
-              ),
+            child: BookmarkButtonWidget(
+              placeId: placeId,
+              userId: userId,
             ),
           ),
         ),
@@ -165,14 +171,19 @@ class CardFrame11Widget extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   shadows: [
                     Shadow(
-                      offset: Offset(2.0, 2.0), // 더 큰 그림자 간격
+                      offset: Offset(
+                        2.0,
+                        2.0,
+                      ), // 더 큰 그림자 간격
                       blurRadius: 4.0, // 더 큰 블러 정도
                       color: Colors.black87, // 더 진한 그림자 색상
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 1), // 제목과 주소 사이 간격
+              const SizedBox(
+                height: 1,
+              ), // 제목과 주소 사이 간격
               Text(
                 getFirstTwoWords(address),
                 style: const TextStyle(
@@ -180,7 +191,10 @@ class CardFrame11Widget extends StatelessWidget {
                   fontSize: 13,
                   shadows: [
                     Shadow(
-                      offset: Offset(2.0, 2.0), // 더 큰 그림자 간격
+                      offset: Offset(
+                        2.0,
+                        2.0,
+                      ), // 더 큰 그림자 간격
                       blurRadius: 4.0, // 더 큰 블러 정도
                       color: Colors.black87, // 더 진한 그림자 색상
                     ),

@@ -19,13 +19,13 @@ public class FestivalImage {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int festivalImageId;
+    private Long festivalImageId;
 
     @Column
     private String url;
 
     @ManyToOne
-    @JoinColumn(name = "festival_id")
+    @JoinColumn(name = "festival_child_id")
     private Festival festival;
 
     @Builder

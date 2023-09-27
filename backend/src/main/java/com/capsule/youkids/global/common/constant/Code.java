@@ -44,7 +44,8 @@ public enum Code {
     MEMORY_DELETE_NOT_PERMITTED(false, 1035, "메모리를 삭제할 권한이 없습니다."),
     MEMORY_DELETE_TIME_LIMIT_EXPIRED(false, 1036, "메모리를 삭제할 수 있는 기간이 지났습니다."),
     MEMORY_SAVE_ERROR(false,1037,"메모리를 저장하지 못했습니다."),
-    // (1041 ~ 1050)
+
+    // 페스티벌 에러(1041 ~ 1050)
     FESTIVAL_EMPTY(false, 1041, "추천하는 공연 정보가 없습니다.");
 
 

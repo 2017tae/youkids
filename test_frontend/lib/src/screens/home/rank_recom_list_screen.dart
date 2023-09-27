@@ -6,19 +6,23 @@ import 'package:flutter/material.dart';
 import '../../models/home_models/child_icon_model.dart';
 import '../../widgets/footer_widget.dart';
 import '../../widgets/home_widgets/child_icon_widget.dart';
-import '../../widgets/main_widgets/RankingWidgetCardFrame11.dart';
+import '../../widgets/main_widgets/ranking_widget_card_frame11.dart';
 import '../login/login_screen.dart';
 import '../shop/shop_detail_screen.dart';
 
 class RankRecomlistScreen extends StatefulWidget {
-  const RankRecomlistScreen({super.key});
+  final dynamic userId;
+
+  const RankRecomlistScreen({
+    super.key,
+    this.userId,
+  });
 
   @override
   State<RankRecomlistScreen> createState() => _RankRecomlistScreen();
 }
 
 class _RankRecomlistScreen extends State<RankRecomlistScreen> {
-
   List? places;
 
   Future? loadDataFuture;
@@ -31,15 +35,13 @@ class _RankRecomlistScreen extends State<RankRecomlistScreen> {
     loadDataFuture = _checkLoginStatus();
   }
 
-
   Future<void> _checkLoginStatus() async {
-
-
     final response = await http.get(
       Uri.parse('https://j9a604.p.ssafy.io/api/place/recomm'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+      },
     );
-
 
     // 응답을 처리하는 코드 (예: 상태를 업데이트하는 등)를 여기에 추가합니다.
     if (response.statusCode == 200) {
@@ -171,10 +173,7 @@ class _RankRecomlistScreen extends State<RankRecomlistScreen> {
               //     ),
               //   ],
               // ),
-              setHomeMenu(
-                context,
-                '저번 주 리뷰 많은 장소'
-              ),
+              setHomeMenu(context, '저번 주 리뷰 많은 장소'),
               Column(
                 children: List<Widget>.generate(10, (index) {
                   return Column(
@@ -185,13 +184,16 @@ class _RankRecomlistScreen extends State<RankRecomlistScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => ShopDetailScreen(
-                                  placeId: places?[index]['placeId']),
+                                placeId: places?[index]['placeId'],
+                              ),
                             ),
                           );
                         },
                         child: RankingWidgetCardFrame11(
+                          placeId: places?[index]['placeId'],
+                          userId: widget.userId,
                           imageUrl: (places?.isNotEmpty ?? false)
-                              ? places![index ]['imageUrl']
+                              ? places![index]['imageUrl']
                               : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
                           name: places![index]['name'],
                           address: places![index]['address'],
@@ -273,12 +275,12 @@ class _LoadingCardFrame21WidgetState extends State<LoadingCardFrame21Widget>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 180),
+      duration: const Duration(milliseconds: 180),
     )..repeat(reverse: true);
 
     _colorAnimation = ColorTween(
-      begin: Color(0xffd0d0d0),
-      end: Color(0xffababab),
+      begin: const Color(0xffd0d0d0),
+      end: const Color(0xffababab),
     ).animate(_controller);
   }
 
@@ -326,12 +328,12 @@ class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 180),
+      duration: const Duration(milliseconds: 180),
     )..repeat(reverse: true);
 
     _colorAnimation = ColorTween(
-      begin: Color(0xffd0d0d0),
-      end: Color(0xffababab),
+      begin: const Color(0xffd0d0d0),
+      end: const Color(0xffababab),
     ).animate(_controller);
   }
 

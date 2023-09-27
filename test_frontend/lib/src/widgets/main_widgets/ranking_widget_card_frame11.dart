@@ -1,10 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:youkids/src/widgets/bookmark_button_widget.dart';
 
 class DiagonalBannerPainter extends CustomPainter {
   final String rank;
 
-  DiagonalBannerPainter({required this.rank});
+  DiagonalBannerPainter({
+    required this.rank,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -17,7 +19,7 @@ class DiagonalBannerPainter extends CustomPainter {
     canvas.drawPath(path, paint);
 
     // 텍스트 그리기
-    final textStyle = TextStyle(
+    const textStyle = TextStyle(
       color: Colors.white,
       fontSize: 14,
       fontWeight: FontWeight.bold,
@@ -29,7 +31,7 @@ class DiagonalBannerPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     );
     textPainter.layout();
-    textPainter.paint(canvas, Offset(10, 10));  // 위치 조정
+    textPainter.paint(canvas, const Offset(10, 10)); // 위치 조정
   }
 
   @override
@@ -39,26 +41,28 @@ class DiagonalBannerPainter extends CustomPainter {
 }
 
 class RankingWidgetCardFrame11 extends StatelessWidget {
-  final String imageUrl;
-  final String name;
-  final String address;
-  final String rank;
-
-  String getFirstTwoWords(String text) {
-    List<String> words = text.split(' ');
-    if (words.length >= 2) {
-      return words[0] + ' ' + words[1];
-    } else {
-      return text;  // 단어가 2개 미만이면 원래 문자열 반환
-    }
-  }
+  final String imageUrl, name, address, rank;
+  final dynamic userId;
+  final int placeId;
 
   const RankingWidgetCardFrame11({
+    super.key,
     required this.imageUrl,
     required this.name,
     required this.address,
     required this.rank,
+    required this.userId,
+    required this.placeId,
   });
+
+  String getFirstTwoWords(String text) {
+    List<String> words = text.split(' ');
+    if (words.length >= 2) {
+      return '${words[0]} ${words[1]}';
+    } else {
+      return text; // 단어가 2개 미만이면 원래 문자열 반환
+    }
+  }
 
   // ... 기존 코드 ...
 
@@ -76,20 +80,18 @@ class RankingWidgetCardFrame11 extends StatelessWidget {
                 image: DecorationImage(
                   image: NetworkImage(imageUrl),
                   fit: BoxFit.cover,
-                )
-            ),
+                )),
           ),
         ),
-
         Positioned(
           top: 0,
           left: 0,
-          child: Container(
-            child: CustomPaint(
-              painter: DiagonalBannerPainter(rank: rank),
-              size: Size(50, 50),  // 배너의 크기를 조정합니다.
-            ),
-
+          child: CustomPaint(
+            painter: DiagonalBannerPainter(rank: rank),
+            size: const Size(
+              50,
+              50,
+            ), // 배너의 크기를 조정합니다.
           ),
         ),
         Positioned(
@@ -97,14 +99,12 @@ class RankingWidgetCardFrame11 extends StatelessWidget {
           right: 0,
           child: Container(
             padding: const EdgeInsets.all(10),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.favorite_border_outlined,
-                size: 30,
-                color: Color(0xffF6766E),
-              ),
-            ),
+            child: (userId != null)
+                ? BookmarkButtonWidget(
+                    placeId: placeId,
+                    userId: userId,
+                  )
+                : Container(),
           ),
         ),
         Positioned(
@@ -115,7 +115,7 @@ class RankingWidgetCardFrame11 extends StatelessWidget {
             children: [
               Text(
                 name,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -128,13 +128,15 @@ class RankingWidgetCardFrame11 extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 1),
+              const SizedBox(
+                height: 1,
+              ),
               const SizedBox(
                 width: 15,
-              ),// 제목과 주소 사이 간격
+              ), // 제목과 주소 사이 간격
               Text(
                 getFirstTwoWords(address),
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                   shadows: [

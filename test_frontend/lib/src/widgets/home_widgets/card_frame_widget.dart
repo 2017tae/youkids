@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:youkids/src/widgets/bookmark_button_widget.dart';
 
 // 2:1 ratio card
 class CardFrame21Widget extends StatelessWidget {
-  final String imageUrl;
-  final String name;
-  final String address;
+  final String imageUrl, name, address;
+  final dynamic userId;
+  final int placeId;
+
+  const CardFrame21Widget({
+    super.key,
+    required this.imageUrl,
+    required this.name,
+    required this.address,
+    required this.userId,
+    required this.placeId,
+  });
 
   String getFirstTwoWords(String text) {
     List<String> words = text.split(' ');
@@ -15,12 +25,6 @@ class CardFrame21Widget extends StatelessWidget {
     }
   }
 
-  const CardFrame21Widget({
-    super.key,
-    required this.imageUrl,
-    required this.name,
-    required this.address,
-  });
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -41,17 +45,12 @@ class CardFrame21Widget extends StatelessWidget {
         Positioned(
           top: 0,
           right: 0,
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.favorite_border_outlined,
-                size: 30,
-                color: Color(0xffF6766E),
-              ),
-            ),
-          ),
+          child: (userId != null)
+              ? BookmarkButtonWidget(
+                  placeId: placeId,
+                  userId: userId,
+                )
+              : Container(),
         ),
         // 제목 및 주소 추가
         Positioned(
@@ -102,9 +101,18 @@ class CardFrame21Widget extends StatelessWidget {
 }
 
 class CardFrame11Widget extends StatelessWidget {
-  final String imageUrl;
-  final String name;
-  final String address;
+  final String imageUrl, name, address;
+  final dynamic userId;
+  final int placeId;
+
+  const CardFrame11Widget({
+    super.key,
+    required this.imageUrl,
+    required this.name,
+    required this.address,
+    required this.userId,
+    required this.placeId,
+  });
 
   String getFirstTwoWords(String text) {
     List<String> words = text.split(' ');
@@ -114,12 +122,6 @@ class CardFrame11Widget extends StatelessWidget {
       return text; // 단어가 2개 미만이면 원래 문자열 반환
     }
   }
-
-  const CardFrame11Widget(
-      {super.key,
-      required this.imageUrl,
-      required this.name,
-      required this.address});
 
   @override
   Widget build(BuildContext context) {
@@ -139,17 +141,12 @@ class CardFrame11Widget extends StatelessWidget {
         Positioned(
           top: 0,
           right: 0,
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.favorite_border_outlined,
-                size: 30,
-                color: Color(0xffF6766E),
-              ),
-            ),
-          ),
+          child: (userId != null)
+              ? BookmarkButtonWidget(
+                  placeId: placeId,
+                  userId: userId,
+                )
+              : Container(),
         ),
         Positioned(
           bottom: 10,

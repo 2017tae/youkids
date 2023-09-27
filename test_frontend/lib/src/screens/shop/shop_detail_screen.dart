@@ -216,8 +216,8 @@ class Place {
   final int placeId;
   final String name;
   final String address;
-  final Double? latitude;
-  final Double? longitude;
+  final String? latitude;
+  final String? longitude;
   final String phoneNumber;
   final String category;
   final String homepage;
@@ -252,8 +252,8 @@ class Place {
       placeId: json['placeId'],
       name: json['name'],
       address: json['address'],
-      latitude: json['latitude'],
-      longitude: json['longitude'],
+      latitude: json['latitude'].toString(),
+      longitude: json['longitude'].toString(),
       phoneNumber: json['phoneNumber'],
       category: json['category'],
       homepage: json['homepage'],

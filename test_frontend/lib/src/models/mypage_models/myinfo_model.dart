@@ -15,5 +15,5 @@ class MyinfoModel {
         nickname = json['nickname'],
         leader = json['leader'],
         description = json['description'],
-        profileImage = json['profileImage'] ?? 'no image';
+        profileImage = json['profileImage'];
 }

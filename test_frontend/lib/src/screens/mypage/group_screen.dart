@@ -20,7 +20,7 @@ class GroupScreen extends StatefulWidget {
 class _GroupScreenState extends State<GroupScreen> {
   String? userId;
   String? newName;
-  String uri = 'https://j9a604.p.ssafy.io/api/';
+  String uri = 'https://j9a604.p.ssafy.io/api';
   String groupName = ' ';
   String emailInput = '';
 

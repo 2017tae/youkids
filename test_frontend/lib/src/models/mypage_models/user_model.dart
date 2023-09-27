@@ -11,6 +11,6 @@ class UserModel {
   UserModel.fromJson(Map<String, dynamic> json)
       : userId = json['userId'],
         nickname = json['nickname'],
-        profileImage = json['profileImage'] ?? 'no image',
+        profileImage = json['profileImage'],
         description = json['description'];
 }

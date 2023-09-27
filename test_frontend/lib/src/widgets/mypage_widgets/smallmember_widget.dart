@@ -15,18 +15,29 @@ class SmallMemberWidget extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
-          Container(
-            width: 100,
-            height: 100,
-            padding: const EdgeInsets.all(7),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black12),
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                  image: AssetImage(tmpChildStoryIcon[1].imgUrl),
-                  fit: BoxFit.cover),
-            ),
-          ),
+          member.profileImage != null
+              ? Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black12),
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                        image: NetworkImage(member.profileImage!),
+                        fit: BoxFit.cover),
+                  ),
+                )
+              : Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black12),
+                    shape: BoxShape.circle,
+                    image: const DecorationImage(
+                        image: AssetImage('lib/src/assets/icons/logo.png'),
+                        fit: BoxFit.cover),
+                  ),
+                ),
           const SizedBox(
             height: 3,
           ),

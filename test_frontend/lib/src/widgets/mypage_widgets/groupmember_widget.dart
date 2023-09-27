@@ -48,17 +48,29 @@ class _GroupMemberState extends State<GroupMember> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            width: 90,
-            height: 90,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black12),
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                  image: AssetImage(tmpChildStoryIcon[0].imgUrl),
-                  fit: BoxFit.cover),
-            ),
-          ),
+          widget.member.profileImage != null
+              ? Container(
+                  width: 90,
+                  height: 90,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black12),
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                        image: NetworkImage(widget.member.profileImage!),
+                        fit: BoxFit.cover),
+                  ),
+                )
+              : Container(
+                  width: 90,
+                  height: 90,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black12),
+                    shape: BoxShape.circle,
+                    image: const DecorationImage(
+                        image: AssetImage('lib/src/assets/icons/logo.png'),
+                        fit: BoxFit.cover),
+                  ),
+                ),
           const SizedBox(
             width: 10,
           ),

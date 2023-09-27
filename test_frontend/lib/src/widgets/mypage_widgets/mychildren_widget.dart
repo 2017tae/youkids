@@ -125,12 +125,20 @@ class Child extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            child.childrenImage != 'no image'
-                ? Image.network(
-                    child.childrenImage!,
-                    height: 100,
+            child.childrenImage != null
+                ? Container(
                     width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black12),
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: NetworkImage(child.childrenImage!),
+                          fit: BoxFit.cover,
+                          alignment: Alignment.center,
+                        )),
                   )
+
                 // 없을때
                 : Container(
                     width: 100,
@@ -138,15 +146,10 @@ class Child extends StatelessWidget {
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.black12),
                       shape: BoxShape.circle,
+                      image: const DecorationImage(
+                          image: AssetImage('lib/src/assets/icons/logo.png'),
+                          fit: BoxFit.cover),
                     ),
-                    child: const Center(
-                        child: Text(
-                      "아이 사진을\n올려주세요",
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                      textAlign: TextAlign.center,
-                    )),
                   ),
             const SizedBox(
               height: 3,

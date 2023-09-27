@@ -75,12 +75,9 @@ public class FestivalServiceImpl implements FestivalService{
         Festival festival = festivalRepository.findById(festivalId)
                 .orElseThrow(()-> new RestApiException(Code.FESTIVAL_EMPTY));
 
-        // 페스티벌에 해당하는 이미지 배열을 가져온다.
-        List<FestivalImage> festivalImages = festivalImageRepository.findAllByFestival(festival);
-
         // 반환 하기 위해 스트링으로 변환한다.
         List<String> imageList = new ArrayList<>();
-        for(FestivalImage festivalImage : festivalImages){
+        for(FestivalImage festivalImage : festival.getImages()){
             imageList.add(festivalImage.getUrl());
         }
 

@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface FestivalRepository extends JpaRepository<Festival, Integer> {
+public interface FestivalRepository extends JpaRepository<Festival, Long> {
     @Query("select new com.capsule.youkids.festival.dto.view.FestivalRecommItemDto(f)"
             + "from Festival f where f.festivalChildId in :festivalIds")
     List<FestivalRecommItemDto> getMixedRecommfestivals(@Param("festivalIds") List<Long> festivalIds);

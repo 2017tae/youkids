@@ -6,6 +6,7 @@ import com.capsule.youkids.global.common.exception.RestApiException;
 import com.capsule.youkids.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,4 +36,13 @@ public class FestivalController {
         }
     }
 
+    // 공연 상세보기
+    @GetMapping("/detail/{festivalId}")
+    public BaseResponse<?> detailFestival(@PathVariable Long festivalId){
+        try{
+            return BaseResponse.success(Code.SUCCESS, festivalService.getDetailFestival(festivalId));
+        }catch (RestApiException e){
+            return BaseResponse.error(e.getErrorCode());
+        }
+    }
 }

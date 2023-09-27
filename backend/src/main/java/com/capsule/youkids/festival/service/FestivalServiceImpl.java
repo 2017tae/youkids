@@ -1,11 +1,16 @@
 package com.capsule.youkids.festival.service;
 
+import com.capsule.youkids.festival.dto.response.FestivalDetailResponseDto;
 import com.capsule.youkids.festival.dto.response.FestivalDivRecommResponseDto;
 import com.capsule.youkids.festival.dto.response.FestivalRecommResponseDto;
 import com.capsule.youkids.festival.dto.view.FestivalRecommItemDto;
+import com.capsule.youkids.festival.entity.Festival;
+import com.capsule.youkids.festival.entity.FestivalImage;
+import com.capsule.youkids.festival.repository.FestivalImageRepository;
 import com.capsule.youkids.festival.repository.FestivalRepository;
 import com.capsule.youkids.global.common.constant.Code;
 import com.capsule.youkids.global.common.exception.RestApiException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -18,6 +23,7 @@ import org.springframework.stereotype.Service;
 public class FestivalServiceImpl implements FestivalService{
 
     private final FestivalRepository festivalRepository;
+    private final FestivalImageRepository festivalImageRepository;
 
     @Override
     public FestivalRecommResponseDto getMixedFestivalRecomm() {
@@ -59,6 +65,29 @@ public class FestivalServiceImpl implements FestivalService{
                 .onGoingFestivals(onGoingFestivals)
                 .upCommingFestivals(upCommingFestivals)
                 .closedFestivals(closedFestivals)
+                .build();
+    }
+
+    @Override
+    public FestivalDetailResponseDto getDetailFestival(Long festivalId) {
+
+        // 페스티벌을 festivalId로 접근한다.
+        Festival festival = festivalRepository.findById(festivalId)
+                .orElseThrow(()-> new RestApiException(Code.FESTIVAL_EMPTY));
+
+        // 페스티벌에 해당하는 이미지 배열을 가져온다.
+        List<FestivalImage> festivalImages = festivalImageRepository.findAllByFestival(festival);
+
+        // 반환 하기 위해 스트링으로 변환한다.
+        List<String> imageList = new ArrayList<>();
+        for(FestivalImage festivalImage : festivalImages){
+            imageList.add(festivalImage.getUrl());
+        }
+
+        // 반환dto를 생성
+        return FestivalDetailResponseDto.builder()
+                .festival(festival)
+                .images(imageList)
                 .build();
     }
 }

@@ -44,7 +44,8 @@ class _ShowCarouselWidgetState extends State<ShowCarouselWidget> {
                 borderRadius: BorderRadius.circular(5),
                 color: Colors.amber[200],
               ),
-              child: Image.network(
+              child:
+              Image.network(
                 widget.imgUrls[index],
                 fit: BoxFit.cover,
               ),

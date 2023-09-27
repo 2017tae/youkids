@@ -16,6 +16,6 @@ class GroupModel {
       : groupId = json['groupId'],
         leaderId = json['leaderId'],
         groupName = json['groupName'],
-        groupImg = json['groupImg'] ?? 'no image',
+        groupImg = json['groupImg'],
         groupMember = [];
 }

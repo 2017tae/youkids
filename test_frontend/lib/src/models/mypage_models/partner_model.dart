@@ -8,5 +8,5 @@ class PartnerModel {
   PartnerModel.fromJson(Map<String, dynamic> json)
       : partnerId = json['partnerId'],
         nickname = json['nickname'],
-        profileImage = json['profileImage'] ?? 'no image';
+        profileImage = json['profileImage'];
 }

@@ -30,12 +30,12 @@ class ChildIconWidget extends StatelessWidget {
               ),
               child: CircleAvatar(
                 radius: 40,
-                backgroundImage: AssetImage(tmpChildStoryIcon[0].imgUrl),
+                // backgroundImage: AssetImage(tmpChildStoryIcon[0].imgUrl),
                 backgroundColor: Colors.white,
               ),
             ),
             Text(
-              tmpChildStoryIcon[0].name,
+              "아이 1",
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
@@ -66,12 +66,11 @@ class ChildIconWidget extends StatelessWidget {
               ),
               child: CircleAvatar(
                 radius: 40,
-                backgroundImage: AssetImage(tmpChildStoryIcon[1].imgUrl),
                 backgroundColor: Colors.white,
               ),
             ),
             Text(
-              tmpChildStoryIcon[1].name,
+              "아이 2",
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,

@@ -238,19 +238,31 @@ class _MyPageScreenState extends State<MyPageScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(7),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black12),
-                              borderRadius: BorderRadius.circular(500),
-                            ),
-                            child: CircleAvatar(
-                              radius: 40,
-                              backgroundImage:
-                                  AssetImage(tmpChildStoryIcon[0].imgUrl),
-                              backgroundColor: Colors.white,
-                            ),
-                          ),
+                          myInfo.profileImage == null
+                              ? Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black12),
+                                    shape: BoxShape.circle,
+                                    image: const DecorationImage(
+                                        image: AssetImage(
+                                            'lib/src/assets/icons/logo.png'),
+                                        fit: BoxFit.cover),
+                                  ),
+                                )
+                              : Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black12),
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                        image:
+                                            NetworkImage(myInfo.profileImage!),
+                                        fit: BoxFit.cover),
+                                  ),
+                                ),
                           const SizedBox(
                             width: 20,
                           ),

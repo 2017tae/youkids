@@ -146,15 +146,10 @@ class Child extends StatelessWidget {
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.black12),
                       shape: BoxShape.circle,
+                      image: const DecorationImage(
+                          image: AssetImage('lib/src/assets/icons/logo.png'),
+                          fit: BoxFit.cover),
                     ),
-                    child: const Center(
-                        child: Text(
-                      "아이 사진을\n올려주세요",
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                      textAlign: TextAlign.center,
-                    )),
                   ),
             const SizedBox(
               height: 3,

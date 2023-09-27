@@ -56,23 +56,33 @@ class ChildrenScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 30, bottom: 30),
                 child: Center(
-                  child: Container(
-                    width: 150,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black12),
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          image: AssetImage(tmpChildStoryIcon[0].imgUrl),
-                          fit: BoxFit.cover),
-                    ),
-                  ),
+                  child: children.childrenImage != null
+                      ? Container(
+                          width: 150,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black12),
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                                image: NetworkImage(children.childrenImage!),
+                                fit: BoxFit.cover),
+                          ),
+                        )
+                      : Container(
+                          width: 150,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black12),
+                            shape: BoxShape.circle,
+                            image: const DecorationImage(
+                                image:
+                                    AssetImage('lib/src/assets/icons/logo.png'),
+                                fit: BoxFit.cover),
+                          ),
+                        ),
                 ),
               ),
-              const Text(
-                "사진 변경",
-                style: TextStyle(color: Color(0XFF0075FF), fontSize: 18),
-              ),
+              const SizedBox(height: 18),
               Padding(
                 padding: const EdgeInsets.all(10),
                 child: Column(

@@ -4,7 +4,7 @@ import 'package:youkids/src/widgets/bookmark_button_widget.dart';
 // 2:1 ratio card
 class CardFrame21Widget extends StatelessWidget {
   final String imageUrl, name, address;
-  final dynamic userId;
+  final String? userId;
   final int placeId;
 
   const CardFrame21Widget({
@@ -102,7 +102,7 @@ class CardFrame21Widget extends StatelessWidget {
 
 class CardFrame11Widget extends StatelessWidget {
   final String imageUrl, name, address;
-  final dynamic userId;
+  final String? userId;
   final int placeId;
 
   const CardFrame11Widget({
@@ -118,9 +118,11 @@ class CardFrame11Widget extends StatelessWidget {
     List<String> words = text.split(' ');
     if (words.length >= 2) {
       return '${words[0]} ${words[1]}';
+
     } else {
       return text; // 단어가 2개 미만이면 원래 문자열 반환
     }
+
   }
 
   @override

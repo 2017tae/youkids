@@ -106,6 +106,7 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                     placeId: places![index]['placeId'].toString(),
                     name: places![index]['name'],
                     address: getFirstTwoWords(places![index]['address']),
+                    addressStyle: TextStyle(color: Colors.grey),  // 여기에 추가
                     category: places![index]['category'],
                     imageUrl: places![index]['imageUrl'],
                   );
@@ -132,6 +133,7 @@ class GridItem extends StatelessWidget {
   final String placeId;
   final String name;
   final String address;
+  final TextStyle addressStyle;  // 여기에 추가
   final String category;
   final String imageUrl;
 
@@ -139,6 +141,7 @@ class GridItem extends StatelessWidget {
     required this.placeId,
     required this.name,
     required this.address,
+    this.addressStyle = const TextStyle(),  // default value
     required this.category,
     required this.imageUrl
   });
@@ -158,7 +161,9 @@ class GridItem extends StatelessWidget {
         ),
         SizedBox(height: 8.0),
         Text(name),
-        Text(address),
+        Text(address,
+          style: TextStyle(color: Colors.grey),  // 여기에 추가
+        ),
       ],
     );
   }

@@ -37,6 +37,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String picture = "";
 
+  List<String> imgUrls = [];
+  List<String> festivalName = [];
+  List<String> festivalPlace = [];
+  List<String> festivalDate = [];
+
   @override
   void initState() {
     super.initState();
@@ -95,7 +100,26 @@ class _HomeScreenState extends State<HomeScreen> {
         festivals = decodedJson2['result']['onGoingFestivals'];
       });
 
-      print(festivals);
+      for (int i = 0; i < festivals!.length ; i++) {
+        if (festivals != null && festivals!.length > i && festivals![i]['poster'] != null) {
+          imgUrls.add(festivals![i]['poster']);
+          festivalPlace.add(festivals![i]['placeName']);
+          festivalDate.add(festivals![i]['startDate']);
+        } else {
+          imgUrls.add("https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png");
+        }
+      }
+
+      for (int i = 0; i < festivals!.length ; i++) {
+        if (festivals != null && festivals!.length > i && festivals![i]['name'] != null) {
+          festivalName.add(festivals![i]['name']);
+        } else {
+          festivalName.add("오류!");
+        }
+      }
+
+      print(imgUrls);
+      print(festivalName);
     }else{
       print("not");
     }
@@ -440,25 +464,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 '공연 예약',
                 const IndoorRecomlistScreen(),
               ),
-              ShowCarouselWidget(itemCount: 6, imgUrls: [(festivals?.isNotEmpty ?? false)
-                  ? festivals![0]['poster']
-                  : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
-                  (festivals?.isNotEmpty ?? false)
-                    ? festivals![1]['poster']
-                    : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
-                (festivals?.isNotEmpty ?? false)
-                    ? festivals![2]['poster']
-                    : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
-                (festivals?.isNotEmpty ?? false)
-                    ? festivals![3]['poster']
-                    : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
-                (festivals?.isNotEmpty ?? false)
-                    ? festivals![4]['poster']
-                    : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
-                (festivals?.isNotEmpty ?? false)
-                    ? festivals![5]['poster']
-                    : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
-              ]
+              ShowCarouselWidget(
+                itemCount: 6,
+                imgUrls: imgUrls,
+                festivalName: festivalName,
+                festivalPlace: festivalPlace,
+                festivalDate: festivalDate
               )
           ],
           ),

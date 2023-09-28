@@ -487,7 +487,7 @@ class _HomeScreenState extends State<HomeScreen> {
               setHomeMenu(
                 context,
                 '공연 예약',
-                const IndoorRecomlistScreen(),
+                IndoorRecomListScreen(),
               ),
               ShowCarouselWidget(
                   itemCount: 6,

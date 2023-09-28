@@ -1,87 +1,87 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:youkids/src/widgets/home_widgets/card_frame_widget.dart';
 import 'package:youkids/src/widgets/home_widgets/child_icon_widget.dart';
+import 'package:http/http.dart' as http;
 
-class IndoorRecomlistScreen extends StatelessWidget {
-  const IndoorRecomlistScreen({super.key});
+import 'banner_widget.dart';
+
+
+class IndoorRecomListScreen extends StatefulWidget {
+
+
+  @override
+  State<IndoorRecomListScreen> createState() => _IndoorRecomListScreenState();
+}
+
+class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
+
+  List? festivals;
+  Future? loadDataFuture;
+
+
+  @override
+  void initState() {
+    super.initState();
+    loadDataFuture = _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+
+    final response2 = await http.get(
+        Uri.parse('https://j9a604.p.ssafy.io/api/festival/recommdiv'),
+        headers: {'Content-Type': 'application/json'});
+
+    if (response2.statusCode == 200) {
+      var jsonString2 = utf8.decode(response2.bodyBytes);
+      Map<String, dynamic> decodedJson2 = jsonDecode(jsonString2);
+      print(decodedJson2['result']['onGoingFestivals']);
+      setState(() {
+        festivals = decodedJson2['result']['onGoingFestivals'];
+      });
+      print("abcd");
+      print(festivals);
+
+    } else {
+      print("not");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> dummy = [
-      // const CardFrame21Widget(),
-      // const CardFrame21Widget(),
-      // const CardFrame21Widget(),
-      // const CardFrame21Widget(),
-      // const CardFrame21Widget(),
-      // const CardFrame21Widget(),
-      // const CardFrame21Widget(),
-    ];
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text(
-          '실내 장소',
-          style: TextStyle(
-              fontSize: 22,
-              color: Color(0xff707070),
-              fontWeight: FontWeight.bold),
+        appBar: AppBar(
+          title: Text('공연 정보'),
         ),
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(
-          color: Colors.black,
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.notifications_outlined,
-              size: 28,
-            ),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              child: Text(
-                '아이 맞춤 형 장소',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+        body:
+        ListView.builder(
+          itemCount: festivals!.length+1,
+          itemBuilder: (context, index) {
+            if(index==0){
+              return  BannerWidget();
+            }
+            int festivalIndex = index-1;
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child:
+
+
+              Row(
+
+                children: [
+                  Image.network(festivals?[festivalIndex]['poster'], width: 150, height: 200), // Adjust width and height as needed
+                  SizedBox(width: 10), // Gap between image and description
+                  Expanded(
+                    child: Text(festivals?[festivalIndex]['name']),
+                  ),
+                ],
               ),
-            ),
-            const ChildIconWidget(),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              child: Text(
-                '추천 장소',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Expanded(
-              child: ListView.separated(
-                itemCount: dummy.length,
-                itemBuilder: (context, index) => dummy[index],
-                separatorBuilder: (context, index) => const SizedBox(
-                  height: 20,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: const FooterWidget(
-        currentIndex: 0,
-      ),
+            );
+          },
+        )
+
     );
   }
 }

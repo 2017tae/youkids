@@ -38,7 +38,7 @@ public interface UserService {
     GetMyInfoResponseDto getMyInfo(UUID userId);
 
     // 본인 회원 유저 수정
-    boolean modifyMyInfo(ModifyMyInfoRequestDto request, MultipartFile file);
+    boolean modifyMyInfo(ModifyMyInfoRequestDto request, MultipartFile file) throws Exception;
 
     // 본인 회원 휴면유저로 변경
     boolean deleteMyInfo(DeleteMyInfoRequestDto request);

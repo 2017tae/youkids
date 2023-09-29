@@ -183,8 +183,8 @@ public class UserController {
     @PutMapping("")
     public ResponseEntity<?> ModifyMyInfo(
             @RequestPart(value = "dto") ModifyMyInfoRequestDto request,
-            @RequestPart(value = "files", required = false)
-            MultipartFile file) {
+            @RequestPart(value = "file", required = false)
+            MultipartFile file) throws Exception {
 
         // 유저 정보 수정 및 사진 처리
         boolean check = userService.modifyMyInfo(request, file);

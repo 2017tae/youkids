@@ -87,8 +87,22 @@ public class User extends BaseTimeEntity {
         this.description = request.getDescription();
     }
 
+
+    // 유저 정보 수정하기
     public void modifyUser(ModifyMyInfoRequestDto request) {
         this.nickname = request.getNickname();
+        this.Car = request.isCar();
+        this.description = request.getDescription();
+    }
+
+    // 유저 프로필 사진 수정하기
+    public void modifyProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    // 프사 삭제
+    public void deleteProfileImage() {
+        this.profileImage = null;
     }
 
     // 서로 맞팔이 되면 partnerId 등록

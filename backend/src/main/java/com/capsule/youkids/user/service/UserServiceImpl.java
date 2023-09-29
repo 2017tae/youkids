@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.capsule.youkids.user.repository.UserRepository;
@@ -32,6 +33,8 @@ import com.capsule.youkids.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import com.capsule.youkids.global.s3.service.AwsS3Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +44,8 @@ public class UserServiceImpl implements UserService {
     private final JwtUtil jwtUtil;
     private final GroupInfoRepository groupInfoRepository;
     private final GroupJoinRepository groupJoinRepository;
+    private final AwsS3Service awsS3Service;
+
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String googleClientId;
@@ -192,12 +197,31 @@ public class UserServiceImpl implements UserService {
     // 유저의 정보만 수정한다.
     @Transactional
     @Override
-    public boolean modifyMyInfo(ModifyMyInfoRequestDto request, MultipartFile file) {
+    public boolean modifyMyInfo(ModifyMyInfoRequestDto request, MultipartFile file) throws Exception {
 
         User user = userRepository.findByUserIdAndRoleNot(request.getUserId(), Role.DELETED)
                 .orElseThrow(()-> new IllegalArgumentException());
 
         // S3를 통해 저장---------------------
+        
+        // 만약에 기존에 프사가 있었는데 삭제된거면
+        if (!user.getProfileImage().isEmpty() && file.isEmpty()) {
+            // 기존 프사를 S3에서 삭제하고
+            awsS3Service.deleteFile(user.getProfileImage());
+            // 내 프사도 삭제
+            user.deleteProfileImage();
+
+        // 들어온 파일이 있으면
+        } else if (!file.isEmpty()) {
+            try {
+                // S3에 넣고 프사 등록혀
+                user.modifyProfileImage(awsS3Service.uploadFile(file));
+            } catch (Exception e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "upload failed");
+            }
+        }
+
+        userRepository.save(user);
 
         //-----------------------------------
         user.modifyUser(request);

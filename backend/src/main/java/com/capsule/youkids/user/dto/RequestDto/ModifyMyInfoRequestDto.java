@@ -16,4 +16,8 @@ public class ModifyMyInfoRequestDto {
 
     private boolean isPartner;
 
+    private String description;
+
+    private boolean car;
+
 }

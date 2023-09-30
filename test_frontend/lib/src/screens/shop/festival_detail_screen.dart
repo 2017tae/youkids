@@ -24,11 +24,12 @@ class FestivalDetailScreen extends StatefulWidget {
 class _FestivalDetailScreen extends State<FestivalDetailScreen> {
   bool _isLoggedIn = false;
   Festival? _festival;
+  Future? loadDataFuture;
 
   @override
   void initState() {
     super.initState();
-    _checkLoginStatus();
+    loadDataFuture = _checkLoginStatus();
   }
 
   _checkLoginStatus() async {
@@ -69,7 +70,103 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
+    return FutureBuilder(
+      future: loadDataFuture,
+      builder: (context, snapshot) {
+        // if (snapshot.connectionState == ConnectionState.done) {
+        if (_festival != null) {
+          print(_festival);
+          return _buildMainContent();
+        } else {
+          return _buildLoadingMainContent();
+        }
+      },
+    );
+
+  }
+
+  Widget _buildLoadingMainContent() {
+    return Scaffold(
+      drawer: const Drawer(),
+      appBar: AppBar(
+        title: const Text(
+          'YouKids',
+          style: TextStyle(
+            fontSize: 22,
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(
+          color: Colors.black,
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
+                height: 24),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                children: [
+                  GestureDetector(
+                    onTap: () {},
+                    child: const LoadingCardFrame11Widget(),
+                  ),
+                  const SizedBox(
+                    height: 500,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () {},
+                        child: const LoadingCardFrame11Widget(),
+                      ),
+                      GestureDetector(
+                        onTap: () {},
+                        child: const LoadingCardFrame11Widget(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () {},
+                        child: const LoadingCardFrame11Widget(),
+                      ),
+                      GestureDetector(
+                        onTap: () {},
+                        child: const LoadingCardFrame11Widget(),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: const FooterWidget(
+        currentIndex: 0,
+      ),
+    );
+  }
+
+  Widget _buildMainContent() {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -262,6 +359,80 @@ class Festival {
       whenTime: json['whenTime'],
       poster: json['poster'],
       images: List<String>.from(json['images']),
+    );
+  }
+Padding loadingSetHomeMenu(String text) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 10),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          text,
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+}
+
+class LoadingCardFrame11Widget extends StatefulWidget {
+  const LoadingCardFrame11Widget({super.key});
+
+  @override
+  State<LoadingCardFrame11Widget> createState() =>
+      _LoadingCardFrame11WidgetState();
+}
+
+class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Color?> _colorAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(
+        milliseconds: 180,
+      ),
+    )..repeat(reverse: true);
+
+    _colorAnimation = ColorTween(
+      begin: const Color(0xffd0d0d0),
+      end: const Color(0xffababab),
+    ).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        AnimatedBuilder(
+          animation: _colorAnimation,
+          builder: (context, child) {
+            return Container(
+              height: MediaQuery.of(context).size.width * 0.44,
+              width: MediaQuery.of(context).size.width * 0.44,
+              decoration: BoxDecoration(
+                color: _colorAnimation.value,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }

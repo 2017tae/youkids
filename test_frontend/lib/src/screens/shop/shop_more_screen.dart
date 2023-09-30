@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
 
 import '../../widgets/footer_widget.dart';
 
@@ -67,57 +69,106 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
     }
   }
 
+  // 1. 상태에 현재 선택된 카테고리를 저장할 변수를 추가합니다.
+  String? selectedCategory ='전체';
 
+  List<String> categories = [
+    '전체',
+    '테마파크',
+    '박물관',
+    '키즈카페',
+    // 여기에 추가 카테고리를 넣을 수 있습니다.
+  ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
+    return FutureBuilder(
+      future: loadDataFuture,
+      builder: (context, snapshot) {
+        // if (snapshot.connectionState == ConnectionState.done) {
+        if (places != null) {
+          print(places);
+          return _buildMainContent();
+        } else {
+          return _buildLoadingMainContent();
+        }
+      },
+    );
+
+  }
+
+  Widget _buildLoadingMainContent() {
     return Scaffold(
+      drawer: const Drawer(),
       appBar: AppBar(
-        title: const Text('여행 추천'),
+        title: const Text(
+          'YouKids',
+          style: TextStyle(
+            fontSize: 22,
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
         backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        iconTheme: const IconThemeData(
+          color: Colors.black,
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
+                height: 24),
+          ),
+        ],
       ),
-      body: NotificationListener<ScrollNotification>(
-        onNotification: (ScrollNotification scrollInfo) {
-          if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-            // 스크롤이 바닥에 닿았을 때
-            // _loadMoreData();
-          }
-          return false;
-        },
-        child: FutureBuilder(
-          future: loadDataFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (places == null) {
-                return Center(child: Text('데이터를 불러오는데 실패했습니다.'));
-              }
-              return GridView.builder(
-                padding: EdgeInsets.all(8.0),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 8.0,
-                  crossAxisSpacing: 8.0,
-                  childAspectRatio: 2 / 3,
-                ),
-                itemCount: places!.length,
-                itemBuilder: (context, index) {
-                  return GridItem(
-                    placeId: places![index]['placeId'].toString(),
-                    name: places![index]['name'],
-                    address: getFirstTwoWords(places![index]['address']),
-                    addressStyle: TextStyle(color: Colors.grey),  // 여기에 추가
-                    category: places![index]['category'],
-                    imageUrl: places![index]['imageUrl'],
-                  );
-                },
-              );
-            } else if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else {
-              return Center(child: Text('데이터를 불러오는데 실패했습니다.'));
-            }
-          },
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                children: [
+                  GestureDetector(
+                    onTap: () {},
+                    child: const LoadingCardFrame11Widget(),
+                  ),
+                  const SizedBox(
+                    height: 500,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () {},
+                        child: const LoadingCardFrame11Widget(),
+                      ),
+                      GestureDetector(
+                        onTap: () {},
+                        child: const LoadingCardFrame11Widget(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () {},
+                        child: const LoadingCardFrame11Widget(),
+                      ),
+                      GestureDetector(
+                        onTap: () {},
+                        child: const LoadingCardFrame11Widget(),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: const FooterWidget(
@@ -127,7 +178,193 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
   }
 
 
+  Widget _buildMainContent() {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('여행 추천',
+        style: TextStyle(
+          fontSize: 20.0
+        ),),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        centerTitle: true,
+      ),
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverToBoxAdapter(
+            child: SizedBox(height: 15.0),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              height: 40.0,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: categories.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 1.0 , horizontal: 8.0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: selectedCategory == categories[index]
+                            ? Color(0xffFF7E76)
+                            : Colors.white,
+                        onSurface: Colors.white,
+                        elevation: 0, // 그림자를 없애기 위해
+                        side: selectedCategory == categories[index]
+                            ? BorderSide(color: Colors.transparent, width: 1.0) // 선택되었을 때 테두리 없음
+                            : BorderSide(color: Colors.grey.withOpacity(0.4), width: 1.0), // 선택되지 않았을 때 회색 테두리
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0), // 버튼의 높이를 더 줄임
+                      ),
+                      child: Text(
+                        categories[index],
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: selectedCategory == categories[index]
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          selectedCategory = categories[index];
+                        });
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(height: 15.0),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0), // 여기서 패딩을 추가
+            sliver: SliverGrid(
+              delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                  var filteredPlaces = places!.where((place) {
+                    if (selectedCategory == '전체') {
+                      return true;
+                    }
+                    return place['category'] == selectedCategory;
+                  }).toList();
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ShopDetailScreen(placeId: filteredPlaces[index]['placeId']), // 여기에 원하는 화면 위젯을 넣으세요.
+                        ),
+                      );
+                    },
+                    child: GridItem(
+                      placeId: filteredPlaces[index]['placeId'].toString(),
+                      name: filteredPlaces[index]['name'],
+                      address: getFirstTwoWords(filteredPlaces[index]['address']),
+                      addressStyle: TextStyle(color: Colors.grey),  // 여기에 추가
+                      category: filteredPlaces[index]['category'],
+                      imageUrl: filteredPlaces[index]['imageUrl'],
+                    ),
+                  );
+                },
+                childCount: places!.where((place) {
+                  if (selectedCategory == '전체') {
+                    return true;
+                  }
+                  return place['category'] == selectedCategory;
+                }).length,
+              ),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 8.0,
+                crossAxisSpacing: 8.0,
+                childAspectRatio: 2 / 3,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  Padding loadingSetHomeMenu(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            text,
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
+
+class LoadingCardFrame11Widget extends StatefulWidget {
+  const LoadingCardFrame11Widget({super.key});
+
+  @override
+  State<LoadingCardFrame11Widget> createState() =>
+      _LoadingCardFrame11WidgetState();
+}
+
+class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Color?> _colorAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(
+        milliseconds: 180,
+      ),
+    )..repeat(reverse: true);
+
+    _colorAnimation = ColorTween(
+      begin: const Color(0xffd0d0d0),
+      end: const Color(0xffababab),
+    ).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        AnimatedBuilder(
+          animation: _colorAnimation,
+          builder: (context, child) {
+            return Container(
+              height: MediaQuery.of(context).size.width * 0.44,
+              width: MediaQuery.of(context).size.width * 0.44,
+              decoration: BoxDecoration(
+                color: _colorAnimation.value,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
 
 class GridItem extends StatelessWidget {
   final String placeId;

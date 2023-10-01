@@ -5,8 +5,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/screens/home/indoor_recom_list_screen.dart';
 import 'package:youkids/src/screens/home/rank_recom_list_screen.dart';
-import 'package:youkids/src/screens/home/review_recom_list_screen.dart';
-import 'package:youkids/src/screens/home/week_recom_list_screen.dart';
 import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
 import 'package:youkids/src/screens/shop/shop_more_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
@@ -16,7 +14,7 @@ import 'package:http/http.dart' as http;
 import 'package:youkids/src/widgets/show_carousel_widget.dart';
 
 import '../../providers/auth_model.dart';
-import '../../widgets/main_widgets/RankingWidgetCardFrame11.dart';
+import '../../widgets/main_widgets/ranking_widget_card_frame11.dart';
 import '../login/login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -37,6 +35,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String picture = "";
 
+  String? userId;
+
+  List<String> imgUrls = [];
+  List<String> festivalName = [];
+  List<String> festivalPlace = [];
+  List<String> festivalDate = [];
+  List<int> festivalChildId = [];
+
   @override
   void initState() {
     super.initState();
@@ -46,7 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<String?> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(
-        'userId'); // Returns 'john_doe' if it exists, otherwise returns null.
+      'userId',
+    ); // Returns 'john_doe' if it exists, otherwise returns null.
   }
 
   void someFunction() async {
@@ -60,8 +67,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _checkLoginStatus() async {
-    String? userId = await getUserId();
-    print(userId);
+    userId = await getUserId();
+
     setState(() {
       _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
     });
@@ -72,9 +79,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     final response2 = await http.get(
-      Uri.parse('https://j9a604.p.ssafy.io/api/festival/recommdiv'),
-      headers: {'Content-Type':'application/json'}
-    );
+        Uri.parse('https://j9a604.p.ssafy.io/api/festival/recommdiv'),
+        headers: {'Content-Type': 'application/json'});
 
     // 응답을 처리하는 코드 (예: 상태를 업데이트하는 등)를 여기에 추가합니다.
     if (response.statusCode == 200) {
@@ -95,11 +101,34 @@ class _HomeScreenState extends State<HomeScreen> {
         festivals = decodedJson2['result']['onGoingFestivals'];
       });
 
-      print(festivals);
-    }else{
+      for (int i = 0; i < festivals!.length ; i++) {
+        if (festivals != null && festivals!.length > i && festivals![i]['poster'] != null) {
+          imgUrls.add(festivals![i]['poster']);
+          festivalPlace.add(festivals![i]['placeName']);
+          festivalDate.add(festivals![i]['startDate']);
+          festivalChildId.add(festivals![i]['festivalChildId']);
+        } else {
+          imgUrls.add("https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png");
+        }
+      }
+
+      for (int i = 0; i < festivals!.length; i++) {
+        if (festivals != null &&
+            festivals!.length > i &&
+            festivals![i]['name'] != null) {
+          festivalName.add(festivals![i]['name']);
+        } else {
+          festivalName.add("오류!");
+        }
+      }
+
+
+
+      print(imgUrls);
+      print(festivalName);
+    } else {
       print("not");
     }
-
   }
 
   @override
@@ -161,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              LoadingsetHomeMenu("이번 주 추천 장소"),
+              loadingSetHomeMenu("이번 주 추천 장소"),
               Column(
                 children: [
                   GestureDetector(
@@ -186,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-              LoadingsetHomeMenu("저번 주 리뷰 많은 장소"),
+              loadingSetHomeMenu("저번 주 리뷰 많은 장소"),
               Column(
                 children: [
                   GestureDetector(
@@ -283,19 +312,19 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _isLoggedIn == true
-                  ? const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Text(
-                  '아이 맞춤 형 장소',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              )
-                  : Container(),
-              _isLoggedIn == true ? const ChildIconWidget() : Container(),
+              // _isLoggedIn == true
+              //     ? const Padding(
+              //         padding: EdgeInsets.symmetric(vertical: 10),
+              //         child: Text(
+              //           '아이 맞춤 형 장소',
+              //           style: TextStyle(
+              //             fontSize: 22,
+              //             fontWeight: FontWeight.bold,
+              //           ),
+              //         ),
+              //       )
+              //     : Container(),
+              // _isLoggedIn == true ? const ChildIconWidget() : Container(),
               setHomeMenu(
                 context,
                 '이번 주 추천 장소',
@@ -309,11 +338,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ShopDetailScreen(
-                                placeId: places?[0]['placeId']),
+                              placeId: places?[0]['placeId'],
+                            ),
                           ),
                         );
                       },
                       child: CardFrame21Widget(
+                        placeId: places?[0]['placeId'],
+                        userId: userId,
                         imageUrl: (places?.isNotEmpty ?? false)
                             ? places![0]['imageUrl']
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
@@ -332,11 +364,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => ShopDetailScreen(
-                                  placeId: places?[1]['placeId']),
+                                placeId: places?[1]['placeId'],
+                              ),
                             ),
                           );
                         },
                         child: CardFrame11Widget(
+                          placeId: places?[1]['placeId'],
+                          userId: userId,
                           imageUrl: (places?.isNotEmpty ?? false)
                               ? places![1]['imageUrl']
                               : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
@@ -350,11 +385,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => ShopDetailScreen(
-                                  placeId: places?[2]['placeId']),
+                                placeId: places?[2]['placeId'],
+                              ),
                             ),
                           );
                         },
                         child: CardFrame11Widget(
+                          placeId: places?[2]['placeId'],
+                          userId: userId,
                           imageUrl: (places?.isNotEmpty ?? false)
                               ? places![2]['imageUrl']
                               : "https://picturepractice.s3.a p-northeast-2.amazonaws.com/Park/1514459962%233.png",
@@ -369,7 +407,9 @@ class _HomeScreenState extends State<HomeScreen> {
               setHomeMenu(
                 context,
                 '저번 주 리뷰 많은 장소',
-                const RankRecomlistScreen(),
+                RankRecomlistScreen(
+                  userId: userId,
+                ),
               ),
               Column(
                 children: [
@@ -379,11 +419,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ShopDetailScreen(
-                                placeId: places?[3]['placeId']),
+                              placeId: places?[3]['placeId'],
+                            ),
                           ),
                         );
                       },
                       child: RankingWidgetCardFrame11(
+                        placeId: places?[3]['placeId'],
+                        userId: userId,
                         imageUrl: (places?.isNotEmpty ?? false)
                             ? places![3]['imageUrl']
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
@@ -400,11 +443,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ShopDetailScreen(
-                                placeId: places?[4]['placeId']),
+                              placeId: places?[4]['placeId'],
+                            ),
                           ),
                         );
                       },
                       child: RankingWidgetCardFrame11(
+                        placeId: places?[4]['placeId'],
+                        userId: userId,
                         imageUrl: (places?.isNotEmpty ?? false)
                             ? places![4]['imageUrl']
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
@@ -421,11 +467,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ShopDetailScreen(
-                                placeId: places?[5]['placeId']),
+                              placeId: places?[5]['placeId'],
+                            ),
                           ),
                         );
                       },
                       child: RankingWidgetCardFrame11(
+                        placeId: places?[5]['placeId'],
+                        userId: userId,
                         imageUrl: (places?.isNotEmpty ?? false)
                             ? places![5]['imageUrl']
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
@@ -438,29 +487,17 @@ class _HomeScreenState extends State<HomeScreen> {
               setHomeMenu(
                 context,
                 '공연 예약',
-                const IndoorRecomlistScreen(),
+                IndoorRecomListScreen(),
               ),
-              ShowCarouselWidget(itemCount: 6, imgUrls: [(festivals?.isNotEmpty ?? false)
-                  ? festivals![0]['poster']
-                  : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
-                  (festivals?.isNotEmpty ?? false)
-                    ? festivals![1]['poster']
-                    : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
-                (festivals?.isNotEmpty ?? false)
-                    ? festivals![2]['poster']
-                    : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
-                (festivals?.isNotEmpty ?? false)
-                    ? festivals![3]['poster']
-                    : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
-                (festivals?.isNotEmpty ?? false)
-                    ? festivals![4]['poster']
-                    : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
-                (festivals?.isNotEmpty ?? false)
-                    ? festivals![5]['poster']
-                    : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
-              ]
+              ShowCarouselWidget(
+                  itemCount: 6,
+                  festivalChildId: festivalChildId,
+                  imgUrls: imgUrls,
+                  festivalName: festivalName,
+                  festivalPlace: festivalPlace,
+                  festivalDate: festivalDate
               )
-          ],
+            ],
           ),
         ),
       ),
@@ -504,7 +541,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Padding LoadingsetHomeMenu(String text) {
+  Padding loadingSetHomeMenu(String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
@@ -524,12 +561,10 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class LoadingCardFrame21Widget extends StatefulWidget {
-  const LoadingCardFrame21Widget({
-    Key? key,
-  }) : super(key: key);
+  const LoadingCardFrame21Widget({super.key});
 
   @override
-  _LoadingCardFrame21WidgetState createState() =>
+  State<LoadingCardFrame21Widget> createState() =>
       _LoadingCardFrame21WidgetState();
 }
 
@@ -543,12 +578,14 @@ class _LoadingCardFrame21WidgetState extends State<LoadingCardFrame21Widget>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 180),
+      duration: const Duration(
+        milliseconds: 180,
+      ),
     )..repeat(reverse: true);
 
     _colorAnimation = ColorTween(
-      begin: Color(0xffd0d0d0),
-      end: Color(0xffababab),
+      begin: const Color(0xffd0d0d0),
+      end: const Color(0xffababab),
     ).animate(_controller);
   }
 
@@ -579,10 +616,10 @@ class _LoadingCardFrame21WidgetState extends State<LoadingCardFrame21Widget>
 }
 
 class LoadingCardFrame11Widget extends StatefulWidget {
-  const LoadingCardFrame11Widget({Key? key}) : super(key: key);
+  const LoadingCardFrame11Widget({super.key});
 
   @override
-  _LoadingCardFrame11WidgetState createState() =>
+  State<LoadingCardFrame11Widget> createState() =>
       _LoadingCardFrame11WidgetState();
 }
 
@@ -596,12 +633,14 @@ class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 180),
+      duration: const Duration(
+        milliseconds: 180,
+      ),
     )..repeat(reverse: true);
 
     _colorAnimation = ColorTween(
-      begin: Color(0xffd0d0d0),
-      end: Color(0xffababab),
+      begin: const Color(0xffd0d0d0),
+      end: const Color(0xffababab),
     ).animate(_controller);
   }
 

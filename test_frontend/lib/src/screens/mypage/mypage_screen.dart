@@ -3,13 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:youkids/src/models/home_models/child_icon_model.dart';
 import 'package:youkids/src/models/mypage_models/children_model.dart';
 import 'package:youkids/src/models/mypage_models/group_model.dart';
 import 'package:youkids/src/models/mypage_models/myinfo_model.dart';
 import 'package:youkids/src/models/mypage_models/partner_model.dart';
 import 'package:youkids/src/models/mypage_models/user_model.dart';
 import 'package:youkids/src/screens/login/login_screen.dart';
+import 'package:youkids/src/screens/mypage/myinfo_update_screen.dart';
 import 'package:youkids/src/widgets/mypage_widgets/mychildren_widget.dart';
 import 'package:youkids/src/widgets/mypage_widgets/mygroup_widget.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
@@ -25,10 +25,12 @@ class MyPageScreen extends StatefulWidget {
 class _MyPageScreenState extends State<MyPageScreen> {
   // 모든 정보를 다 가지고 오고 false로 바꾸기
   bool isLoading = true;
+  // String uri = 'http://10.0.2.2:8080';
   String uri = 'https://j9a604.p.ssafy.io/api';
   String? userId;
 
-  MyinfoModel myInfo = MyinfoModel(email: ' ', nickname: ' ', leader: true);
+  MyinfoModel myInfo =
+      MyinfoModel(email: ' ', nickname: ' ', leader: true, car: false);
   // leader == false이고 partnerInfo가 존재하면 partner 기준으로 정보 가져오기
   PartnerModel? partnerInfo;
   List<ChildrenModel> children = [];
@@ -74,39 +76,12 @@ class _MyPageScreenState extends State<MyPageScreen> {
           } else {
             getMyChildren(partnerInfo!.partnerId);
           }
-
-          // 내가 리더가 아니면
-          if (!myInfo.leader) {
-            String pid = partnerInfo!.partnerId;
-            String pname = partnerInfo!.nickname;
-            // 파트너의 그룹을 가져와서 넣는다
-            final response = await http.get(
-              Uri.parse('$uri/group/member/$pid'),
-              headers: {'Content-Type': 'application/json'},
-            );
-            GroupModel g = GroupModel(
-                groupId: pid,
-                leaderId: pid,
-                groupName: '$pname님의 그룹',
-                groupMember: []);
-            if (response.statusCode == 200) {
-              var jsonString = utf8.decode(response.bodyBytes);
-              List<dynamic> groupMemberList = jsonDecode(jsonString);
-              for (var gm in groupMemberList) {
-                final member = UserModel.fromJson(gm);
-                g.groupMember.add(member);
-              }
-            }
-            setState(() {
-              group = [g];
-            });
-          }
           getMyGroup(userId);
         } else {
           throw Exception('상태 코드 ${response.statusCode}');
         }
       } catch (err) {
-        print('에러 $err');
+        print('에러 1 $err');
       }
     }
   }
@@ -132,7 +107,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
         throw Exception('상태 코드 ${response.statusCode}');
       }
     } catch (err) {
-      print('에러 $err');
+      print('에러 2 $err');
     }
   }
 
@@ -173,7 +148,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
         throw Exception('상태 코드 ${response.statusCode}');
       }
     } catch (err) {
-      print('에러 $err');
+      print('에러 3 $err');
     }
   }
 
@@ -299,7 +274,15 @@ class _MyPageScreenState extends State<MyPageScreen> {
                           ElevatedButton(
                             onPressed: () {
                               // 프로필 수정 페이지로
-                              print('update');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MyinfoUpdateScreen(
+                                    myInfo: myInfo,
+                                    partnerInfo: partnerInfo,
+                                  ),
+                                ),
+                              );
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
@@ -327,7 +310,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
                   itemBuilder: (context, index) {
                     return MyGroup(
                         group: group[index],
-                        myGroup: userId == group[index].groupId);
+                        myGroup: userId == group[index].groupId,
+                        partnerGroup: (partnerInfo != null &&
+                            partnerInfo!.partnerId == group[index].groupId));
                   },
                 )
               ],

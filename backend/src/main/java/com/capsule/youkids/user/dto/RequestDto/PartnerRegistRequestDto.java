@@ -6,20 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ModifyMyInfoRequestDto {
-
+public class PartnerRegistRequestDto {
     private UUID userId;
-
-    private String nickname;
-
     private UUID partnerId;
-
-    private boolean isPartner;
-
-    private String description;
-
-    private boolean car;
-
-    private boolean imageChanged;
-
 }

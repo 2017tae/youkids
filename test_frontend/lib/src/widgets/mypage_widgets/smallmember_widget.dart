@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:youkids/src/models/home_models/child_icon_model.dart';
 import 'package:youkids/src/models/mypage_models/user_model.dart';
 
 class SmallMemberWidget extends StatelessWidget {
@@ -41,7 +40,7 @@ class SmallMemberWidget extends StatelessWidget {
           const SizedBox(
             height: 3,
           ),
-          Text(member.nickname),
+          Text(member.nickname ?? ''),
         ],
       ),
     );

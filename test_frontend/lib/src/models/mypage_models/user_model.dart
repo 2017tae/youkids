@@ -1,10 +1,10 @@
 class UserModel {
-  String userId, nickname;
-  String? profileImage, description;
+  String userId;
+  String? profileImage, description, nickname;
 
   UserModel(
       {required this.userId,
-      required this.nickname,
+      this.nickname,
       this.profileImage,
       this.description});
 

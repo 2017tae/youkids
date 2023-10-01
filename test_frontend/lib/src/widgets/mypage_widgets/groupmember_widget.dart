@@ -2,16 +2,20 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:youkids/src/models/home_models/child_icon_model.dart';
 import 'package:youkids/src/models/mypage_models/user_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:youkids/src/screens/mypage/mypage_screen.dart';
 
 class GroupMember extends StatefulWidget {
   final UserModel member;
-  final bool leader;
+  final bool delete;
+  final String leaderId;
 
-  const GroupMember({super.key, required this.member, required this.leader});
+  const GroupMember(
+      {super.key,
+      required this.member,
+      required this.delete,
+      required this.leaderId});
 
   @override
   State<GroupMember> createState() => _GroupMemberState();
@@ -25,12 +29,11 @@ class _GroupMemberState extends State<GroupMember> {
 
   Future<bool> deleteMember() async {
     String uri = 'https://j9a604.p.ssafy.io/api/group';
-    String? leaderId = await getUserId();
     try {
       final response = await http.delete(Uri.parse(uri),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode(
-              {'userId': widget.member.userId, 'leaderId': leaderId}));
+              {'userId': widget.member.userId, 'leaderId': widget.leaderId}));
       if (response.statusCode == 200) {
         print('success');
         return true;
@@ -78,7 +81,7 @@ class _GroupMemberState extends State<GroupMember> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.member.nickname,
+                Text(widget.member.nickname ?? '',
                     style: const TextStyle(
                         fontSize: 20, overflow: TextOverflow.ellipsis)),
                 const SizedBox(
@@ -97,8 +100,7 @@ class _GroupMemberState extends State<GroupMember> {
           const SizedBox(
             width: 10,
           ),
-          // 내가 그룹장일 경우에만 보여주기
-          !widget.leader
+          !widget.delete
               ? Container()
               : InkWell(
                   onTap: () {
@@ -107,7 +109,7 @@ class _GroupMemberState extends State<GroupMember> {
                       builder: (BuildContext context) {
                         return SimpleDialog(
                           title: Text(
-                            '${widget.member.nickname}님을 내 그룹에서 \n삭제하시겠습니까?',
+                            '${widget.member.nickname ?? ''}님을 내 그룹에서 \n삭제하시겠습니까?',
                             textAlign: TextAlign.center,
                           ),
                           children: <Widget>[

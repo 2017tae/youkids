@@ -1,12 +1,16 @@
 class PartnerModel {
-  String partnerId, nickname;
-  String? profileImage;
+  String partnerId, partnerEmail;
+  String? nickname, profileImage;
 
   PartnerModel(
-      {required this.partnerId, required this.nickname, this.profileImage});
+      {required this.partnerId,
+      required this.partnerEmail,
+      this.nickname,
+      this.profileImage});
 
   PartnerModel.fromJson(Map<String, dynamic> json)
       : partnerId = json['partnerId'],
+        partnerEmail = json['partnerEmail'],
         nickname = json['nickname'],
         profileImage = json['profileImage'];
 }

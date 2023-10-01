@@ -91,6 +91,11 @@ public class ChildrenServiceImpl implements ChildrenService {
     public void registChildren(ChildrenRegistRequest childrenRegistRequest, MultipartFile file) throws Exception {
         // 부모 찾기
         Optional<User> user = userRepository.findById(childrenRegistRequest.getParentId());
+        if (user.isPresent()) {
+            if (!user.get().isLeader()) {
+                user = userRepository.findById(user.get().getPartnerId());
+            }
+        }
         // 부모가 있으면
         if (user.isPresent()) {
             try {
@@ -130,12 +135,19 @@ public class ChildrenServiceImpl implements ChildrenService {
         // 애기가 있으면 고치고
         if (children.isPresent()) {
             try {
-                // 파일이 들어왔으면 새로운 사진으로 업데이트
-                if (file != null) {
-                    children.get().updateChildren(childrenRequest.getName(), childrenRequest.getGender(), childrenRequest.getBirthday(), awsS3Service.uploadFile(file));
-                // 파일이 없으면 기존 사진 or 사진 삭제
+                // 사진 안바뀜
+                if (!childrenRequest.isImageChanged()) {
+                    children.get().updateChildren(childrenRequest.getName(), childrenRequest.getGender(), childrenRequest.getBirthday(), children.get().getChildrenImage());
+                // 사진 바뀜
                 } else {
-                    children.get().updateChildren(childrenRequest.getName(), childrenRequest.getGender(), childrenRequest.getBirthday(), childrenRequest.getProfileImage());
+                    // 새 사진 들어옴
+                    if (file != null) {
+                        children.get().updateChildren(childrenRequest.getName(), childrenRequest.getGender(), childrenRequest.getBirthday(), awsS3Service.uploadFile(file));
+                    // 사진 삭제
+                    } else {
+                        children.get().updateChildren(childrenRequest.getName(), childrenRequest.getGender(), childrenRequest.getBirthday(), null);
+                    }
+
                 }
                 childrenRepository.save(children.get());
             } catch (Exception e) {

@@ -135,6 +135,10 @@ public class GroupServiceImpl implements GroupService {
             // 그룹 정보를 추출해낸다~
             for (GroupJoin g : groupList) {
                 Optional<GroupInfo> gi = groupInfoRepository.findById(g.getGroupId());
+                // 내가 리더가 아니면 내 그룹은 넣지 않기
+                if (!user.get().isLeader() && gi.get().getLeaderId().equals(user.get().getUserId())) {
+                  continue;
+                }
                 Optional<User> leader = userRepository.findById(gi.get().getLeaderId());
                 GroupResponse gr = GroupResponse.builder().
                         groupId(g.getGroupId()).

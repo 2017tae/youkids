@@ -108,7 +108,11 @@ public class User extends BaseTimeEntity {
     // 서로 맞팔이 되면 partnerId 등록
     public void modifyUserPartner(UUID partnerId) {
         this.partnerId = partnerId;
+    }
 
+    // 리더ㄴㄴ
+    public void changeLeaderStatus(boolean status) {
+        this.leader = status;
     }
 
     //일단 두 방향 다 가능하도록 설정함(한 방향이 맞는듯...)

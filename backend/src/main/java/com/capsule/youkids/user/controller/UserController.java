@@ -4,10 +4,12 @@ import com.capsule.youkids.global.common.constant.Code;
 import com.capsule.youkids.global.common.exception.RestApiException;
 import com.capsule.youkids.user.dto.RequestDto.DeleteMyInfoRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.ModifyMyInfoRequestDto;
+import com.capsule.youkids.user.dto.RequestDto.PartnerRegistRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.checkPartnerRequestDto;
 import com.capsule.youkids.user.dto.ResponseDto.GetMyInfoResponseDto;
 import com.capsule.youkids.user.dto.ResponseDto.GiveUserDto;
+import com.capsule.youkids.user.dto.view.PartnerInfoDto;
 import com.capsule.youkids.user.entity.Token;
 import com.capsule.youkids.user.entity.User;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
@@ -159,14 +161,21 @@ public class UserController {
     public ResponseEntity<?> checkPartner(@RequestBody checkPartnerRequestDto request) {
 
         // partner가 있는지 유무 파악
-        boolean check = userService.checkPartner(request);
+        PartnerInfoDto check = userService.checkPartner(request);
 
         //여기서 id가 없으면, partnerId 보내줘야 할수도 있음!
-        if (check) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (check != null) {
+            return new ResponseEntity<>(check, HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping("/partner")
+    public ResponseEntity<?> registPartner(@RequestBody PartnerRegistRequestDto request) {
+        if (userService.registPartner(request)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     // Mypage에서 User의 정보만 GET

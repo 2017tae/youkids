@@ -1,6 +1,7 @@
 package com.capsule.youkids.user.dto.view;
 
 import com.capsule.youkids.user.entity.User;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,16 +9,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PartnerInfoDto {
 
-    private String email;
-
+    private UUID partnerId;
     private String nickname;
-
     private String profileImage;
+    private String partnerEmail;
+
 
     public PartnerInfoDto(User user) {
-        this.email = user.getEmail();
+        this.partnerId = user.getUserId();
         this.nickname = user.getNickname();
         this.profileImage = user.getProfileImage();
+        this.partnerEmail = user.getEmail();
     }
 
 }

@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class checkPartnerRequestDto {
 
-    private UUID partnerId;
+    private UUID userId;
+
+    private String partnerEmail;
 
 
 }

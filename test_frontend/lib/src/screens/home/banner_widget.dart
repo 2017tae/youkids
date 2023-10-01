@@ -68,19 +68,20 @@ class _BannerWidgetState extends State<BannerWidget> {
                 ),
               ),
               Positioned( // 현재 페이지 인덱스를 표시
-                top: 16,
+                bottom: 16,
                 right: 16,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(5.0),
+                    color: Colors.black.withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(20.0),
                   ),
                   child: Text(
                     "${actualIndex + 1} / ${imgList.length}",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,
+                      fontWeight: FontWeight.w600
                     ),
                   ),
                 ),

@@ -51,6 +51,8 @@ dependencies:
   http_parser: ^4.0.2
   cached_network_image: ^3.3.0
   dio: ^5.3.3
+  url_launcher: ^6.0.12 # 최신 버전을 확인해주세요
+
 
 dev_dependencies:
   flutter_test:

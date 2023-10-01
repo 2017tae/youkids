@@ -150,71 +150,96 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
 
   Widget _buildMainContent() {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('공연 정보'),
-        ),
-        body: ListView.builder(
-          itemCount: festivals!.length + 1,
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              return BannerWidget();
-            }
-            int festivalIndex = index - 1;
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
+      appBar: AppBar(
+        title: Text('공연 정보', style: TextStyle(color: Colors.black)),
+        backgroundColor: Colors.white,
+        elevation: 0.5,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.black),
+      ),
+      body: ListView.builder(
+        itemCount: festivals!.length + 1, // +1은 BannerWidget 때문에 추가
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return BannerWidget(); // 첫 번째 아이템은 BannerWidget
+          }
+
+          // 실제 페스티벌 데이터의 인덱스를 가져옴
+          int festivalIndex = index - 1;
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FestivalDetailScreen(
+                        festivalId: festivals?[festivalIndex]['festivalChildId']),
+                  ),
+                );
+              },
               child: Row(
-                // mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      // 이미지를 클릭했을 때의 동작
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => FestivalDetailScreen(
-                              festivalId: festivals?[festivalIndex]
-                              ['festivalChildId']),
-                        ),
-                      );
-                    },
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
-                      child: Image.network(
-                        festivals?[festivalIndex]['poster'],
-                        width: 150,
-                        height: 200,
-                      ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
+                      festivals?[festivalIndex]['poster'],
+                      width: 100,
+                      height: 140,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  SizedBox(width: 10),
+                  SizedBox(width: 20),
                   Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        // 텍스트를 클릭했을 때의 동작
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FestivalDetailScreen(
-                                festivalId: festivals?[festivalIndex]
-                                ['festivalChildId']),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          festivals?[festivalIndex]['name'] ?? '',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
                           ),
-                        );
-                      },
-                      child: Text(
-                        festivals?[festivalIndex]['name'],
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        softWrap: false,
-                      ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          '기간: ' + (festivals?[festivalIndex]['startDate'] + ' ~ ' + festivals?[festivalIndex]['endDate'] ?? '정보 없음'),
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 14,
+                          ),
+                        ),
+                        SizedBox(height: 5),
+                        Text(
+                          '장소: ' + (festivals?[festivalIndex]['placeName'] ?? '정보 없음'),
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                  Icon(Icons.arrow_forward_ios, color: Colors.grey[400], size: 18),
                 ],
               ),
-            );
-          },
-        ));
+            ),
+          );
+        },
+      ),
+    );
   }
+
+
+
+
+
 }
+
 
 class LoadingCardFrame21Widget extends StatefulWidget {
   const LoadingCardFrame21Widget({super.key});

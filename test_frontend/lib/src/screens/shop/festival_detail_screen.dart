@@ -76,7 +76,7 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
       future: loadDataFuture,
       builder: (context, snapshot) {
         // if (snapshot.connectionState == ConnectionState.done) {
-        if (_festival != null) {
+        if (_festival != null ) {
           print(_festival);
           return _buildMainContent();
         } else {
@@ -175,67 +175,108 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            ' ',
-            style: TextStyle(
-              fontSize: 22,
-              color: Colors.black,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          backgroundColor: Colors.transparent,
-          iconTheme: const IconThemeData(
-            color: Colors.black,
-          ),
-          actions: [
-            IconButton(
-              onPressed: () {},
-              icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
-                  height: 24),
-            ),
-          ],
-
-        ),
+        // appBar: AppBar(
+        //   title: const Text(
+        //     ' ',
+        //     style: TextStyle(
+        //       fontSize: 22,
+        //       color: Colors.black,
+        //       fontWeight: FontWeight.w500,
+        //     ),
+        //   ),
+        //   backgroundColor: Colors.transparent,
+        //   iconTheme: const IconThemeData(
+        //     color: Colors.black,
+        //   ),
+        //   actions: [
+        //     IconButton(
+        //       onPressed: () {},
+        //       icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
+        //           height: 24),
+        //     ),
+        //   ],
+        //
+        // ),
         body:
         NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
+            return <Widget>[
+              SliverAppBar(
+                expandedHeight: 350.0,
+                floating: false,
+                pinned: true,
+                backgroundColor: Colors.white,
+                flexibleSpace: LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) {
+                    double top = constraints.biggest.height;
+                    return Container(
+                      color: top > 80 ? Colors.transparent : Colors.white,
+                      child: FlexibleSpaceBar(
+                        centerTitle: true,
+                        // title: Text(
+                        //     _festival?.name ?? 'Loading...',
+                        //   style: TextStyle(
+                        //     fontSize: 22,
+                        //     color: Colors.black,
+                        //     fontWeight: FontWeight.w500,
+                        //   ),
+                        // ),
+                        background: ClipRRect(
+                          borderRadius: BorderRadius.circular(5.0),
+                          child: Container(
+                            width: double.infinity,
+                            height: 350,
+                            child: Image.network(
+                              _festival!.poster,
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                iconTheme: const IconThemeData(
+                  color: Colors.black,
+                ),
+                actions: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg', height: 24),
+                  ),
+                ],
+              ),
             SliverList(
               delegate: SliverChildListDelegate(
                 [
                   if (_festival?.images != null && _festival!.images.isNotEmpty)
-                    CarouselSlider.builder(
-                      itemCount: 1,
-                      itemBuilder: (BuildContext context, int index,
-                          int realIndex) {
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(5.0),
-                          // BorderRadius 추가
-                          child:
-                          // CachedNetworkImage(
-                          //   imageUrl: "https://example.com/path/to/your/image.png",
-                          //   placeholder: (context, url) => CircularProgressIndicator(),
-                          //   errorWidget: (context, url, error) => Icon(Icons.error),
-                          // ),
-                          Image.network(
-                            _festival!.poster,
-                            fit: BoxFit.cover,
-                          ),
-                        );
-                      },
-                      options: CarouselOptions(
-                        height: 300,
-                        autoPlay: false,
-                        aspectRatio: 1.0,
-                        enlargeCenterPage: false,
-                        viewportFraction: 1.0,
-                        initialPage: 0,
-                        enableInfiniteScroll: false,
-                        reverse: false,
-                        scrollDirection: Axis.horizontal,
-                      ),
-                    ),
+                    // CarouselSlider.builder(
+                    //   itemCount: 1,
+                    //   itemBuilder: (BuildContext context, int index, int realIndex) {
+                    //     return ClipRRect(
+                    //       borderRadius: BorderRadius.circular(5.0),
+                    //       child: Container(
+                    //         width: double.infinity,  // 가로 크기를 꽉 차게 합니다.
+                    //         height: 300,  // 원하는 높이로 설정합니다.
+                    //         child: Image.network(
+                    //           _festival!.poster,
+                    //           fit: BoxFit.fill,
+                    //         ),
+                    //       ),
+                    //     );
+                    //   },
+                    //   options: CarouselOptions(
+                    //     height: 500,
+                    //     autoPlay: false,
+                    //     aspectRatio: 1.0,
+                    //     enlargeCenterPage: false,
+                    //     viewportFraction: 1.0,
+                    //     initialPage: 0,
+                    //     enableInfiniteScroll: false,
+                    //     reverse: false,
+                    //     scrollDirection: Axis.horizontal,
+                    //   ),
+                    // ),
 
                   // 지도 들어올 자리
                   Container(
@@ -247,9 +288,18 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _infoItem("이름", _festival?.name ?? 'Loading...', Icons.event_note),
+                        Text(
+                          _festival?.name ?? 'Loading...',
+                          style: TextStyle(
+                            fontSize: 23.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Divider(color: Colors.grey[200], thickness: 1), // 간단한 구분선
                         SizedBox(height: 15),
+
                         _infoItem("시작 날짜", _festival?.startDate ?? 'Loading...', Icons.date_range),
+
                         SizedBox(height: 15),
                         _infoItem("종료 날짜", _festival?.endDate ?? 'Loading...', Icons.date_range),
                         SizedBox(height: 15),
@@ -388,7 +438,7 @@ Widget _buildPerformanceInfo(Festival? _festival) {
 Widget _infoItem(String title, String info, IconData iconData) {
   return Row(
     children: [
-      Icon(iconData, color: Colors.red[700]), // 인터파크의 레드 컬러를 사용
+      Icon(iconData, color: Color(0xffFF7E76)), // 인터파크의 레드 컬러를 사용
       SizedBox(width: 10),
       Expanded(
         child: Column(
@@ -398,14 +448,14 @@ Widget _infoItem(String title, String info, IconData iconData) {
               title,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 15,
+                fontSize: 12,
                 color: Colors.black,
               ),
             ),
             Text(
               info,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 11,
                 color: Colors.grey[700],
               ),
             ),

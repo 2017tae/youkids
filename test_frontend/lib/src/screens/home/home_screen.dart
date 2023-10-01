@@ -312,19 +312,19 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _isLoggedIn == true
-                  ? const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      child: Text(
-                        '아이 맞춤 형 장소',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    )
-                  : Container(),
-              _isLoggedIn == true ? const ChildIconWidget() : Container(),
+              // _isLoggedIn == true
+              //     ? const Padding(
+              //         padding: EdgeInsets.symmetric(vertical: 10),
+              //         child: Text(
+              //           '아이 맞춤 형 장소',
+              //           style: TextStyle(
+              //             fontSize: 22,
+              //             fontWeight: FontWeight.bold,
+              //           ),
+              //         ),
+              //       )
+              //     : Container(),
+              // _isLoggedIn == true ? const ChildIconWidget() : Container(),
               setHomeMenu(
                 context,
                 '이번 주 추천 장소',

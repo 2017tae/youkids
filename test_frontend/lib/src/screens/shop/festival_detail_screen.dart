@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/screens/shop/create_shop_review_screen.dart';
+import 'package:youkids/src/screens/shop/festival_info_page.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:http/http.dart' as http;
 
@@ -110,6 +111,10 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
           ),
         ],
       ),
+      
+      
+      
+      
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -167,134 +172,163 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
   }
 
   Widget _buildMainContent() {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'YouKids',
-          style: TextStyle(
-            fontSize: 22,
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            ' ',
+            style: TextStyle(
+              fontSize: 22,
+              color: Colors.black,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          backgroundColor: Colors.transparent,
+          iconTheme: const IconThemeData(
             color: Colors.black,
-            fontWeight: FontWeight.w500,
           ),
-        ),
-        backgroundColor: Colors.transparent,
-        iconTheme: const IconThemeData(
-          color: Colors.black,
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
-                height: 24),
-          ),
-        ],
-      ),
-      body:
-      SingleChildScrollView(
-        child: Column(
-          children: [
-            if (_festival?.images != null && _festival!.images.isNotEmpty)
-              CarouselSlider.builder(
-                itemCount: 1,
-                itemBuilder: (BuildContext context, int index, int realIndex) {
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(5.0), // BorderRadius 추가
-                    child:
-                    // CachedNetworkImage(
-                    //   imageUrl: "https://example.com/path/to/your/image.png",
-                    //   placeholder: (context, url) => CircularProgressIndicator(),
-                    //   errorWidget: (context, url, error) => Icon(Icons.error),
-                    // ),
-                    Image.network(
-                      _festival!.poster,
-                      fit: BoxFit.cover,
-                    ),
-                  );
-                },
-                options: CarouselOptions(
-                  height: 300,
-                  autoPlay: false,
-                  aspectRatio: 1.0,
-                  enlargeCenterPage: false,
-                  viewportFraction: 1.0,
-                  initialPage: 0,
-                  enableInfiniteScroll: false,
-                  reverse: false,
-                  scrollDirection: Axis.horizontal,
-                ),
-              ),
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
+                  height: 24),
+            ),
+          ],
 
-            // 지도 들어올 자리
-            Padding(
-              padding: const EdgeInsets.all(15),
-              child: Column(
-                children: [
-                  shopInfo(
-                      imgUrl: 'lib/src/assets/icons/shop_address.png',
-                      info: _festival != null ? _festival!.name : 'Loading...'),
-                  shopInfo(
-                    imgUrl: 'lib/src/assets/icons/shop_phone.png',
-                    info: _festival != null ? _festival!.startDate : 'Loading...',
+        ),
+        body:
+        NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverList(
+              delegate: SliverChildListDelegate(
+                [
+                  if (_festival?.images != null && _festival!.images.isNotEmpty)
+                    CarouselSlider.builder(
+                      itemCount: 1,
+                      itemBuilder: (BuildContext context, int index,
+                          int realIndex) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(5.0),
+                          // BorderRadius 추가
+                          child:
+                          // CachedNetworkImage(
+                          //   imageUrl: "https://example.com/path/to/your/image.png",
+                          //   placeholder: (context, url) => CircularProgressIndicator(),
+                          //   errorWidget: (context, url, error) => Icon(Icons.error),
+                          // ),
+                          Image.network(
+                            _festival!.poster,
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      },
+                      options: CarouselOptions(
+                        height: 300,
+                        autoPlay: false,
+                        aspectRatio: 1.0,
+                        enlargeCenterPage: false,
+                        viewportFraction: 1.0,
+                        initialPage: 0,
+                        enableInfiniteScroll: false,
+                        reverse: false,
+                        scrollDirection: Axis.horizontal,
+                      ),
+                    ),
+
+                  // 지도 들어올 자리
+                  Container(
+                    padding: const EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                      color: Colors.white, // 밝은 배경색
+                      borderRadius: BorderRadius.circular(10), // 라운드 처리
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _infoItem("이름", _festival?.name ?? 'Loading...', Icons.event_note),
+                        SizedBox(height: 15),
+                        _infoItem("시작 날짜", _festival?.startDate ?? 'Loading...', Icons.date_range),
+                        SizedBox(height: 15),
+                        _infoItem("종료 날짜", _festival?.endDate ?? 'Loading...', Icons.date_range),
+                        SizedBox(height: 15),
+                        _infoItem("장소", _festival?.placeName ?? 'Loading...', Icons.location_on),
+                      ],
+                    ),
                   ),
-                  shopInfo(
-                    imgUrl: 'lib/src/assets/icons/shop_url.png',
-                    info: _festival != null ? _festival!.endDate : 'Loading...',
+                  Container(
+                    child: TabBar(
+                      indicatorColor: Color(0xffFF7E76),
+                      labelColor: Color(0xffFF7E76),
+                      tabs: const [
+                        Tab(text: "공연정보"),
+                        Tab(text: "판매정보"),
+                        Tab(text: "관람후기"),
+                      ],
+                    ),
                   ),
-                  shopInfo(
-                    imgUrl: 'lib/src/assets/icons/shop_info.png',
-                    info: _festival != null ? _festival!.placeName : 'Loading...',
-                  ),
+                  // 기존 ListView.builder 대신 이렇게 변경
+                  // Column(
+                  //   children: _festival!.images.map((imagePath) {
+                  //     return Image.network(
+                  //       imagePath,
+                  //       fit: BoxFit.cover,
+                  //       loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                  //         if (loadingProgress == null) return child;
+                  //         return Center(
+                  //           child: CircularProgressIndicator(
+                  //             value: loadingProgress.expectedTotalBytes != null
+                  //                 ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                  //                 : null,
+                  //           ),
+                  //         );
+                  //       },
+                  //       errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                  //         return const Center(child: Text('이미지 로드 실패'));
+                  //       },
+                  //     );
+                  //   }).toList(),
+                  // ),
                 ],
               ),
             ),
-            // 기존 ListView.builder 대신 이렇게 변경
-            Column(
-              children: _festival!.images.map((imagePath) {
-                return Image.network(
-                  imagePath,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                            : null,
-                      ),
-                    );
-                  },
-                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                    return const Center(child: Text('이미지 로드 실패'));
-                  },
-                );
-              }).toList(),
-            ),
-          ],
+          ];
+        },
+            body: TabBarView(
+            children: [
+            _buildPerformanceInfo(_festival),
+            _buildSalesInfo(),
+            _buildReviewInfo(),
+        ],
+      ),
+            // bottomNavigationBar: const FooterWidget(
+            //   currentIndex: 0,
+            // ),
+            // floatingActionButton: FloatingActionButton(
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => const CreateShopReviewScreen(),
+            //       ),
+            //     );
+            //   },
+            //   backgroundColor: const Color(0xffF6766E),
+            //   shape: RoundedRectangleBorder(
+            //     borderRadius: BorderRadius.circular(100),
+            //   ),
+            //   child: const Icon(
+            //     Icons.create,
+            //     color: Color(0xffFFFFFF),
+            //   ),
+            // ),
+      ),
+
         ),
-      ),
-      bottomNavigationBar: const FooterWidget(
-        currentIndex: 0,
-      ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Navigator.push(
-      //       context,
-      //       MaterialPageRoute(
-      //         builder: (context) => const CreateShopReviewScreen(),
-      //       ),
-      //     );
-      //   },
-      //   backgroundColor: const Color(0xffF6766E),
-      //   shape: RoundedRectangleBorder(
-      //     borderRadius: BorderRadius.circular(100),
-      //   ),
-      //   child: const Icon(
-      //     Icons.create,
-      //     color: Color(0xffFFFFFF),
-      //   ),
-      // ),
-    );
+        );
   }
+
 
   Padding shopInfo({required String imgUrl, required String info}) {
     return Padding(
@@ -320,6 +354,106 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
       ),
     );
   }
+}
+
+Widget _buildPerformanceInfo(Festival? _festival) {
+  return ListView.builder(
+    itemCount: _festival!.images.length,
+    itemBuilder: (context, index) {
+      String imagePath = _festival.images[index];
+      return Image.network(
+        imagePath,
+        fit: BoxFit.cover,
+        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Center(
+            child: CircularProgressIndicator(
+              value: loadingProgress.expectedTotalBytes != null
+                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                  : null,
+            ),
+          );
+        },
+        errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+          return const Center(child: Text('이미지 로드 실패'));
+        },
+      );
+    },
+  );
+}
+
+
+
+// 각 정보 항목을 나타내는 위젯
+Widget _infoItem(String title, String info, IconData iconData) {
+  return Row(
+    children: [
+      Icon(iconData, color: Colors.red[700]), // 인터파크의 레드 컬러를 사용
+      SizedBox(width: 10),
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+                color: Colors.black,
+              ),
+            ),
+            Text(
+              info,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[700],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
+}
+
+Widget _buildSalesInfo() {
+  // 판매정보에 대한 위젯 반환
+  return SingleChildScrollView(
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            "판매정보",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10),  // 간격을 주기 위한 위젯
+          Text(
+            "판매정보에 대한 상세 내용이 들어가는 부분입니다.",  // 여기에 판매정보 내용을 적으면 됩니다.
+            style: TextStyle(fontSize: 16),
+          ),
+          SizedBox(height: 20),  // 간격을 주기 위한 위젯
+          InkWell(
+            onTap: () {
+              // 여기에 URL을 열어주는 코드를 추가합니다. 예를 들어, url_launcher 패키지를 사용할 수 있습니다.
+            },
+            child: Text(
+              "판매정보 관련 URL",  // 실제 URL이나 "자세히 보기"와 같은 텍스트를 적으면 됩니다.
+              style: TextStyle(fontSize: 16, color: Colors.blue),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _buildReviewInfo() {
+  // 관람후기에 대한 위젯 반환
+  return SingleChildScrollView(
+    // 여기에 관람후기 관련 위젯 추가
+  );
 }
 
 class Festival {

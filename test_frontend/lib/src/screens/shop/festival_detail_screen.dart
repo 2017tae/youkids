@@ -240,10 +240,10 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
                   color: Colors.black,
                 ),
                 actions: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg', height: 24),
-                  ),
+                  // IconButton(
+                  //   onPressed: () {},
+                  //   icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg', height: 24),
+                  // ),
                 ],
               ),
             SliverList(

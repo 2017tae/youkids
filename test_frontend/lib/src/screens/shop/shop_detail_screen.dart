@@ -168,6 +168,8 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
     );
   }
 
+  bool _isExpanded = false;
+
 
   Widget _buildMainContent() {
     return Scaffold(
@@ -250,13 +252,29 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                     ],
                   ),
                   SizedBox(height: 30),
-                  Text(
-                    _place != null ? _place!.description : 'Loading...',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[700],
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _place != null ? (_isExpanded || _place!.description.length <= 50 ? _place!.description : _place!.description.substring(0, 50) + '...') : 'Loading...',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      if (_place != null && _place!.description.length > 50)
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              _isExpanded = !_isExpanded;
+                            });
+                          },
+                          child: Text(_isExpanded ? "접기" : "더보기", style: TextStyle(color: Colors.blue)),
+                        ),
+                    ],
                   ),
+
+
                   SizedBox(height: 10),
                   Divider(thickness: 0.5, color: Colors.grey[300]),
                   SizedBox(height: 10),

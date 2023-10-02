@@ -77,9 +77,25 @@ public class Festival {
     private String whenTime;
 
     @Column
-    private String cast_member;
+    private String castMember;
 
-    @Column String crew_member;
+    @Column
+    private String crewMember;
+
+    @Column
+    private String address;
+
+    @Column
+    private Double latitude;
+
+    @Column
+    private Double longitude;
+
+    @Column
+    private String phoneNumber;
+
+    @Column
+    private String homepage;
 
     @OneToMany(mappedBy = "festival")
     List<FestivalImage> images = new ArrayList<>();
@@ -88,7 +104,9 @@ public class Festival {
     public Festival(Long festivalChildId, String eachId, String name, LocalDate startDate,
             LocalDate endDate, String state, String category, String openRun, String poster,
             String placeName, String placeFacilId, String runTime, String age, String enterprise,
-            String price, String story, String whenTime, String cast_member, String crew_member) {
+            String price, String story, String whenTime, String castMember, String crewMember,
+            String address, Double latitude, Double longitude, String phoneNumber,
+            String homepage) {
         this.festivalChildId = festivalChildId;
         this.eachId = eachId;
         this.name = name;
@@ -106,7 +124,12 @@ public class Festival {
         this.price = price;
         this.story = story;
         this.whenTime = whenTime;
-        this.cast_member = cast_member;
-        this.crew_member = crew_member;
+        this.castMember = castMember;
+        this.crewMember = crewMember;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.phoneNumber = phoneNumber;
+        this.homepage = homepage;
     }
 }

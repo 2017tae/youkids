@@ -18,12 +18,15 @@ public class GetMyInfoDto {
 
     private String description;
 
+    private boolean car;
+
     public GetMyInfoDto(User user) {
         this.email = user.getEmail();
         this.nickname = user.getNickname();
         this.leader = user.isLeader();
         this.profileImage = user.getProfileImage();
         this.description = user.getDescription();
+        this.car = user.isCar();
     }
 
 }

@@ -2,9 +2,11 @@ package com.capsule.youkids.user.service;
 
 import com.capsule.youkids.user.dto.RequestDto.DeleteMyInfoRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.ModifyMyInfoRequestDto;
+import com.capsule.youkids.user.dto.RequestDto.PartnerRegistRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.checkPartnerRequestDto;
 import com.capsule.youkids.user.dto.ResponseDto.GetMyInfoResponseDto;
+import com.capsule.youkids.user.dto.view.PartnerInfoDto;
 import com.capsule.youkids.user.entity.Token;
 import com.capsule.youkids.user.entity.User;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
@@ -32,13 +34,15 @@ public interface UserService {
     User addInfoUser(addUserInfoRequestDto request);
 
     // partner로 선택한 유저 유무 파악
-    boolean checkPartner(checkPartnerRequestDto request);
+    PartnerInfoDto checkPartner(checkPartnerRequestDto request);
+
+    boolean registPartner(PartnerRegistRequestDto request);
 
     // 본인 회원 유저 정보 조회
     GetMyInfoResponseDto getMyInfo(UUID userId);
 
     // 본인 회원 유저 수정
-    boolean modifyMyInfo(ModifyMyInfoRequestDto request, MultipartFile file);
+    boolean modifyMyInfo(ModifyMyInfoRequestDto request, MultipartFile file) throws Exception;
 
     // 본인 회원 휴면유저로 변경
     boolean deleteMyInfo(DeleteMyInfoRequestDto request);

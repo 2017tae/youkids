@@ -57,7 +57,7 @@ class ReviewRecomlistScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const ChildIconWidget(),
+            // const ChildIconWidget(),
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 10),
               child: Text(

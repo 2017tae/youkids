@@ -1,13 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/screens/mypage/mypage_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:dio/dio.dart';
 

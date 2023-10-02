@@ -3,8 +3,10 @@ import 'dart:ffi';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:youkids/src/screens/shop/create_shop_review_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:http/http.dart' as http;
@@ -24,11 +26,13 @@ class ShopDetailScreen extends StatefulWidget {
 class _ShopDetailScreenState extends State<ShopDetailScreen> {
   bool _isLoggedIn = false;
   Place? _place;
+  Future? loadDataFuture;
+
 
   @override
   void initState() {
     super.initState();
-    _checkLoginStatus();
+    loadDataFuture = _checkLoginStatus();
   }
 
   _checkLoginStatus() async {
@@ -40,7 +44,8 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
 
     final response = await http.get(
       Uri.parse(
-          'https://j9a604.p.ssafy.io/api/place/87dad60a-bfff-47e5-8e21-02cb49b23ba6/${widget.placeId}'),
+          'https://j9a604.p.ssafy.io/api/place/87dad60a-bfff-47e5-8e21-02cb49b23ba6/${widget
+              .placeId}'),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -67,8 +72,25 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
+    return FutureBuilder(
+      future: loadDataFuture,
+      builder: (context, snapshot) {
+        // if (snapshot.connectionState == ConnectionState.done) {
+        if (_place != null) {
+          print(_place);
+          return _buildMainContent();
+        } else {
+          return _buildLoadingMainContent();
+        }
+      },
+    );
+
+  }
+
+  Widget _buildLoadingMainContent() {
     return Scaffold(
+      drawer: const Drawer(),
       appBar: AppBar(
         title: const Text(
           'YouKids',
@@ -78,7 +100,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         iconTheme: const IconThemeData(
           color: Colors.black,
         ),
@@ -91,28 +113,103 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
         ],
       ),
       body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                children: [
+                  GestureDetector(
+                    onTap: () {},
+                    child: const LoadingCardFrame11Widget(),
+                  ),
+                  const SizedBox(
+                    height: 500,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () {},
+                        child: const LoadingCardFrame11Widget(),
+                      ),
+                      GestureDetector(
+                        onTap: () {},
+                        child: const LoadingCardFrame11Widget(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () {},
+                        child: const LoadingCardFrame11Widget(),
+                      ),
+                      GestureDetector(
+                        onTap: () {},
+                        child: const LoadingCardFrame11Widget(),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: const FooterWidget(
+        currentIndex: 0,
+      ),
+    );
+  }
+
+  bool _isExpanded = false;
+
+
+  Widget _buildMainContent() {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          _place!.name,
+          style: TextStyle(
+            fontSize: 22,
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(
+          color: Colors.black,
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg', height: 24),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
         child: Column(
           children: [
             if (_place?.images != null && _place!.images.isNotEmpty)
               CarouselSlider.builder(
                 itemCount: _place!.images.length,
                 itemBuilder: (BuildContext context, int index, int realIndex) {
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(5.0), // BorderRadius 추가
-                    child:
-                    // CachedNetworkImage(
-                    //   imageUrl: "https://example.com/path/to/your/image.png",
-                    //   placeholder: (context, url) => CircularProgressIndicator(),
-                    //   errorWidget: (context, url, error) => Icon(Icons.error),
-                    // ),
-                    Image.network(
-                      _place!.images[index],
-                      fit: BoxFit.cover,
-                    ),
+                  return Image.network(
+                    _place!.images[index],
+                    fit: BoxFit.cover,
+                    width: MediaQuery.of(context).size.width,
                   );
                 },
                 options: CarouselOptions(
-                  height: 300,
+                  height: 250,
                   autoPlay: false,
                   aspectRatio: 1.0,
                   enlargeCenterPage: false,
@@ -124,88 +221,262 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                 ),
               ),
 
-            // 지도 들어올 자리
             Padding(
-              padding: const EdgeInsets.all(15),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+
                 children: [
-                  shopInfo(
-                      imgUrl: 'lib/src/assets/icons/shop_address.png',
-                      info: _place != null ? _place!.name : 'Loading...'),
-                  shopInfo(
-                    imgUrl: 'lib/src/assets/icons/shop_phone.png',
-                    info: _place != null ? _place!.phoneNumber : 'Loading...',
+                  Text(
+                    _place?.name ?? 'Loading...',
+                    style: TextStyle(
+                      fontSize: 23.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.left,
                   ),
-                  shopInfo(
-                    imgUrl: 'lib/src/assets/icons/shop_url.png',
-                    info: _place != null ? _place!.homepage : 'Loading...',
+                  // Divider(thickness: 0.5, color: Colors.grey[300]),
+                  // _detailInfo(title: "전화번호", info: _place != null ? _place!.phoneNumber : 'Loading...'),
+                  // _detailInfo(title: "홈페이지", info: _place != null ? _place!.homepage : 'Loading...'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        _place!.category,
+                        style: TextStyle(
+                          fontSize: 18,
+                          // fontWeight: FontWeight.w600,
+                          color: Colors.grey[500],
+                        ),
+                      ),
+                    ],
                   ),
-                  shopInfo(
-                    imgUrl: 'lib/src/assets/icons/shop_info.png',
-                    info: _place != null ? _place!.description : 'Loading...',
+                  SizedBox(height: 30),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _place != null ? (_isExpanded || _place!.description.length <= 50 ? _place!.description : _place!.description.substring(0, 50) + '...') : 'Loading...',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      if (_place != null && _place!.description.length > 50)
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              _isExpanded = !_isExpanded;
+                            });
+                          },
+                          child: Text(_isExpanded ? "접기" : "더보기", style: TextStyle(color: Colors.blue)),
+                        ),
+                    ],
                   ),
-                  // const Divider(
-                  //   thickness: 1,
-                  //   color: Color(0xff707070),
-                  // ),
-                  // const Divider(
-                  //   thickness: 1,
-                  //   color: Color(0xff707070),
-                  // ),
-                  // const Divider(
-                  //   thickness: 1,
-                  //   color: Color(0xff707070),
-                  // ),
+
+
+                  SizedBox(height: 10),
+                  Divider(thickness: 0.5, color: Colors.grey[300]),
+                  SizedBox(height: 10),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "기본정보",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  _addressInfo(info: _place != null ? _place!.address : "Loading..."),
+                  _phoneInfo( phoneNumber: _place != null ? _place!.phoneNumber : 'Loading...'),
+                  _homepageInfo(url: _place != null ? _place!.homepage : 'Loading...'),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
-      bottomNavigationBar: const FooterWidget(
-        currentIndex: 0,
-      ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Navigator.push(
-      //       context,
-      //       MaterialPageRoute(
-      //         builder: (context) => const CreateShopReviewScreen(),
-      //       ),
-      //     );
-      //   },
-      //   backgroundColor: const Color(0xffF6766E),
-      //   shape: RoundedRectangleBorder(
-      //     borderRadius: BorderRadius.circular(100),
-      //   ),
-      //   child: const Icon(
-      //     Icons.create,
-      //     color: Color(0xffFFFFFF),
-      //   ),
-      // ),
     );
   }
 
-  Padding shopInfo({required String imgUrl, required String info}) {
+  Widget _detailInfo({required String title, required String info}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: 10,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset(imgUrl),
-          const SizedBox(
-            width: 15,
-          ),
-          Expanded(
-            child: Text(
-              info,
-              style: const TextStyle(
-                fontSize: 15,
-              ),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
             ),
           ),
+          SizedBox(height: 5),
+          Text(
+            info,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[700],
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Divider(thickness: 0.5, color: Colors.grey[300]),
+        ],
+      ),
+    );
+  }
+
+  Widget _addressInfo({required String info}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "주소",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+          ),
+          SizedBox(height: 5),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  info,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[700],
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.copy, size: 20, color: Color(0xffFF7E76)),
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: info));
+                  // 복사가 완료되었음을 알리는 스낵바 메시지
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('주소가 복사되었습니다.')),
+                  );
+                },
+              )
+            ],
+          ),
+          Divider(thickness: 0.5, color: Colors.grey[300]),
+        ],
+      ),
+    );
+  }
+
+  Widget _homepageInfo({required String url}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "홈페이지",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+          ),
+          SizedBox(height: 5),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  url,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[700],
+                    // decoration: TextDecoration.underline,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (url.trim().isNotEmpty)
+                IconButton(
+                  icon: Icon(Icons.launch, size: 20, color: Color(0xffFF7E76)),
+                  onPressed: () async {
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      // 불가능한 URL일 경우 메시지 표시
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('홈페이지를 열 수 없습니다.')),
+                      );
+                    }
+                  },
+                )
+            ],
+          ),
+          Divider(thickness: 0.5, color: Colors.grey[300]),
+        ],
+      ),
+    );
+  }
+
+  Widget _phoneInfo({required String phoneNumber}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "전화번호",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+          ),
+          SizedBox(height: 5),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  phoneNumber,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[700],
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (phoneNumber.trim().isNotEmpty)
+                IconButton(
+                  icon: Icon(Icons.call, size: 20, color: Color(0xffFF7E76)),
+                  onPressed: () async {
+                    final url = 'tel:$phoneNumber';
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      // 불가능한 전화번호일 경우 메시지 표시
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('전화를 걸 수 없습니다.')),
+                      );
+                    }
+                  },
+                )
+            ],
+          ),
+          Divider(thickness: 0.5, color: Colors.grey[300]),
         ],
       ),
     );
@@ -264,6 +535,63 @@ class Place {
       subwayId: json['subwayId'],
       subwayDistance: json['subwayDistance'],
       images: List<String>.from(json['images']),
+    );
+  }
+}
+
+class LoadingCardFrame11Widget extends StatefulWidget {
+  const LoadingCardFrame11Widget({super.key});
+
+  @override
+  State<LoadingCardFrame11Widget> createState() =>
+      _LoadingCardFrame11WidgetState();
+}
+
+class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Color?> _colorAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(
+        milliseconds: 180,
+      ),
+    )..repeat(reverse: true);
+
+    _colorAnimation = ColorTween(
+      begin: const Color(0xffd0d0d0),
+      end: const Color(0xffababab),
+    ).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        AnimatedBuilder(
+          animation: _colorAnimation,
+          builder: (context, child) {
+            return Container(
+              height: MediaQuery.of(context).size.width * 0.44,
+              width: MediaQuery.of(context).size.width * 0.44,
+              decoration: BoxDecoration(
+                color: _colorAnimation.value,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }

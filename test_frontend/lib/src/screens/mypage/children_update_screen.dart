@@ -7,7 +7,6 @@ import 'package:youkids/src/screens/mypage/mypage_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:dio/dio.dart';
 
@@ -28,6 +27,7 @@ class _ChildrenUpdateScreenState extends State<ChildrenUpdateScreen> {
   String? originalImage;
   File? newImage;
 
+  // String uri = 'http://10.0.2.2:8080';
   String uri = 'https://j9a604.p.ssafy.io/api';
 
   Future<void> selectDate(BuildContext context) async {
@@ -130,15 +130,7 @@ class _ChildrenUpdateScreenState extends State<ChildrenUpdateScreen> {
         print('there is null');
         return false;
       } else {
-        // final response = await http.put(Uri.parse('$uri/children'),
-        //     headers: {'Content-Type': 'application/json'},
-        //     body: jsonEncode({
-        //       'parentId': parentId,
-        //       'childrenId': childrenId,
-        //       'name': newName,
-        //       'gender': newGender == '남' ? 0 : 1,
-        //       'birthday': DateFormat('yyyy-MM-dd').format(newBirthday!),
-        //     }));
+        print(imageChanged);
         // 만약에 사진이 바뀌었으면 새 사진을 multipartfile로 넣고, 아님 기존 사진 그대로 보내고
         final dio = Dio();
         final formData = FormData.fromMap({
@@ -153,7 +145,7 @@ class _ChildrenUpdateScreenState extends State<ChildrenUpdateScreen> {
             'name': newName,
             'gender': newGender == '남' ? 0 : 1,
             'birthday': DateFormat('yyyy-MM-dd').format(newBirthday!),
-            'profileImage': newImage != null ? null : originalImage,
+            'imageChanged': imageChanged,
           }),
         });
         final response = await dio.put(('$uri/children'), data: formData);

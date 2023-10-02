@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:youkids/src/models/home_models/child_icon_model.dart';
 import 'package:youkids/src/models/mypage_models/children_model.dart';
 import 'package:youkids/src/screens/mypage/children_update_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';

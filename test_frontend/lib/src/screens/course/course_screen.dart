@@ -6,6 +6,7 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kakao_flutter_sdk_navi/kakao_flutter_sdk_navi.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:youkids/src/screens/course/course_create_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:youkids/src/models/course_models/course_detail_model.dart';
 import 'package:youkids/src/providers/course_providers.dart';
@@ -33,7 +34,7 @@ class _CourseScreenState extends State<CourseScreen> {
   bool isLoading = true;
   bool isLoadingCurCoords = true;
   bool isCourseList = true;
-  String? userId;
+  String? userId = "87dad60a-bfff-47e5-8e21-02cb49b23ba6";
   CourseProviders courseProviders = CourseProviders();
 
   Future<String?> getUserId() async {
@@ -64,7 +65,6 @@ class _CourseScreenState extends State<CourseScreen> {
       setState(() {
         bookmarks = decodedJson['result']['bookmarks'];
       });
-      print(bookmarks);
     }
   }
 
@@ -101,7 +101,7 @@ class _CourseScreenState extends State<CourseScreen> {
   @override
   void initState() {
     super.initState();
-    getUserId().then((userId) {
+    // getUserId().then((userId) {
       if (userId != null) {
         initCourses().then((_) {
           setState(() {
@@ -110,7 +110,7 @@ class _CourseScreenState extends State<CourseScreen> {
         });
         initBookmark();
       }
-    });
+    // });
     // _initCurrentLocation();
     scrollController = ScrollController();
     scrollController.addListener(() {
@@ -190,7 +190,7 @@ class _CourseScreenState extends State<CourseScreen> {
   }
 
   Future<void> _onDeleteCourse(Course_detail_model course) async {
-    String api = dotenv.get("api_key3");
+    String api = dotenv.get("api_key");
     Uri uri = Uri.parse(api);
 
     Map data = {"courseId": course.courseId, "userId": userId};
@@ -202,8 +202,9 @@ class _CourseScreenState extends State<CourseScreen> {
       headers: {'Content-Type': 'application/json'},
       body: body,
     );
-
+    print(response.body);
     if (response.statusCode == 200) {
+
       setState(() {
         courses.remove(course);
       });
@@ -256,7 +257,6 @@ class _CourseScreenState extends State<CourseScreen> {
 
       var bounds = NLatLngBounds.from(bound);
 
-      // 중간 지점으로 카메라 이동
       _controller!.updateCamera(
         NCameraUpdate.fitBounds(bounds,
             padding:
@@ -329,8 +329,18 @@ class _CourseScreenState extends State<CourseScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
+            onPressed: () {
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation1, animation2) =>
+                  CourseCreateScreen(),
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                ),
+              );
+            },
+            icon: SvgPicture.asset('lib/src/assets/icons/add_white.svg',
                 height: 24),
           ),
         ],
@@ -487,6 +497,20 @@ class _CourseScreenState extends State<CourseScreen> {
                                 );
                               }),
                             if (isCourseList)
+                              if (courses.length == 0)
+                                Container(
+                                  height:
+                                  MediaQuery.of(context).size.height * 0.25,
+                                  child: Center(
+                                    child: Text(
+                                      '불러올 코스가 없습니다',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                  ),
+                                ),
+                              if(courses.length>0)
                               ...courses.asMap().entries.map((entry) {
                                 final course = entry.value;
                                 return GestureDetector(

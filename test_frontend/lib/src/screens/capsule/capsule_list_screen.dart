@@ -51,7 +51,7 @@ class _CapsuleListScreenState extends State<CapsuleListScreen> {
       _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
     });
 
-    // userId = "87dad60a-bfff-47e5-8e21-02cb49b23ba6";
+    userId = "87dad60a-bfff-47e5-8e21-02cb49b23ba6";
 
 
     if (userId == null) {
@@ -94,7 +94,11 @@ class _CapsuleListScreenState extends State<CapsuleListScreen> {
     'capsule9.png',
   ];
 
-  final Random random = Random();
+  String getRandomCapsuleImage() {
+    final random = Random();
+    int index = random.nextInt(capsuleImages.length);
+    return capsuleImages[index];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,10 +131,10 @@ class _CapsuleListScreenState extends State<CapsuleListScreen> {
             alignment: Alignment.centerLeft, // 왼쪽 정렬
             child: Row(
               children: List.generate(
-                capsulesList!.length-1,
+                capsulesList!.length,
                     (index) => GestureDetector(
                   onTap: () => _capsuleIconTap(index),
-                  child: ChildIconWidget(num: index+1),
+                  child: ChildIconWidget(num: index),
                 ),
               ),
             ),
@@ -144,60 +148,57 @@ class _CapsuleListScreenState extends State<CapsuleListScreen> {
 
 
         // 아이콘에 해당하는 정보 표시
+// 아이콘에 해당하는 정보 표시
         Expanded(
           child: GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3, childAspectRatio: 0.7),
-            itemCount: capsulesList!.length-1,
+            itemCount: capsulesList?[_selectedCapsuleIndex]['capsules'].length, // 선택된 그룹의 capsules 항목 수로 설정
             itemBuilder: (BuildContext context, int index) {
-              if (index == _selectedCapsuleIndex) {
-                final capsule = capsulesList?[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CapsuleDetailScreen(capsule!['capsules'][0]['capsuleId'].toString()),
-                      ),
-                    );
-                  },
-                  child: Card(
-                    elevation: 0,
-                    margin: EdgeInsets.symmetric(vertical: 5.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Flexible(
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Image.asset(
-                                'lib/src/assets/icons/${capsuleImages[index]}',
-                                width: 120,
-                                height: 120,
-                                fit: BoxFit.fitHeight,
-                              ),
-                            ],
-                          ),
-                          flex: 5,
-                        ),
-                        Flexible(
-                          child: Text(
-                            capsule!['capsules'][0]['year'].toString(),
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          flex: 1,
-                        ),
-                      ],
+              final capsule = capsulesList?[_selectedCapsuleIndex]['capsules'][index];
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CapsuleDetailScreen(capsule!['capsuleId'].toString()),
                     ),
+                  );
+                },
+                child: Card(
+                  elevation: 0,
+                  margin: EdgeInsets.symmetric(vertical: 5.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.asset(
+                              'lib/src/assets/icons/${getRandomCapsuleImage()}',
+                              width: 120,
+                              height: 120,
+                              fit: BoxFit.fitHeight,
+                            ),
+                          ],
+                        ),
+                        flex: 5,
+                      ),
+                      Flexible(
+                        child: Text(
+                          capsule['year'].toString(),
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        flex: 1,
+                      ),
+                    ],
                   ),
-                );
-              } else {
-                return SizedBox.shrink();
-              }
+                ),
+              );
             },
           ),
         ),

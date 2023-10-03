@@ -3,6 +3,7 @@ import 'dart:ffi';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/screens/shop/create_shop_review_screen.dart';
@@ -68,6 +69,20 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(
         'email'); // Returns 'john_doe' if it exists, otherwise returns null.
+  }
+
+  String formatText(String? text) {
+    const int maxLength = 14;
+
+    if (text == null) {
+      return 'Loading...';
+    }
+
+    if (text.length > maxLength) {
+      return text.substring(0, maxLength) + '...';
+    } else {
+      return text;
+    }
   }
 
   @override
@@ -171,38 +186,17 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
     );
   }
 
+
   Widget _buildMainContent() {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        // appBar: AppBar(
-        //   title: const Text(
-        //     ' ',
-        //     style: TextStyle(
-        //       fontSize: 22,
-        //       color: Colors.black,
-        //       fontWeight: FontWeight.w500,
-        //     ),
-        //   ),
-        //   backgroundColor: Colors.transparent,
-        //   iconTheme: const IconThemeData(
-        //     color: Colors.black,
-        //   ),
-        //   actions: [
-        //     IconButton(
-        //       onPressed: () {},
-        //       icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
-        //           height: 24),
-        //     ),
-        //   ],
-        //
-        // ),
         body:
         NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
               SliverAppBar(
-                expandedHeight: 350.0,
+                expandedHeight: 450.0,
                 floating: false,
                 pinned: true,
                 backgroundColor: Colors.white,
@@ -213,22 +207,26 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
                       color: top > 80 ? Colors.transparent : Colors.white,
                       child: FlexibleSpaceBar(
                         centerTitle: true,
-                        // title: Text(
-                        //     _festival?.name ?? 'Loading...',
-                        //   style: TextStyle(
-                        //     fontSize: 22,
-                        //     color: Colors.black,
-                        //     fontWeight: FontWeight.w500,
-                        //   ),
-                        // ),
-                        background: ClipRRect(
-                          borderRadius: BorderRadius.circular(5.0),
-                          child: Container(
-                            width: double.infinity,
-                            height: 350,
-                            child: Image.network(
-                              _festival!.poster,
-                              fit: BoxFit.fill,
+                        title: top < 120
+                            ? Text(
+                          formatText(_festival?.name),
+                          style: TextStyle(
+                            fontSize: 22,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                          ), // 최대 1라인까지만 표시
+                        )
+                            : null,
+                        background: SafeArea(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(5.0),
+                            child: Container(
+                              width: double.infinity,
+                              height: 450,
+                              child: Image.network(
+                                _festival!.poster,
+                                fit: BoxFit.fill,
+                              ),
                             ),
                           ),
                         ),
@@ -249,35 +247,6 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
             SliverList(
               delegate: SliverChildListDelegate(
                 [
-                  if (_festival?.images != null && _festival!.images.isNotEmpty)
-                    // CarouselSlider.builder(
-                    //   itemCount: 1,
-                    //   itemBuilder: (BuildContext context, int index, int realIndex) {
-                    //     return ClipRRect(
-                    //       borderRadius: BorderRadius.circular(5.0),
-                    //       child: Container(
-                    //         width: double.infinity,  // 가로 크기를 꽉 차게 합니다.
-                    //         height: 300,  // 원하는 높이로 설정합니다.
-                    //         child: Image.network(
-                    //           _festival!.poster,
-                    //           fit: BoxFit.fill,
-                    //         ),
-                    //       ),
-                    //     );
-                    //   },
-                    //   options: CarouselOptions(
-                    //     height: 500,
-                    //     autoPlay: false,
-                    //     aspectRatio: 1.0,
-                    //     enlargeCenterPage: false,
-                    //     viewportFraction: 1.0,
-                    //     initialPage: 0,
-                    //     enableInfiniteScroll: false,
-                    //     reverse: false,
-                    //     scrollDirection: Axis.horizontal,
-                    //   ),
-                    // ),
-
                   // 지도 들어올 자리
                   Container(
                     padding: const EdgeInsets.all(15),
@@ -293,6 +262,14 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
                           style: TextStyle(
                             fontSize: 23.0,
                             fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                        Text(
+                          _festival?.category ?? 'Loading...',
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            color: Colors.grey[600],
                           ),
                         ),
                         Divider(color: Colors.grey[200], thickness: 1), // 간단한 구분선
@@ -318,28 +295,6 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
                       ],
                     ),
                   ),
-                  // 기존 ListView.builder 대신 이렇게 변경
-                  // Column(
-                  //   children: _festival!.images.map((imagePath) {
-                  //     return Image.network(
-                  //       imagePath,
-                  //       fit: BoxFit.cover,
-                  //       loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                  //         if (loadingProgress == null) return child;
-                  //         return Center(
-                  //           child: CircularProgressIndicator(
-                  //             value: loadingProgress.expectedTotalBytes != null
-                  //                 ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                  //                 : null,
-                  //           ),
-                  //         );
-                  //       },
-                  //       errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                  //         return const Center(child: Text('이미지 로드 실패'));
-                  //       },
-                  //     );
-                  //   }).toList(),
-                  // ),
                 ],
               ),
             ),
@@ -352,27 +307,6 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
             _buildReviewInfo(),
         ],
       ),
-            // bottomNavigationBar: const FooterWidget(
-            //   currentIndex: 0,
-            // ),
-            // floatingActionButton: FloatingActionButton(
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (context) => const CreateShopReviewScreen(),
-            //       ),
-            //     );
-            //   },
-            //   backgroundColor: const Color(0xffF6766E),
-            //   shape: RoundedRectangleBorder(
-            //     borderRadius: BorderRadius.circular(100),
-            //   ),
-            //   child: const Icon(
-            //     Icons.create,
-            //     color: Color(0xffFFFFFF),
-            //   ),
-            // ),
       ),
 
         ),

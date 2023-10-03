@@ -21,7 +21,7 @@ class ChildIconWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(7),
               decoration: BoxDecoration(
-                gradient: num == 1
+                gradient: num == 0
                     ? const LinearGradient(
                   begin: Alignment.bottomRight,
                   end: Alignment.topLeft,

@@ -397,7 +397,11 @@ class GridItem extends StatelessWidget {
           ),
         ),
         SizedBox(height: 8.0),
-        Text(name),
+        Text(
+          name,
+          overflow: TextOverflow.ellipsis,  // 내용이 넘칠 때 '...'로 표시
+          maxLines: 1,  // 최대 표시 줄 수
+        ),
         Text(address,
           style: TextStyle(color: Colors.grey),  // 여기에 추가
         ),

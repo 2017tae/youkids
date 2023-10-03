@@ -188,12 +188,12 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
         iconTheme: const IconThemeData(
           color: Colors.black,
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg', height: 24),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {},
+        //     icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg', height: 24),
+        //   ),
+        // ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -244,7 +244,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                       Text(
                         _place!.category,
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 15,
                           // fontWeight: FontWeight.w600,
                           color: Colors.grey[500],
                         ),

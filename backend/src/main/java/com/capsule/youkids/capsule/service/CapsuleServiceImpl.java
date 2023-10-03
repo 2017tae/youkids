@@ -182,6 +182,7 @@ public class CapsuleServiceImpl implements CapsuleService {
 
             // 반환값에 추가한다.
             MemoryResponseDto memoryResponseDto = MemoryResponseDto.builder()
+                    .memoryId(memory.getMemoryId())
                     .month(memory.getMonth())
                     .day(memory.getDay())
                     .memoryImageDtoList(memoryImageDtoList)
@@ -459,6 +460,7 @@ public class CapsuleServiceImpl implements CapsuleService {
         childrenImageList = new ArrayList<>(child);
 
         MemoryDetailResponseDto response = MemoryDetailResponseDto.builder()
+                .memoryId(memory.getMemoryId())
                 .year(memory.getYear())
                 .month(memory.getMonth())
                 .day(memory.getDay())

@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/screens/capsule/capsule_list_screen.dart';
 import 'package:http/http.dart' as http;
 
+import 'capsule_big_detail_screen.dart';
+
 
 class CapsuleDetailScreen extends StatefulWidget {
   final String capsuleId;
@@ -114,9 +116,19 @@ class _CapsuleDetailScreenState extends State<CapsuleDetailScreen> {
                   ),
                   itemCount: memoryItem["memoryImageDtoList"].length,
                   itemBuilder: (ctx, imageIndex) {
-                    return Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: Image.network(memoryItem["memoryImageDtoList"][imageIndex]["url"]),
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CapsuleBigDetailScreen(22),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Image.network(memoryItem["memoryImageDtoList"][imageIndex]["url"]),
+                      ),
                     );
                   },
                 ),

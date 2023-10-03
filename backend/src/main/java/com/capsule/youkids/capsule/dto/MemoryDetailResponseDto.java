@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MemoryDetailResponseDto {
 
+    private long memoryId;
     private int year;
     private int month;
     private int day;
@@ -18,8 +19,9 @@ public class MemoryDetailResponseDto {
     private List<String> childrenImageList;
 
     @Builder
-    public MemoryDetailResponseDto(int year, int month, int day, String description,
+    public MemoryDetailResponseDto(long memoryId, int year, int month, int day, String description,
             String location, List<String> images, List<String> childrenImageList) {
+        this.memoryId = memoryId;
         this.year = year;
         this.month = month;
         this.day = day;

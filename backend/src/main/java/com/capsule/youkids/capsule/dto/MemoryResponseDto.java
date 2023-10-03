@@ -7,12 +7,14 @@ import lombok.Getter;
 @Getter
 public class MemoryResponseDto {
 
+    private long memoryId;
     private int month;
     private int day;
     private List<MemoryImageDto> memoryImageDtoList;
 
     @Builder
-    public MemoryResponseDto(int month, int day, List<MemoryImageDto> memoryImageDtoList) {
+    public MemoryResponseDto(long memoryId, int month, int day, List<MemoryImageDto> memoryImageDtoList) {
+        this.memoryId = memoryId;
         this.month = month;
         this.day = day;
         this.memoryImageDtoList = memoryImageDtoList;

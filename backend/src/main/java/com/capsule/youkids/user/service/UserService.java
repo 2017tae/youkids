@@ -1,6 +1,7 @@
 package com.capsule.youkids.user.service;
 
 import com.capsule.youkids.user.dto.RequestDto.DeleteMyInfoRequestDto;
+import com.capsule.youkids.user.dto.RequestDto.FcmTokenRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.ModifyMyInfoRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.PartnerRegistRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
@@ -46,5 +47,8 @@ public interface UserService {
 
     // 본인 회원 휴면유저로 변경
     boolean deleteMyInfo(DeleteMyInfoRequestDto request);
+
+    // fcmToken 리뉴얼하기
+    boolean updateFcmToken(FcmTokenRequestDto request);
 
 }

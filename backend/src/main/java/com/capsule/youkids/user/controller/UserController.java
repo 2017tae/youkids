@@ -3,6 +3,7 @@ package com.capsule.youkids.user.controller;
 import com.capsule.youkids.global.common.constant.Code;
 import com.capsule.youkids.global.common.exception.RestApiException;
 import com.capsule.youkids.user.dto.RequestDto.DeleteMyInfoRequestDto;
+import com.capsule.youkids.user.dto.RequestDto.FcmTokenRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.ModifyMyInfoRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.PartnerRegistRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
@@ -217,6 +218,18 @@ public class UserController {
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    // fcmToken update하기
+    @PostMapping("/fcm")
+    public ResponseEntity<?> updateFcmToken(@RequestBody FcmTokenRequestDto request) {
+        boolean check = userService.updateFcmToken(request);
+        if (check) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
     }
 
 

@@ -60,6 +60,10 @@ public class User extends BaseTimeEntity {
     @Column(columnDefinition = "int default 0")
     private int courseCount;
 
+    // fcmToken 관리하기
+    @Column
+    private String fcmToken;
+
     // Builder 부분
     @Builder
     public User(UUID userId, String provider, String providerId, String email, Role role) {
@@ -75,6 +79,7 @@ public class User extends BaseTimeEntity {
         this.description = null;
         this.partnerId = null;
         this.token = null;
+        this.fcmToken = null;
     }
 
     public void changeToken(Token token) {
@@ -127,6 +132,11 @@ public class User extends BaseTimeEntity {
     // 코스를 생성하면 코스 개수가 증가
     public void changeCourseCount(int i) {
         this.courseCount += i;
+    }
+
+    // fcmToken update
+    public void updateFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 
 }

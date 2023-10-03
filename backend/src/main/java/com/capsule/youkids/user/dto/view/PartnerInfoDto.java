@@ -13,6 +13,7 @@ public class PartnerInfoDto {
     private String nickname;
     private String profileImage;
     private String partnerEmail;
+    private String fcmToken;
 
 
     public PartnerInfoDto(User user) {
@@ -20,6 +21,7 @@ public class PartnerInfoDto {
         this.nickname = user.getNickname();
         this.profileImage = user.getProfileImage();
         this.partnerEmail = user.getEmail();
+        this.fcmToken = user.getFcmToken();
     }
 
 }

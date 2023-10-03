@@ -1,10 +1,13 @@
 import 'dart:convert';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/screens/home/indoor_recom_list_screen.dart';
 import 'package:youkids/src/screens/home/rank_recom_list_screen.dart';
+import 'package:youkids/src/screens/message/firebase_api.dart';
 import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
 import 'package:youkids/src/screens/shop/shop_more_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
@@ -47,6 +50,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     loadDataFuture = _checkLoginStatus();
+    // fcmToken 리뉴얼하기
+    renewFcmToken();
   }
 
   Future<String?> getUserId() async {
@@ -54,6 +59,30 @@ class _HomeScreenState extends State<HomeScreen> {
     return prefs.getString(
       'userId',
     ); // Returns 'john_doe' if it exists, otherwise returns null.
+  }
+
+  // fcmToken 리뉴얼하기
+  // 리뉴얼 주기를 얼마나 해야 맞는걸까 home은 주구장창 방문할텐데.. 로그인할때?
+  Future<void> renewFcmToken() async {
+    String? userId = await getUserId();
+    String? fcmToken;
+    if (userId != null) {
+      fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        final response =
+            await http.post(Uri.parse('http://10.0.2.2:8080/user/fcm'),
+                headers: {'Content-Type': 'application/json'},
+                body: jsonEncode({
+                  'userId': userId,
+                  'fcmToken': fcmToken,
+                }));
+        if (response.statusCode == 200) {
+          print('fcm renewed');
+        } else {
+          print('fcm renew failed');
+        }
+      }
+    }
   }
 
   void someFunction() async {
@@ -101,14 +130,17 @@ class _HomeScreenState extends State<HomeScreen> {
         festivals = decodedJson2['result']['onGoingFestivals'];
       });
 
-      for (int i = 0; i < festivals!.length ; i++) {
-        if (festivals != null && festivals!.length > i && festivals![i]['poster'] != null) {
+      for (int i = 0; i < festivals!.length; i++) {
+        if (festivals != null &&
+            festivals!.length > i &&
+            festivals![i]['poster'] != null) {
           imgUrls.add(festivals![i]['poster']);
           festivalPlace.add(festivals![i]['placeName']);
           festivalDate.add(festivals![i]['startDate']);
           festivalChildId.add(festivals![i]['festivalChildId']);
         } else {
-          imgUrls.add("https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png");
+          imgUrls.add(
+              "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png");
         }
       }
 
@@ -121,8 +153,6 @@ class _HomeScreenState extends State<HomeScreen> {
           festivalName.add("오류!");
         }
       }
-
-
 
       print(imgUrls);
       print(festivalName);
@@ -495,8 +525,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   imgUrls: imgUrls,
                   festivalName: festivalName,
                   festivalPlace: festivalPlace,
-                  festivalDate: festivalDate
-              )
+                  festivalDate: festivalDate)
             ],
           ),
         ),

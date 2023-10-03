@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "250855237154",
+    "project_id": "youkids-a604",
+    "storage_bucket": "youkids-a604.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:250855237154:android:9d2d9b4a2c211f5e708c7b",
+        "android_client_info": {
+          "package_name": "com.capsule.youkids"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF0M7-R6-qoNR87nPiGFGBEMHmkC7V4-4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -12,14 +12,14 @@ class PlaceServices {
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
-      var jsonString = utf8.decode(response.bodyBytes);
-      final bookmarks = jsonDecode(jsonString)['result']['bookmarks'];
+      // var jsonString = utf8.decode(response.bodyBytes);
+      // final bookmarks = jsonDecode(jsonString)['result']['bookmarks'];
 
-      for (var bookmark in bookmarks) {
-        final instance = bookmark['placeId'].toString();
+      // for (var bookmark in bookmarks) {
+      //   final instance = bookmark['placeId'].toString();
 
-        bookmarkInstances.add(instance);
-      }
+      //   bookmarkInstances.add(instance);
+      // }
 
       return bookmarkInstances;
     }

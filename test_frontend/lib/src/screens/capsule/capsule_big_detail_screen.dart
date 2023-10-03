@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/screens/capsule/capsule_list_screen.dart';
 import 'package:http/http.dart' as http;
 
+import '../../widgets/capsule_carousel_widget.dart';
+
 
 class CapsuleBigDetailScreen extends StatefulWidget {
   final int memoryId;
@@ -77,13 +79,26 @@ class _CapsuleBigDetailScreen extends State<CapsuleBigDetailScreen> {
             ),
           ],
         ),
-        body:
-        Text(
-          "사진첩",
-          style: TextStyle(
-            fontSize: 22,
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬을 위해
+            children: [
+              Text(
+                "사진첩",
+                style: TextStyle(
+                  fontSize: 22,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 16.0), // 사진첩 제목과 캐러셀 위젯 간의 간격
+              Expanded(
+                child: CapsuleCarouselWidget(
+                  imgUrls: ["https://picturepractice.s3.ap-northeast-2.amazonaws.com/festival/PF225433.png"],
+                ),
+              ),
+            ],
           ),
         )
     );

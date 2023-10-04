@@ -121,7 +121,7 @@ class _CapsuleDetailScreenState extends State<CapsuleDetailScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => CapsuleBigDetailScreen(22),
+                            builder: (context) => CapsuleBigDetailScreen(memoryItem["memoryId"]),
                           ),
                         );
                       },

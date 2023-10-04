@@ -35,6 +35,8 @@ class _CourseScreenState extends State<CourseScreen> {
   bool isLoading = true;
   bool isLoadingCurCoords = true;
   bool isCourseList = true;
+  bool isCurCoords = false;
+  NMarker? curMarker;
   String? userId;
   Future? loadDataFuture;
   CourseProviders courseProviders = CourseProviders();
@@ -86,6 +88,7 @@ class _CourseScreenState extends State<CourseScreen> {
           latitude = response.latitude;
           longitude = response.longitude;
           isLoadingCurCoords = false;
+          isCurCoords = true;
         });
       });
       _updateCamera();
@@ -159,13 +162,14 @@ class _CourseScreenState extends State<CourseScreen> {
     if (!isLoadingCurCoords) {
       if (_controller != null) {
         _updateCamera();
-        final marker = NMarker(
+        curMarker = NMarker(
             icon: NOverlayImage.fromAssetImage(
                 "lib/src/assets/icons/mapMark.png"),
             size: NMarker.autoSize,
             id: "curCoord",
             position: NLatLng(latitude, longitude));
-        _controller!.addOverlay(marker);
+
+        _controller!.addOverlay(curMarker!);
       }
     }
   }
@@ -252,9 +256,10 @@ class _CourseScreenState extends State<CourseScreen> {
   void _onCourseClicked(Course_detail_model course) {
     // Naver map contorller 불러오기
     if (_controller != null) {
-      for (int i = 0; i < coursePlaces.length; i++) {
-        _controller!.deleteOverlay(
-            NOverlayInfo(type: NOverlayType.marker, id: i.toString()));
+      _controller!.clearOverlays();
+
+      if (isCurCoords) {
+        _controller!.addOverlay(curMarker!);
       }
       List<NLatLng> bound = [];
       for (var place in course.places) {
@@ -269,8 +274,12 @@ class _CourseScreenState extends State<CourseScreen> {
                 EdgeInsets.only(bottom: 360, top: 50, right: 50, left: 50)),
       );
 
-      // 해당 코스 마커 렌더링
-      int i = 0;
+      /*
+       * 해당 코스 마커 렌더링
+       * 첫번째 마커부터 1~n
+       *
+       */
+      int i = 1;
       for (var place in course.places) {
         final marker = NMarker(
           icon:
@@ -289,20 +298,24 @@ class _CourseScreenState extends State<CourseScreen> {
 
   void _onBookmarkClicked(double x, double y) {
     if (_controller != null) {
-      // for (int i = 0; i < coursePlaces.length; i++) {
-      //   _controller!.deleteOverlay(
-      //       NOverlayInfo(type: NOverlayType.marker, id: i.toString()));
-      // }
+      _controller!.clearOverlays();
+
+      if (isCurCoords) {
+        _controller!.addOverlay(curMarker!);
+      }
       _controller!.updateCamera(
         NCameraUpdate.fromCameraPosition(
           NCameraPosition(
-            target: NLatLng(x - 0.2, y),
+            target: NLatLng(x, y),
             zoom: 8.5,
           ),
-        ),
+        )..setPivot(NPoint(0.5, 1 / 4)),
       );
 
-      // 해당 코스 마커 렌더링
+      /*
+       *  북마크 마커 id는 0
+       */
+
       int i = 0;
       final marker = NMarker(
         icon: NOverlayImage.fromAssetImage("lib/src/assets/icons/mapMark.png"),

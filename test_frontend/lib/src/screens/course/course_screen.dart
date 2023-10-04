@@ -37,9 +37,9 @@ class _CourseScreenState extends State<CourseScreen> {
   String? userId;
   CourseProviders courseProviders = CourseProviders();
 
-  Future<String?> getUserId() async {
+  Future<void> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(
+    userId = prefs.getString(
       'userId',
     );
   }
@@ -100,9 +100,9 @@ class _CourseScreenState extends State<CourseScreen> {
   }
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
-    userId = await getUserId();
+    getUserId();
     if (userId != null) {
       initCourses().then((_) {
         setState(() {

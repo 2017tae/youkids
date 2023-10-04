@@ -38,9 +38,9 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
   String? userId;
   CourseProviders courseProviders = CourseProviders();
 
-  Future<String?> getUserId() async {
+  Future<void> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(
+    userId = prefs.getString(
       'userId',
     );
   }
@@ -320,9 +320,9 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
   }
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
-    userId = await getUserId();
+    getUserId();
     scrollController = ScrollController();
     scrollController.addListener(() {
       // maxheight에 도달했으면

@@ -40,9 +40,9 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
   }
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
-    userId = await getUserId();
+    getUserId();
   }
 
   Future<void> showSuccessDialog(BuildContext context) async {
@@ -107,9 +107,9 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
     );
   }
 
-  Future<String?> getUserId() async {
+  Future<void> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(
+    userId = prefs.getString(
       'userId',
     );
   }

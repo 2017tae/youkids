@@ -23,9 +23,11 @@ class CoursePostScreen extends StatefulWidget {
 }
 
 class _CoursePostScreenState extends State<CoursePostScreen> {
+  bool _isLoggedIn = false;
   NaverMapController? _controller;
   TextEditingController _courseNameController = TextEditingController();
   String? userId;
+  Future? loadDataFuture;
   List<Map<String, dynamic>> placesData = [];
 
   Future<void> infoToData() async {
@@ -40,11 +42,17 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
   }
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
-    userId = await getUserId();
+    loadDataFuture = _checkLoginStatus();
   }
+  Future<void> _checkLoginStatus() async {
+    userId = await getUserId();
 
+    setState(() {
+      _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
+    });
+  }
   Future<void> showSuccessDialog(BuildContext context) async {
     return showDialog<void>(
       context: context,

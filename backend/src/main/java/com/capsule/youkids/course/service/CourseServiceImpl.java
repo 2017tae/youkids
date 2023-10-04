@@ -91,7 +91,7 @@ public class CourseServiceImpl implements CourseService {
         User user = getLeader(userId);
 
         // 유저의 모든 코스 불러오기
-        List<Course> courses = courseRepository.findAllByUser_UserId(user.getUserId());
+        List<Course> courses = courseRepository.findAllByUser_UserIdOrderByUpdatedTime(user.getUserId());
 
         // 불러온 해당 유저의 코스가 비었으면
         if (courses.isEmpty()) {

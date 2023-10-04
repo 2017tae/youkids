@@ -107,34 +107,17 @@ class _CourseScreenState extends State<CourseScreen> {
     setState(() {
       _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
     });
+
+    if (userId != null) {
+      await initCourses();
+      await initBookmark();
+    }
   }
 
   @override
   void initState() {
     super.initState();
     loadDataFuture = _checkLoginStatus();
-    if (userId != null) {
-      initCourses();
-      initBookmark();
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("오류"),
-            content: Text("유저 아이디 없음"),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text("확인"),
-              ),
-            ],
-          );
-        },
-      );
-    }
     // _initCurrentLocation();
     scrollController = ScrollController();
     scrollController.addListener(() {

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/models/mypage_models/myinfo_model.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,6 +10,7 @@ import 'package:youkids/src/models/mypage_models/partner_model.dart';
 import 'package:youkids/src/screens/mypage/mypage_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:dio/dio.dart';
+import 'package:http/http.dart' as http;
 
 class MyinfoUpdateScreen extends StatefulWidget {
   final MyinfoModel myInfo;
@@ -150,6 +152,7 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
     }
   }
 
+  // 파트너가 있는지 체크하고
   Future<bool> partnerRequest() async {
     try {
       if (partnerEmail == null ||
@@ -159,18 +162,17 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
         });
         return false;
       } else {
-        print(partnerEmail);
         final dio = Dio();
         final response = await dio.post('$uri/user/checkpartner',
             data: {'userId': userId, 'partnerEmail': partnerEmail});
         if (response.statusCode == 200) {
-          print(response.data['nickname']);
           setState(() {
             requestPartner = PartnerModel(
                 partnerEmail: response.data['partnerEmail'],
                 partnerId: response.data['partnerId'],
                 nickname: response.data['nickname'],
-                profileImage: response.data['profileImage']);
+                profileImage: response.data['profileImage'],
+                fcmToken: response.data['fcmToken']);
           });
           return true;
         } else {
@@ -189,15 +191,47 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
     }
   }
 
+  // 그 파트너에게 알람을 보낸다
   Future<bool> sendPartnerRequest() async {
     try {
       if (userId != null && requestPartner != null) {
-        final dio = Dio();
-        final response = await dio.post('$uri/user/partner',
-            data: {'userId': userId, 'partnerId': requestPartner!.partnerId});
-        if (response.statusCode == 200) {
-          return true;
+        // fcmToken이 존재하는 경우에만 알람을 보낼 수 있음
+        if (requestPartner!.fcmToken != null) {
+          final url = Uri.parse('https://fcm.googleapis.com/fcm/send');
+          final fcmServerKey = dotenv.get("fcm_key");
+          final headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'key=$fcmServerKey'
+          };
+          final body = {
+            'notification': {
+              'title': 'YouKids',
+              'body': '$nickname님이 당신을 배우자로 등록하려 합니다.',
+            },
+            'data': {
+              'do': 'partner',
+              'userId': userId,
+              'partnerId': requestPartner!.partnerId,
+              'nickname': nickname
+            },
+            'to': requestPartner!.fcmToken,
+          };
+          final response =
+              await http.post(url, headers: headers, body: jsonEncode(body));
+          if (response.statusCode == 200) {
+            print('성공');
+            return true;
+          } else {
+            print('실패');
+            return false;
+          }
         }
+        // final dio = Dio();
+        // final response = await dio.post('$uri/user/partner',
+        //     data: {'userId': userId, 'partnerId': requestPartner!.partnerId});
+        // if (response.statusCode == 200) {
+        //   return true;
+        // }
       }
     } catch (err) {
       return false;
@@ -457,10 +491,10 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                                         builder: (BuildContext context) {
                                           return SimpleDialog(
                                               title: Text(
-                                                '${requestPartner!.nickname ?? partnerEmail}님에게 \n등록 요청을 보내시겠습니까?',
+                                                '${requestPartner!.nickname ?? partnerEmail}님에게 \n요청을 보내시겠습니까?',
                                                 textAlign: TextAlign.center,
                                                 style: const TextStyle(
-                                                    fontSize: 15),
+                                                    fontSize: 20),
                                               ),
                                               children: [
                                                 const SizedBox(
@@ -492,9 +526,9 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                                                                       builder:
                                                                           (BuildContext
                                                                               context) {
-                                                                        return const SuccessDialog(
+                                                                        return const FailDialog(
                                                                             text:
-                                                                                "성공했습니다");
+                                                                                "요청을 보냈습니다");
                                                                       });
                                                                 } else {
                                                                   showDialog(

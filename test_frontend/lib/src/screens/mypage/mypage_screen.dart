@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/models/mypage_models/children_model.dart';
@@ -149,6 +150,31 @@ class _MyPageScreenState extends State<MyPageScreen> {
       }
     } catch (err) {
       print('에러 3 $err');
+    }
+  }
+
+  Future<void> sendNotificationToDevice() async {
+    final url = Uri.parse('https://fcm.googleapis.com/fcm/send');
+    final fcmServerKey = dotenv.get("fcm_key");
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'key=$fcmServerKey'
+    };
+    final body = {
+      'notification': {
+        'title': 'youkids',
+        'body': '야옹',
+      },
+      'data': {'nickname': 'yaonggod'},
+      'to':
+          'fpWZqxkWQwCJkzCBTLxmE9:APA91bEpxCXqFiN-iFEbbSYjtWelAVCxp1_HyThlUT5lNXzixLH59siW29tpLXnj5wCWvW6KVvjWa2NfiWSIk0yhNpNjOiZgfW7QKK1xi4r8kOyAPPp2pTUDQoRDxo2NI2wqN4CoKhAO',
+    };
+    final response =
+        await http.post(url, headers: headers, body: jsonEncode(body));
+    if (response.statusCode == 200) {
+      print('성공');
+    } else {
+      print('실패');
     }
   }
 
@@ -309,6 +335,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                   itemCount: group.length,
                   itemBuilder: (context, index) {
                     return MyGroup(
+                        nickname: myInfo.nickname,
                         group: group[index],
                         myGroup: userId == group[index].groupId,
                         partnerGroup: (partnerInfo != null &&

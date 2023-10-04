@@ -45,7 +45,7 @@ class YouKids extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const HomeScreen(),
-        '/message': (context) => const MessageScreen(),
+        '/message': (context) => MessageScreen(),
       },
       navigatorKey: navigatorKey,
     );

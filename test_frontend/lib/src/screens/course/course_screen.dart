@@ -46,7 +46,6 @@ class _CourseScreenState extends State<CourseScreen> {
     );
   }
 
-
   void toggleButtonText() {
     setState(() {
       isCourseList = !isCourseList;
@@ -115,12 +114,26 @@ class _CourseScreenState extends State<CourseScreen> {
     super.initState();
     loadDataFuture = _checkLoginStatus();
     if (userId != null) {
-      initCourses().then((_) {
-        setState(() {
-          isLoading = false;
-        });
-      });
+      initCourses();
       initBookmark();
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("오류"),
+            content: Text("유저 아이디 없음"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("확인"),
+              ),
+            ],
+          );
+        },
+      );
     }
     // _initCurrentLocation();
     scrollController = ScrollController();

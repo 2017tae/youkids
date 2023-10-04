@@ -100,8 +100,9 @@ class _CourseScreenState extends State<CourseScreen> {
   }
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
+    userId = await getUserId();
     getUserId().then((userId) {
       if (userId != null) {
         initCourses().then((_) {

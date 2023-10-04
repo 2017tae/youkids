@@ -320,8 +320,9 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
   }
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
+    userId = await getUserId();
     getUserId().then((userId) {
       if (userId != null) {}
     });

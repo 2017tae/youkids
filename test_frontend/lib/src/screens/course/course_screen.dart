@@ -69,7 +69,7 @@ class _CourseScreenState extends State<CourseScreen> {
         List<NLatLng> bound = [];
         //모든 찜 목록의 좌표를 bound에 넣음
         for (var place in bookmarks!) {
-          bound.add(NLatLng(place.latitude, place.longitude));
+          bound.add(NLatLng(place['latitude'], place['longitude']));
         }
 
         // 좌표가 나올 화면
@@ -77,7 +77,7 @@ class _CourseScreenState extends State<CourseScreen> {
 
         // 화면을 북마크가 전부 보이게 업데이트
         _controller!.updateCamera(
-          NCameraUpdate.fitBounds(bounds)..setPivot(NPoint(0.5, 1 / 4)),
+          NCameraUpdate.fitBounds(bounds, padding: EdgeInsets.all(50)),
         );
 
         int i = 100;
@@ -87,7 +87,7 @@ class _CourseScreenState extends State<CourseScreen> {
                 "lib/src/assets/icons/mapMark.png"),
             size: NMarker.autoSize,
             id: i.toString(),
-            position: NLatLng(place.latitude, place.longitude),
+            position: NLatLng(place['latitude'], place['longitude']),
           );
           i++;
 
@@ -207,12 +207,11 @@ class _CourseScreenState extends State<CourseScreen> {
       if (_controller != null) {
         _updateCamera();
         curMarker = NMarker(
-            icon: NOverlayImage.fromAssetImage(
-                "lib/src/assets/icons/mapMark.png"),
+            icon:
+                NOverlayImage.fromAssetImage("lib/src/assets/icons/myMark.png"),
             size: NMarker.autoSize,
             id: "curCoord",
             position: NLatLng(latitude, longitude));
-
         _controller!.addOverlay(curMarker!);
       }
     }
@@ -310,7 +309,10 @@ class _CourseScreenState extends State<CourseScreen> {
       var bounds = NLatLngBounds.from(bound);
 
       _controller!.updateCamera(
-        NCameraUpdate.fitBounds(bounds)..setPivot(NPoint(0.5, 1 / 4)),
+        NCameraUpdate.fitBounds(bounds,
+            padding:
+                EdgeInsets.only(bottom: 150, top: 200, right: 50, left: 50))
+          ..setPivot(NPoint(0.5, 1 / 4)),
       );
 
       /*
@@ -369,15 +371,35 @@ class _CourseScreenState extends State<CourseScreen> {
           IconButton(
             onPressed: () {
               if (userId != null) {
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation1, animation2) =>
-                        CourseCreateScreen(),
-                    transitionDuration: Duration.zero,
-                    reverseTransitionDuration: Duration.zero,
-                  ),
-                );
+                if (bookmarks!.isNotEmpty) {
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation1, animation2) =>
+                          CourseCreateScreen(),
+                      transitionDuration: Duration.zero,
+                      reverseTransitionDuration: Duration.zero,
+                    ),
+                  );
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("오류"),
+                        content: Text("찜 목록이 비었습니다"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text("확인"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
               } else {
                 showDialog(
                   context: context,
@@ -407,14 +429,16 @@ class _CourseScreenState extends State<CourseScreen> {
         children: [
           NaverMap(
             options: NaverMapViewOptions(
-                initialCameraPosition: NCameraPosition(
-                  target: NLatLng(
-                    37.5110317,
-                    127.0602133,
-                  ),
-                  zoom: 15,
+              initialCameraPosition: NCameraPosition(
+                target: NLatLng(
+                  37.5110317,
+                  127.0602133,
                 ),
-                locale: Locale.fromSubtags(languageCode: 'Ko')),
+                zoom: 15,
+              ),
+              locale: Locale.fromSubtags(languageCode: 'Ko'),
+              contentPadding: EdgeInsets.only(bottom: 40),
+            ),
             onMapReady: (controller) {
               setState(() {
                 _controller = controller; // NaverMapController 초기화

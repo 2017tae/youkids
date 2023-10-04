@@ -373,8 +373,8 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
       if (_controller != null) {
         _updateCamera();
         final marker = NMarker(
-            icon: NOverlayImage.fromAssetImage(
-                "lib/src/assets/icons/mapMark.png"),
+            icon:
+                NOverlayImage.fromAssetImage("lib/src/assets/icons/myMark.png"),
             size: NMarker.autoSize,
             id: "curCoord",
             position: NLatLng(latitude, longitude));
@@ -438,14 +438,16 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
         children: [
           NaverMap(
             options: NaverMapViewOptions(
-                initialCameraPosition: NCameraPosition(
-                  target: NLatLng(
-                    37.5110317,
-                    127.0602133,
-                  ),
-                  zoom: 15,
+              initialCameraPosition: NCameraPosition(
+                target: NLatLng(
+                  37.5110317,
+                  127.0602133,
                 ),
-                locale: Locale.fromSubtags(languageCode: 'Ko')),
+                zoom: 15,
+              ),
+              locale: Locale.fromSubtags(languageCode: 'Ko'),
+              contentPadding: EdgeInsets.only(bottom: 40),
+            ),
             onMapReady: _onMapReady,
           ),
           //상단 찜, 코스 목록 토글 버튼

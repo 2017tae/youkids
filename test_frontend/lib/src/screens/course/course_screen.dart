@@ -52,38 +52,47 @@ class _CourseScreenState extends State<CourseScreen> {
     setState(() {
       isCourseList = !isCourseList;
     });
+
+    // 네이버 지도 생성 후
     if (_controller != null) {
+      // 현재 생성되어있는 좌표 일괄 삭제
       _controller!.clearOverlays();
+
+      // 만약 현재 위치를 불러온 적이 있으면
       if (isCurCoords) {
+        //현재 좌표 렌더링
         _controller!.addOverlay(curMarker!);
       }
-      if (isCourseList) {
-        if (_controller != null) {
-          List<NLatLng> bound = [];
-          for (var place in bookmarks!) {
-            bound.add(NLatLng(place.latitude, place.longitude));
-          }
 
-          var bounds = NLatLngBounds.from(bound);
+      // 만약 찜 목록이라면
+      if (!isCourseList) {
+        List<NLatLng> bound = [];
+        //모든 찜 목록의 좌표를 bound에 넣음
+        for (var place in bookmarks!) {
+          bound.add(NLatLng(place.latitude, place.longitude));
+        }
 
-          _controller!.updateCamera(
-            NCameraUpdate.fitBounds(bounds)..setPivot(NPoint(0.5, 1 / 4)),
+        // 좌표가 나올 화면
+        var bounds = NLatLngBounds.from(bound);
+
+        // 화면을 북마크가 전부 보이게 업데이트
+        _controller!.updateCamera(
+          NCameraUpdate.fitBounds(bounds)..setPivot(NPoint(0.5, 1 / 4)),
+        );
+
+        int i = 100;
+        for (var place in bookmarks!) {
+          final marker = NMarker(
+            icon: NOverlayImage.fromAssetImage(
+                "lib/src/assets/icons/mapMark.png"),
+            size: NMarker.autoSize,
+            id: i.toString(),
+            position: NLatLng(place.latitude, place.longitude),
           );
+          i++;
 
-          int i = 100;
-          for (var place in bookmarks!) {
-            final marker = NMarker(
-              icon: NOverlayImage.fromAssetImage(
-                  "lib/src/assets/icons/mapMark.png"),
-              size: NMarker.autoSize,
-              id: i.toString(),
-              position: NLatLng(place.latitude, place.longitude),
-            );
-            i++;
-
-            // 마커 지도 위에 렌더링
-            _controller!.addOverlay(marker);
-          }
+          // 마커 지도 위에 렌더링
+          _controller!.addOverlay(marker);
         }
       }
     }

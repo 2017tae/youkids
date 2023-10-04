@@ -30,6 +30,41 @@ public class GroupServiceImpl implements GroupService {
     private final UserRepository userRepository;
 
     @Override
+    public boolean checkUserInGroup(RegistUserRequest registUserRequest) throws Exception {
+        Optional<User> leader = userRepository.findById(registUserRequest.getLeaderId());
+        Optional<User> user = userRepository.findByEmailAndRoleNot(registUserRequest.getUserEmail(), Role.DELETED);
+
+        // 유저가 없으면 에러~
+        if (leader.isEmpty() || user.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no user exists");
+        }
+
+        // 리더가 그룹이 없으면 에러~ (사실 가입 시 그룹이 만들어져 있어서 무의미한 필터링이긴 함)
+        // 리더가 리더가 아니거나(파트너에 종속되어 있음)
+        UUID lid = leader.get().getUserId();
+        Optional<GroupInfo> groupInfo = groupInfoRepository.findByLeaderId(lid);
+        if (groupInfo.isEmpty() || !leader.get().isLeader()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no group exists");
+        }
+
+        // 유저가 리더의 파트너인 경우
+        UUID uid = user.get().getUserId();
+        if (leader.get().getPartnerId() != null && leader.get().getPartnerId().equals(uid)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "partner");
+        }
+
+        UUID gid = groupInfo.get().getGroupId();
+        Optional<GroupJoin> group = groupJoinRepository.findByGroupIdAndUserId(gid, uid);
+        // 이미 추가되어 있으면 에러~
+        if (group.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "already exists");
+        }
+
+        return true;
+    }
+
+
+    @Override
     public void addUserInGroup(RegistUserRequest registUserRequest) throws Exception {
         Optional<User> leader = userRepository.findById(registUserRequest.getLeaderId());
         Optional<User> user = userRepository.findByEmailAndRoleNot(registUserRequest.getUserEmail(), Role.DELETED);

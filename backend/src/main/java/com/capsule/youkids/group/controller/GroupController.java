@@ -29,6 +29,17 @@ public class GroupController {
 
     private final GroupService groupService;
 
+    @PostMapping("/check")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "추가 성공"),
+            @ApiResponse(responseCode = "404", description = "정보가 존재하지 않음"),
+            @ApiResponse(responseCode = "400", description = "이미 추가된 유저")
+    })
+    // 리더 id와 등록 대상 유저 email을 받아와서 추가 가능한지 검증하기
+    public ResponseEntity<?> checkUserInGroup(@RequestBody RegistUserRequest registUserRequest) throws Exception {
+        groupService.checkUserInGroup(registUserRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
     @PostMapping()
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "추가 성공"),

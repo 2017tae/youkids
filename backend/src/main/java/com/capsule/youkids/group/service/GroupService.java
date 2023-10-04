@@ -10,6 +10,9 @@ import java.util.UUID;
 
 public interface GroupService {
 
+    // 그룹에 사람 있는지 확인하기
+    public boolean checkUserInGroup(RegistUserRequest registUserRequest) throws Exception;
+
     // 리더가 그룹에 사람 추가하기
     public void addUserInGroup(RegistUserRequest registUserRequest) throws Exception;
 

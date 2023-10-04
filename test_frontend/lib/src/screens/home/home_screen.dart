@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
       fcmToken = await FirebaseMessaging.instance.getToken();
       if (fcmToken != null) {
         final response =
-            await http.post(Uri.parse('http://10.0.2.2:8080/user/fcm'),
+            await http.post(Uri.parse('https://j9a604.p.ssafy.io/api/user/fcm'),
                 headers: {'Content-Type': 'application/json'},
                 body: jsonEncode({
                   'userId': userId,

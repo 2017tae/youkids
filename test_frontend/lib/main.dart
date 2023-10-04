@@ -17,7 +17,7 @@ void main() async {
   // firebase, notification 시작
   await Firebase.initializeApp();
   initializeNotification();
-  //
+  /////////////////////
   await dotenv.load(fileName: ".env");
   await NaverMapSdk.instance.initialize(clientId: dotenv.get("naver_map_key"));
   KakaoSdk.init(nativeAppKey: dotenv.get("kakao_key"));
@@ -28,7 +28,7 @@ void main() async {
 class YouKids extends StatelessWidget {
   const YouKids({super.key});
 
-  //
+  // message로 라우팅할시 MessageScreen 띄우기
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
   @override

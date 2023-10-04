@@ -7,7 +7,9 @@ import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
 import '../../widgets/footer_widget.dart';
 
 class ShopMoreScreen extends StatefulWidget {
-  const ShopMoreScreen({super.key});
+  final String? PushselectedCategory;
+
+  const ShopMoreScreen({super.key, required this.PushselectedCategory});
 
   @override
   State<ShopMoreScreen> createState() => _ShopMoreScreenState();
@@ -38,6 +40,9 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
   //   });
   // }
 
+  String? selectedCategory;
+
+
   Future<void> _getData() async {
 
     final response = await http.get(
@@ -54,11 +59,16 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
       });
       print("장소");
       print(places);
+      setState(() {
+          selectedCategory = widget.PushselectedCategory;
+      });
+
     }else{
       print("failfail");
     }
 
   }
+
 
   String getFirstTwoWords(String text) {
     List<String> words = text.split(' ');
@@ -70,7 +80,6 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
   }
 
   // 1. 상태에 현재 선택된 카테고리를 저장할 변수를 추가합니다.
-  String? selectedCategory ='전체';
 
   List<String> categories = [
     '전체',

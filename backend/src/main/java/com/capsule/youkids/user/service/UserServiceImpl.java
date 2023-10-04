@@ -1,5 +1,6 @@
 package com.capsule.youkids.user.service;
 
+import com.capsule.youkids.capsule.service.CapsuleService;
 import com.capsule.youkids.group.entity.GroupInfo;
 import com.capsule.youkids.group.entity.GroupJoin;
 import com.capsule.youkids.group.repository.GroupInfoRepository;
@@ -48,6 +49,7 @@ public class UserServiceImpl implements UserService {
     private final GroupInfoRepository groupInfoRepository;
     private final GroupJoinRepository groupJoinRepository;
     private final AwsS3Service awsS3Service;
+    private final CapsuleService capsuleService;
 
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
@@ -149,6 +151,9 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         groupJoinRepository.save(groupJoin);
+
+        // 캡슐을 새로 만들어준다.
+        capsuleService.createCapsule(user);
 
         //여기서 partner에 팔로우 보내야 함!--------------
 

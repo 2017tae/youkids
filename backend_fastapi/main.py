@@ -7,7 +7,6 @@ from scipy.sparse import hstack
 from sklearn.metrics.pairwise import cosine_similarity
 from services.festival_recommendation_service import recomm_festival
 from models.festival_item import FestivalItem
-
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -75,7 +74,7 @@ def startup_event():
     # 서버 시작 시 cal_similarity 함수 실행
     cal_similarity()
 
-@app.get("/fastapi/festival/{festival_id}")
+@app.get("/festival/{festival_id}")
 def recommend_festival(festival_id: str):
     global category_cos_sim, festival_dto_df
 

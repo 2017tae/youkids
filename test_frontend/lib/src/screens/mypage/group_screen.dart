@@ -1,19 +1,24 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/models/mypage_models/group_model.dart';
+import 'package:youkids/src/models/mypage_models/partner_model.dart';
 import 'package:youkids/src/screens/mypage/mypage_screen.dart';
 import 'package:youkids/src/widgets/mypage_widgets/groupmember_widget.dart';
 import 'package:http/http.dart' as http;
 
 class GroupScreen extends StatefulWidget {
+  final String nickname;
   final GroupModel group;
   final bool myGroup;
   final bool partnerGroup;
 
   const GroupScreen(
       {super.key,
+      required this.nickname,
       required this.group,
       required this.myGroup,
       required this.partnerGroup});
@@ -25,9 +30,11 @@ class GroupScreen extends StatefulWidget {
 class _GroupScreenState extends State<GroupScreen> {
   String? userId;
   String? newName;
+  // String uri = 'http://10.0.2.2:8080';
   String uri = 'https://j9a604.p.ssafy.io/api';
   String groupName = ' ';
   String emailInput = '';
+  PartnerModel? request;
 
   Future<void> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -71,21 +78,38 @@ class _GroupScreenState extends State<GroupScreen> {
     }
   }
 
+  // 멤버 이메일을 보내서 추가 요청을 보내기
   Future<String> addMember() async {
     if (emailInput == '' || !emailInput.contains('@')) {
       return 'email';
     }
     try {
-      final response = await http.post(Uri.parse('$uri/group'),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
-            'leaderId': widget.group.groupId,
-            'userEmail': emailInput,
-          }));
+      final dio = Dio();
+      final response = await dio.post('$uri/group/check',
+          data: {'leaderId': userId, 'userEmail': emailInput});
       if (response.statusCode == 200) {
+        try {
+          final response2 = await dio.post('$uri/user/checkpartner',
+              data: {'userId': userId, 'partnerEmail': emailInput});
+          if (response2.statusCode == 200) {
+            setState(() {
+              request = PartnerModel(
+                  partnerEmail: response2.data['partnerEmail'],
+                  partnerId: response2.data['partnerId'],
+                  nickname: response2.data['nickname'],
+                  profileImage: response2.data['profileImage'],
+                  fcmToken: response2.data['fcmToken']);
+            });
+          } else if (response.statusCode == 400) {
+            return 'exists';
+          } else {
+            return 'error';
+          }
+        } catch (err) {
+          return 'error';
+        }
+
         return 'success';
-      } else if (response.statusCode == 404) {
-        return 'no user';
       } else if (response.statusCode == 400) {
         return 'exists';
       } else {
@@ -94,6 +118,54 @@ class _GroupScreenState extends State<GroupScreen> {
     } catch (err) {
       return 'error';
     }
+  }
+
+  // 유저에게 알람을 보낸다
+  Future<bool> addMemberRequest() async {
+    try {
+      if (userId != null && request != null) {
+        // fcmToken이 존재하는 경우에만 알람을 보낼 수 있음
+        if (request!.fcmToken != null) {
+          final url = Uri.parse('https://fcm.googleapis.com/fcm/send');
+          final fcmServerKey = dotenv.get("fcm_key");
+          final headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'key=$fcmServerKey'
+          };
+          final body = {
+            'notification': {
+              'title': 'YouKids',
+              'body': '${widget.nickname}님이 그룹에 당신을 추가하려 합니다.',
+            },
+            'data': {
+              'do': 'group',
+              'leaderId': userId,
+              'userEmail': request!.partnerId,
+              'nickname': widget.nickname
+            },
+            'to': request!.fcmToken,
+          };
+          final response =
+              await http.post(url, headers: headers, body: jsonEncode(body));
+          if (response.statusCode == 200) {
+            print('성공');
+            return true;
+          } else {
+            print('실패');
+            return false;
+          }
+        }
+        // final dio = Dio();
+        // final response = await dio.post('$uri/user/partner',
+        //     data: {'userId': userId, 'partnerId': requestPartner!.partnerId});
+        // if (response.statusCode == 200) {
+        //   return true;
+        // }
+      }
+    } catch (err) {
+      return false;
+    }
+    return false;
   }
 
   Future<bool> deleteGroup() async {
@@ -434,7 +506,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                         child: ElevatedButton(
                                           onPressed: () {
                                             addMember().then((result) {
-                                              Navigator.of(context).pop();
+                                              // Navigator.of(context).pop();
                                               if (result == 'email') {
                                                 showDialog(
                                                   context: context,
@@ -445,17 +517,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                                             "이메일 형식을 지켜주세요.");
                                                   },
                                                 );
-                                              } else if (result == 'no user') {
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return const FailDialog(
-                                                        message:
-                                                            "입력하신 유저 정보가 존재하지 않습니다.");
-                                                  },
-                                                );
-                                              } else if (result == 'exist') {
+                                              } else if (result == 'exists') {
                                                 showDialog(
                                                   context: context,
                                                   builder:
@@ -466,15 +528,29 @@ class _GroupScreenState extends State<GroupScreen> {
                                                   },
                                                 );
                                               } else if (result == 'success') {
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return const SuccessDialog(
-                                                        message:
-                                                            "해당 유저를 그룹에 추가했습니다.");
-                                                  },
-                                                );
+                                                addMemberRequest()
+                                                    .then((value) {
+                                                  if (value) {
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return const SuccessDialog(
+                                                              message:
+                                                                  "해당 유저에게 요청을 보냈습니다.");
+                                                        });
+                                                  } else {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return const FailDialog(
+                                                            message:
+                                                                "알 수 없는 오류입니다.");
+                                                      },
+                                                    );
+                                                  }
+                                                });
                                               } else {
                                                 showDialog(
                                                   context: context,

@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CourseRepository extends JpaRepository<Course, Integer> {
 
-    List<Course> findAllByUser_UserId(UUID userId);
+    List<Course> findAllByUser_UserIdOrderByUpdatedTime(UUID userId);
 
     Optional<Course> findByCourseId(UUID courseId);
 }

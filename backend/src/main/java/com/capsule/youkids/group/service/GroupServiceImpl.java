@@ -163,13 +163,15 @@ public class GroupServiceImpl implements GroupService {
         List<UserResponse> userResponseList = new ArrayList<>();
         for (GroupJoin gr : groupJoinList) {
             Optional<User> u = userRepository.findById(gr.getUserId());
-            UserResponse ur = UserResponse.builder()
-                    .userId(u.get().getUserId())
-                    .nickname(u.get().getNickname())
-                    .profileImage(u.get().getProfileImage())
-                    .description(u.get().getDescription())
-                    .build();
-            userResponseList.add(ur);
+            if(!u.isEmpty()){
+                UserResponse ur = UserResponse.builder()
+                        .userId(u.get().getUserId())
+                        .nickname(u.get().getNickname())
+                        .profileImage(u.get().getProfileImage())
+                        .description(u.get().getDescription())
+                        .build();
+                userResponseList.add(ur);
+            }
         }
         return userResponseList;
     }

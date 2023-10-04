@@ -11,7 +11,12 @@ import 'package:http/http.dart' as http;
 class MyGroup extends StatefulWidget {
   final GroupModel group;
   final bool myGroup;
-  const MyGroup({super.key, required this.group, required this.myGroup});
+  final bool partnerGroup;
+  const MyGroup(
+      {super.key,
+      required this.group,
+      required this.myGroup,
+      required this.partnerGroup});
 
   @override
   State<MyGroup> createState() => _MyGroupState();
@@ -51,8 +56,11 @@ class _MyGroupState extends State<MyGroup> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      GroupScreen(group: widget.group, myGroup: widget.myGroup),
+                  builder: (context) => GroupScreen(
+                    group: widget.group,
+                    myGroup: widget.myGroup,
+                    partnerGroup: widget.partnerGroup,
+                  ),
                 ),
               );
             },

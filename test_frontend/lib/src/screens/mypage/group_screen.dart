@@ -10,8 +10,13 @@ import 'package:http/http.dart' as http;
 class GroupScreen extends StatefulWidget {
   final GroupModel group;
   final bool myGroup;
+  final bool partnerGroup;
 
-  const GroupScreen({super.key, required this.group, required this.myGroup});
+  const GroupScreen(
+      {super.key,
+      required this.group,
+      required this.myGroup,
+      required this.partnerGroup});
 
   @override
   State<GroupScreen> createState() => _GroupScreenState();
@@ -125,112 +130,115 @@ class _GroupScreenState extends State<GroupScreen> {
       appBar: AppBar(
         title: GestureDetector(
           onTap: () {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return SimpleDialog(
-                    title: const Text(
-                      '그룹 이름을 입력하세요',
-                      textAlign: TextAlign.center,
-                    ),
-                    children: [
-                      const SizedBox(
-                        height: 5,
+            if (!widget.partnerGroup) {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return SimpleDialog(
+                      title: const Text(
+                        '그룹 이름을 입력하세요',
+                        textAlign: TextAlign.center,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: TextField(
-                            onChanged: (value) {
-                              setState(() {
-                                newName = value;
-                              });
-                            },
-                            decoration: InputDecoration(
-                              labelText: newName,
-                              focusedBorder: const OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5.0)),
-                                borderSide: BorderSide(
-                                    width: 1, color: Color(0XFFF6766E)),
-                              ),
-                              enabledBorder: const OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5.0)),
-                                borderSide: BorderSide(
-                                    width: 1, color: Color(0XFFF6766E)),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                              ),
-                              floatingLabelBehavior:
-                                  FloatingLabelBehavior.never,
-                            )),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                    child: ElevatedButton(
-                                  onPressed: () {
-                                    // put요청 보내기
-                                    updateGroup().then((result) {
-                                      Navigator.of(context).pop();
-                                      if (result) {
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return const SuccessDialog(
-                                                message: "그룹명을 변경했습니다.");
-                                          },
-                                        );
-                                      } else {
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return const FailDialog(
-                                                message: "그룹명 변경에 실패했습니다.");
-                                          },
-                                        );
-                                      }
-                                    });
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0XFFF6766E),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5)),
-                                      padding: const EdgeInsets.all(2)),
-                                  child: const Text(
-                                    "이름 변경하기",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                )),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text("닫기"),
-                                )
-                              ],
-                            ),
-                          ],
+                      children: [
+                        const SizedBox(
+                          height: 5,
                         ),
-                      )
-                    ]);
-              },
-            );
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: TextField(
+                              onChanged: (value) {
+                                setState(() {
+                                  newName = value;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                labelText: newName,
+                                focusedBorder: const OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5.0)),
+                                  borderSide: BorderSide(
+                                      width: 1, color: Color(0XFFF6766E)),
+                                ),
+                                enabledBorder: const OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5.0)),
+                                  borderSide: BorderSide(
+                                      width: 1, color: Color(0XFFF6766E)),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                ),
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.never,
+                              )),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                      child: ElevatedButton(
+                                    onPressed: () {
+                                      // put요청 보내기
+                                      updateGroup().then((result) {
+                                        Navigator.of(context).pop();
+                                        if (result) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return const SuccessDialog(
+                                                  message: "그룹명을 변경했습니다.");
+                                            },
+                                          );
+                                        } else {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return const FailDialog(
+                                                  message: "그룹명 변경에 실패했습니다.");
+                                            },
+                                          );
+                                        }
+                                      });
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            const Color(0XFFF6766E),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(5)),
+                                        padding: const EdgeInsets.all(2)),
+                                    child: const Text(
+                                      "이름 변경하기",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  )),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text("닫기"),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        )
+                      ]);
+                },
+              );
+            }
           },
           child: Text(
             groupName,
@@ -246,7 +254,7 @@ class _GroupScreenState extends State<GroupScreen> {
           color: Colors.black,
         ),
         actions: [
-          !widget.myGroup
+          !widget.myGroup && !widget.partnerGroup
               ? ElevatedButton(
                   onPressed: () {
                     showDialog(
@@ -357,13 +365,18 @@ class _GroupScreenState extends State<GroupScreen> {
             itemBuilder: (context, index) {
               if (widget.group.groupMember[index].userId != userId) {
                 return GroupMember(
-                    member: widget.group.groupMember[index],
-                    leader: userId == widget.group.groupId);
+                  member: widget.group.groupMember[index],
+                  delete: widget.myGroup ||
+                      (widget.partnerGroup &&
+                          widget.group.groupMember[index].userId !=
+                              widget.group.groupId),
+                  leaderId: widget.group.leaderId,
+                );
               }
               return Container();
             },
           ),
-          !widget.myGroup
+          !widget.myGroup && !widget.partnerGroup
               ? Container()
               : GestureDetector(
                   onTap: () {

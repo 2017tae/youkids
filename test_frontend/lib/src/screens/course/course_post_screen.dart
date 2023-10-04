@@ -231,6 +231,7 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
                     tiltGesturesEnable: false,
                     zoomGesturesEnable: false,
                     stopGesturesEnable: false,
+                    contentPadding: EdgeInsets.only(bottom: 10),
                   ),
                   onMapReady: _onMapReady,
                 ),

@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -14,6 +17,8 @@ class PostingImgsWidget extends StatefulWidget {
 }
 
 class _PostingImgsWidgetState extends State<PostingImgsWidget> {
+  int _current = 0;
+  final CarouselController _controller = CarouselController();
   final ImagePicker _picker = ImagePicker();
   List<XFile> _selectedImgs = [];
 
@@ -29,7 +34,9 @@ class _PostingImgsWidgetState extends State<PostingImgsWidget> {
     }
   }
 
-  void deleteImg({required int idx}) async {
+  void deleteImg({
+    required int idx,
+  }) async {
     setState(() {
       _selectedImgs.removeAt(idx);
       List<String> imagePaths =
@@ -40,6 +47,75 @@ class _PostingImgsWidgetState extends State<PostingImgsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    final List<Widget> imageSliders = _selectedImgs
+        .map(
+          (item) => Image.file(
+            File(item.path),
+            fit: BoxFit.contain,
+            width: MediaQuery.of(context).size.width,
+          ),
+        )
+        .toList();
+    return _selectedImgs.isEmpty
+        ? Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 15,
+            ),
+            child: GestureDetector(
+              onTap: selectImg,
+              child: Stack(
+                children: [
+                  Container(
+                    height: MediaQuery.of(context).size.width,
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      color: const Color(0xffFFA49E),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  const Positioned(
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Icon(
+                      Icons.add_photo_alternate_outlined,
+                      color: Colors.white,
+                      size: 100,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          )
+        : Stack(
+            children: [
+              CarouselSlider(
+                items: imageSliders,
+                carouselController: _controller,
+                options: CarouselOptions(
+                  enableInfiniteScroll: false,
+                  height: MediaQuery.of(context).size.width,
+                  viewportFraction: 1.0,
+                  onPageChanged: (index, reason) {
+                    setState(() {
+                      _current = index;
+                    });
+                  },
+                ),
+              ),
+              Positioned(
+                right: 0,
+                top: 0,
+                child: IconButton(
+                  onPressed: () => deleteImg(idx: _current),
+                  icon: const Icon(
+                    Icons.delete_forever,
+                    color: Color(0xffF6766E),
+                  ),
+                ),
+              )
+            ],
+          );
   }
 }

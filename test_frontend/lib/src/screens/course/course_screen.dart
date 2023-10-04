@@ -34,7 +34,7 @@ class _CourseScreenState extends State<CourseScreen> {
   bool isLoading = true;
   bool isLoadingCurCoords = true;
   bool isCourseList = true;
-  String? userId = "87dad60a-bfff-47e5-8e21-02cb49b23ba6";
+  String? userId;
   CourseProviders courseProviders = CourseProviders();
 
   Future<String?> getUserId() async {
@@ -102,16 +102,16 @@ class _CourseScreenState extends State<CourseScreen> {
   @override
   void initState() {
     super.initState();
-    // getUserId().then((userId) {
-    if (userId != null) {
-      initCourses().then((_) {
-        setState(() {
-          isLoading = false;
+    getUserId().then((userId) {
+      if (userId != null) {
+        initCourses().then((_) {
+          setState(() {
+            isLoading = false;
+          });
         });
-      });
-      initBookmark();
-    }
-    // });
+        initBookmark();
+      }
+    });
     // _initCurrentLocation();
     scrollController = ScrollController();
     scrollController.addListener(() {
@@ -192,7 +192,7 @@ class _CourseScreenState extends State<CourseScreen> {
 
   Future<void> _onDeleteCourse(Course_detail_model course) async {
     String api = dotenv.get("api_key");
-    Uri uri = Uri.parse(api + "/course/" + userId!);
+    Uri uri = Uri.parse(api + "/course");
 
     Map data = {"courseId": course.courseId, "userId": userId};
 
@@ -330,15 +330,35 @@ class _CourseScreenState extends State<CourseScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      CourseCreateScreen(),
-                  transitionDuration: Duration.zero,
-                  reverseTransitionDuration: Duration.zero,
-                ),
-              );
+              if (userId != null) {
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation1, animation2) =>
+                        CourseCreateScreen(),
+                    transitionDuration: Duration.zero,
+                    reverseTransitionDuration: Duration.zero,
+                  ),
+                );
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text("로그인"),
+                      content: Text("로그인을 해주세요"),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text("확인"),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
             },
             icon: SvgPicture.asset('lib/src/assets/icons/add_white.svg',
                 height: 24),
@@ -497,20 +517,6 @@ class _CourseScreenState extends State<CourseScreen> {
                                 );
                               }),
                             if (isCourseList)
-                              if (courses.length == 0)
-                                Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.25,
-                                  child: Center(
-                                    child: Text(
-                                      '불러올 코스가 없습니다',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                  ),
-                                ),
-                            if (courses.length > 0)
                               ...courses.asMap().entries.map((entry) {
                                 final course = entry.value;
                                 return GestureDetector(

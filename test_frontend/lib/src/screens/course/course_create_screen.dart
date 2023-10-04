@@ -35,7 +35,7 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
   double zoomLevel = 15.0;
   bool isLoading = true;
   bool isLoadingCurCoords = true;
-  String? userId = "87dad60a-bfff-47e5-8e21-02cb49b23ba6";
+  String? userId;
   CourseProviders courseProviders = CourseProviders();
 
   Future<String?> getUserId() async {
@@ -71,7 +71,7 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
   Future removePlace(NMarker marker, Map<String, dynamic> bookmark) async {
     setState(() {
       coursePlaces.remove(marker);
-      coursePlacesInfo.add(bookmark);
+      coursePlacesInfo.remove(bookmark);
     });
     marker.setIcon(
         NOverlayImage.fromAssetImage("lib/src/assets/icons/mapMark.png"));
@@ -322,11 +322,9 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
   @override
   void initState() {
     super.initState();
-    // getUserId().then((userId) {
-    //   if (userId != null) {
-    // }
-    // });
-    // _initCurrentLocation();
+    getUserId().then((userId) {
+      if (userId != null) {}
+    });
     scrollController = ScrollController();
     scrollController.addListener(() {
       // maxheight에 도달했으면
@@ -482,10 +480,7 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
                                   ),
                                 ),
                               ),
-                            ...(coursePlaces ?? [])
-                                .asMap()
-                                .entries
-                                .map((entry) {
+                            ...coursePlaces.asMap().entries.map((entry) {
                               final int index = entry.key;
                               final NMarker coursePlace = entry.value;
                               final matchingBookmark = bookmarks?.firstWhere(

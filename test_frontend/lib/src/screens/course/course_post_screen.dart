@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:youkids/src/screens/course/course_screen.dart';
 import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:http/http.dart' as http;
@@ -24,15 +25,26 @@ class CoursePostScreen extends StatefulWidget {
 class _CoursePostScreenState extends State<CoursePostScreen> {
   NaverMapController? _controller;
   TextEditingController _courseNameController = TextEditingController();
-  String? userId = "87dad60a-bfff-47e5-8e21-02cb49b23ba6";
+  String? userId;
+  List<Map<String, dynamic>> placesData = [];
+
+  Future<void> infoToData() async {
+    placesData = widget.coursePlacesInfo.asMap().entries.map((entry) {
+      final int order = entry.key + 1;
+      final int placeId = entry.value['placeId'];
+      return {
+        'placeId': placeId,
+        'order': order,
+      };
+    }).toList();
+  }
 
   @override
   void initState() {
     super.initState();
-    // getUserId().then((userId) {
-    //   if (userId != null) {
-    // }
-    // });
+    getUserId().then((userId) {
+      if (userId != null) {}
+    });
   }
 
   Future<void> showSuccessDialog(BuildContext context) async {
@@ -53,6 +65,15 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
               child: Text('확인'),
               onPressed: () {
                 Navigator.of(context).pop();
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation1, animation2) =>
+                        CourseScreen(),
+                    transitionDuration: Duration.zero,
+                    reverseTransitionDuration: Duration.zero,
+                  ),
+                );
               },
             ),
           ],
@@ -72,7 +93,6 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
             child: ListBody(
               children: <Widget>[
                 Text('코스 등록 중 오류가 발생했습니다.'),
-                Text('오류 메시지: $errorMessage'),
               ],
             ),
           ),
@@ -100,6 +120,7 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
     setState(() {
       _controller = controller;
       _initData();
+      infoToData();
     });
   }
 
@@ -156,14 +177,14 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
         headers: {'Content-Type': 'application/json'},
         body: body,
       );
-      print(utf8.decode(response.bodyBytes));
+
       if (response.statusCode == 200) {
         showSuccessDialog(context);
       } else {
-        showErrorDialog(context, '서버에서 오류가 발생했습니다.');
+        showErrorDialog(context, '오류가 발생했습니다.');
       }
     } catch (error) {
-      showErrorDialog(context, '오류가 발생했습니다: $error');
+      showErrorDialog(context, '오류가 발생했습니다.');
     }
   }
 
@@ -191,7 +212,7 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
           Column(
             children: [
               Container(
-                height: MediaQuery.of(context).size.height * 0.3, // 상단 30% 높이
+                height: MediaQuery.of(context).size.height * 0.3,
                 child: NaverMap(
                   options: NaverMapViewOptions(
                     initialCameraPosition: NCameraPosition(
@@ -223,10 +244,7 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
                         const SizedBox(
                           height: 70,
                         ),
-                        ...(widget.coursePlacesInfo ?? [])
-                            .asMap()
-                            .entries
-                            .map((entry) {
+                        ...widget.coursePlacesInfo.asMap().entries.map((entry) {
                           final int index = entry.key;
                           final Map<String, dynamic> coursePlace = entry.value;
                           return GestureDetector(
@@ -237,7 +255,7 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
                                   pageBuilder:
                                       (context, animation1, animation2) =>
                                           ShopDetailScreen(
-                                              placeId: coursePlace?['placeId']),
+                                              placeId: coursePlace['placeId']),
                                   transitionDuration: Duration.zero,
                                   reverseTransitionDuration: Duration.zero,
                                 ),
@@ -358,7 +376,27 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
                         child: TextButton(
                           onPressed: () {
                             String courseName = _courseNameController.text;
-                            postCourse(courseName);
+                            if (courseName.isEmpty) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("오류"),
+                                    content: Text("코스 명을 입력해주세요"),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text("확인"),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            } else {
+                              postCourse(courseName);
+                            }
                           },
                           style: ButtonStyle(
                             side: MaterialStateProperty.all(

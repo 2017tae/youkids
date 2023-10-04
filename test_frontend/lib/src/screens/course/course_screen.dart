@@ -21,6 +21,7 @@ class CourseScreen extends StatefulWidget {
 }
 
 class _CourseScreenState extends State<CourseScreen> {
+  bool _isLoggedIn = false;
   NaverMapController? _controller;
   String? selectedMarkerId;
   late ScrollController scrollController;
@@ -35,14 +36,16 @@ class _CourseScreenState extends State<CourseScreen> {
   bool isLoadingCurCoords = true;
   bool isCourseList = true;
   String? userId;
+  Future? loadDataFuture;
   CourseProviders courseProviders = CourseProviders();
 
-  Future<void> getUserId() async {
+  Future<String?> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    userId = prefs.getString(
+    return prefs.getString(
       'userId',
     );
   }
+
 
   void toggleButtonText() {
     setState(() {
@@ -99,10 +102,18 @@ class _CourseScreenState extends State<CourseScreen> {
     }
   }
 
+  Future<void> _checkLoginStatus() async {
+    userId = await getUserId();
+
+    setState(() {
+      _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    getUserId();
+    loadDataFuture = _checkLoginStatus();
     if (userId != null) {
       initCourses().then((_) {
         setState(() {

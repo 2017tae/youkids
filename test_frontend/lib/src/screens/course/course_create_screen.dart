@@ -21,6 +21,7 @@ class CourseCreateScreen extends StatefulWidget {
 }
 
 class _CourseCreateScreenState extends State<CourseCreateScreen> {
+  bool _isLoggedIn = false;
   NaverMapController? _controller;
   String? selectedMarkerId;
   late ScrollController scrollController;
@@ -36,13 +37,21 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
   bool isLoading = true;
   bool isLoadingCurCoords = true;
   String? userId;
+  Future? loadDataFuture;
   CourseProviders courseProviders = CourseProviders();
 
-  Future<void> getUserId() async {
+  Future<String?> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    userId = prefs.getString(
+    return prefs.getString(
       'userId',
     );
+  }
+  Future<void> _checkLoginStatus() async {
+    userId = await getUserId();
+
+    setState(() {
+      _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
+    });
   }
 
   Future initBookmark() async {
@@ -86,6 +95,7 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
   void _onMapReady(NaverMapController controller) {
     setState(() {
       _controller = controller;
+      loadDataFuture = _checkLoginStatus();
       _initData();
     });
   }

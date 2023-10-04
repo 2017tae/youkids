@@ -28,6 +28,7 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
 
   // 코스에 넣을 장소 리스트
   List<NMarker> coursePlaces = [];
+  List<Map<String, dynamic>> coursePlacesInfo = [];
   bool isMaxHeightReached = false;
   double latitude = 37.5;
   double longitude = 127.0;
@@ -45,8 +46,9 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
   }
 
   Future initBookmark() async {
-    String api = dotenv.get("api_key2");
-    final response = await http.get(Uri.parse(api + '/' + userId!));
+    String api = dotenv.get("api_key");
+    final response =
+        await http.get(Uri.parse(api + "/place/bookmark/" + userId!));
     if (response.statusCode == 200) {
       var jsonString = utf8.decode(response.bodyBytes);
       Map<String, dynamic> decodedJson = jsonDecode(jsonString);
@@ -56,18 +58,20 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
     }
   }
 
-  Future addPlace(NMarker marker) async {
+  Future addPlace(NMarker marker, Map<String, dynamic> bookmark) async {
     setState(() {
       coursePlaces.add(marker);
+      coursePlacesInfo.add(bookmark);
     });
     marker.setIcon(NOverlayImage.fromAssetImage("lib/src/assets/icons/mark" +
         (coursePlaces.length).toString() +
         ".png"));
   }
 
-  Future removePlace(NMarker marker) async {
+  Future removePlace(NMarker marker, Map<String, dynamic> bookmark) async {
     setState(() {
       coursePlaces.remove(marker);
+      coursePlacesInfo.add(bookmark);
     });
     marker.setIcon(
         NOverlayImage.fromAssetImage("lib/src/assets/icons/mapMark.png"));
@@ -88,14 +92,12 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
 
   Future _renderBookmark(List? bookmarks) async {
     if (bookmarks != null) {
-      print(bookmarks);
       List<NLatLng> bound = [];
       for (var place in bookmarks) {
         bound.add(NLatLng(place['latitude'], place['longitude']));
       }
 
       var bounds = NLatLngBounds.from(bound);
-      print(bounds);
       if (_controller == null) {
         showDialog(
           context: context,
@@ -123,7 +125,7 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
       for (var place in bookmarks) {
         final marker = NMarker(
           icon:
-          NOverlayImage.fromAssetImage("lib/src/assets/icons/mapMark.png"),
+              NOverlayImage.fromAssetImage("lib/src/assets/icons/mapMark.png"),
           size: NMarker.autoSize,
           id: i.toString(),
           position: NLatLng(place['latitude'], place['longitude']),
@@ -133,13 +135,14 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
           var cameraUpdate = NCameraUpdate.fromCameraPosition(
             NCameraPosition(
               target:
-              NLatLng(marker.position.latitude, marker.position.longitude),
+                  NLatLng(marker.position.latitude, marker.position.longitude),
               zoom: 10,
             ),
           )..setPivot(NPoint(0.5, 1 / 4));
 
           cameraUpdate.setAnimation(
-              animation: NCameraAnimation.fly, duration: Duration(seconds: 2));
+              animation: NCameraAnimation.linear,
+              duration: Duration(seconds: 1));
 
           _controller!.updateCamera(cameraUpdate);
 
@@ -150,9 +153,9 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
             builder: (BuildContext context) {
               return StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
-                  final matchingBookmark = bookmarks?.firstWhere(
-                        (bookmark) =>
-                    bookmark['latitude'] == marker.position.latitude &&
+                  final matchingBookmark = bookmarks.firstWhere(
+                    (bookmark) =>
+                        bookmark['latitude'] == marker.position.latitude &&
                         bookmark['longitude'] == marker.position.longitude,
                     orElse: () => null,
                   );
@@ -167,9 +170,9 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
                             child: ElevatedButton(
                               onPressed: () async {
                                 if (coursePlaces.contains(marker)) {
-                                  removePlace(marker);
+                                  removePlace(marker, matchingBookmark);
                                 } else if (coursePlaces.length < 5) {
-                                  addPlace(marker);
+                                  addPlace(marker, matchingBookmark);
                                 } else if (coursePlaces.length >= 5) {
                                   showDialog(
                                     context: context,
@@ -196,14 +199,15 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
                             ),
                           ),
                         ),
-
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
                               context,
                               PageRouteBuilder(
-                                pageBuilder: (context, animation1, animation2) =>
-                                    ShopDetailScreen(placeId: matchingBookmark?['placeId']),
+                                pageBuilder: (context, animation1,
+                                        animation2) =>
+                                    ShopDetailScreen(
+                                        placeId: matchingBookmark?['placeId']),
                                 transitionDuration: Duration.zero,
                                 reverseTransitionDuration: Duration.zero,
                               ),
@@ -237,9 +241,10 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
                                               Flexible(
                                                 child: Text(
                                                   matchingBookmark?[
-                                                  'address'] ??
+                                                          'address'] ??
                                                       '',
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                               ),
                                             ],
@@ -276,7 +281,6 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
     }
   }
 
-
   Future<void> getCurrentLocation() async {
     // 위치 권한 받음
     LocationPermission permission = await Geolocator.checkPermission();
@@ -308,7 +312,7 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
   }
 
   Future<void> _initData() async {
-    await initBookmark(); // initBookmark 메서드 완료 대기
+    await initBookmark();
     setState(() {
       isLoading = false;
       _renderBookmark(bookmarks);
@@ -376,10 +380,6 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
 
   void _onBookmarkClicked(double x, double y) {
     if (_controller != null) {
-      // for (int i = 0; i < coursePlaces.length; i++) {
-      //   _controller!.deleteOverlay(
-      //       NOverlayInfo(type: NOverlayType.marker, id: i.toString()));
-      // }
       _controller!.updateCamera(
         NCameraUpdate.fromCameraPosition(
           NCameraPosition(
@@ -388,18 +388,6 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
           ),
         ),
       );
-
-      // 해당 코스 마커 렌더링
-      int i = 0;
-      final marker = NMarker(
-        icon: NOverlayImage.fromAssetImage("lib/src/assets/icons/mapMark.png"),
-        size: NMarker.autoSize,
-        id: i.toString(),
-        position: NLatLng(x, y),
-      );
-
-      // 마커 지도 위에 렌더링
-      _controller!.addOverlay(marker);
     }
   }
 
@@ -427,7 +415,10 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
                 context,
                 PageRouteBuilder(
                   pageBuilder: (context, animation1, animation2) =>
-                      CoursePostScreen(coursePlaces: coursePlaces, bookmarks: bookmarks),
+                      CoursePostScreen(
+                    coursePlacesInfo: coursePlacesInfo,
+                    coursePlaces: coursePlaces,
+                  ),
                   transitionDuration: Duration.zero,
                   reverseTransitionDuration: Duration.zero,
                 ),
@@ -491,7 +482,12 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
                                   ),
                                 ),
                               ),
-                            ...(coursePlaces ?? []).map((coursePlace) {
+                            ...(coursePlaces ?? [])
+                                .asMap()
+                                .entries
+                                .map((entry) {
+                              final int index = entry.key;
+                              final NMarker coursePlace = entry.value;
                               final matchingBookmark = bookmarks?.firstWhere(
                                 (bookmark) =>
                                     bookmark['latitude'] ==
@@ -504,8 +500,9 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
                               return GestureDetector(
                                 onTap: () {
                                   if (matchingBookmark != null) {
-                                    final name = matchingBookmark['name'];
-                                    final address = matchingBookmark['address'];
+                                    _onBookmarkClicked(
+                                        matchingBookmark['latitude'] ?? 36,
+                                        matchingBookmark['longitude'] ?? 127);
                                   }
                                 },
                                 child: Container(
@@ -518,28 +515,27 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
                                         children: [
                                           Expanded(
                                             child: ListTile(
-                                              title: Text(
-                                                matchingBookmark?['name'] ?? '',
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                              subtitle: Padding(
-                                                padding:
-                                                    EdgeInsets.only(top: 8.0),
+                                              title: Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: 8.0, bottom: 8.0),
                                                 child: Row(
                                                   children: [
-                                                    SvgPicture.asset(
-                                                      'lib/src/assets/icons/course_white.svg',
-                                                      height: 16,
+                                                    Image.asset(
+                                                      "lib/src/assets/icons/mark" +
+                                                          (index + 1)
+                                                              .toString() +
+                                                          ".png",
+                                                      height: 35,
                                                     ),
-                                                    SizedBox(width: 5.0),
+                                                    SizedBox(width: 12.0),
                                                     Flexible(
                                                       child: Text(
                                                         matchingBookmark?[
-                                                                'address'] ??
+                                                                'name'] ??
                                                             '',
+                                                        style: TextStyle(
+                                                          fontSize: 20,
+                                                        ),
                                                         overflow: TextOverflow
                                                             .ellipsis,
                                                       ),

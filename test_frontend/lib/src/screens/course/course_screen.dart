@@ -52,13 +52,14 @@ class _CourseScreenState extends State<CourseScreen> {
 
   Future initCourses() async {
     String api = dotenv.get("api_key");
-    courses = await courseProviders.getCourse(Uri.parse(api + "/" + userId!));
+    courses =
+        await courseProviders.getCourse(Uri.parse(api + "/course/" + userId!));
   }
 
   Future initBookmark() async {
-    String api = dotenv.get("api_key2");
-    final response = await http.get(Uri.parse(api + '/' + userId!));
-    print(Uri.parse(api + '/' + userId!));
+    String api = dotenv.get("api_key");
+    final response =
+        await http.get(Uri.parse(api + "/place/bookmark/" + userId!));
     if (response.statusCode == 200) {
       var jsonString = utf8.decode(response.bodyBytes);
       Map<String, dynamic> decodedJson = jsonDecode(jsonString);
@@ -102,14 +103,14 @@ class _CourseScreenState extends State<CourseScreen> {
   void initState() {
     super.initState();
     // getUserId().then((userId) {
-      if (userId != null) {
-        initCourses().then((_) {
-          setState(() {
-            isLoading = false;
-          });
+    if (userId != null) {
+      initCourses().then((_) {
+        setState(() {
+          isLoading = false;
         });
-        initBookmark();
-      }
+      });
+      initBookmark();
+    }
     // });
     // _initCurrentLocation();
     scrollController = ScrollController();
@@ -191,7 +192,7 @@ class _CourseScreenState extends State<CourseScreen> {
 
   Future<void> _onDeleteCourse(Course_detail_model course) async {
     String api = dotenv.get("api_key");
-    Uri uri = Uri.parse(api);
+    Uri uri = Uri.parse(api + "/course/" + userId!);
 
     Map data = {"courseId": course.courseId, "userId": userId};
 
@@ -204,7 +205,6 @@ class _CourseScreenState extends State<CourseScreen> {
     );
     print(response.body);
     if (response.statusCode == 200) {
-
       setState(() {
         courses.remove(course);
       });
@@ -260,7 +260,7 @@ class _CourseScreenState extends State<CourseScreen> {
       _controller!.updateCamera(
         NCameraUpdate.fitBounds(bounds,
             padding:
-                EdgeInsets.only(bottom: 350, top: 50, right: 50, left: 50)),
+                EdgeInsets.only(bottom: 360, top: 50, right: 50, left: 50)),
       );
 
       // 해당 코스 마커 렌더링
@@ -334,7 +334,7 @@ class _CourseScreenState extends State<CourseScreen> {
                 context,
                 PageRouteBuilder(
                   pageBuilder: (context, animation1, animation2) =>
-                  CourseCreateScreen(),
+                      CourseCreateScreen(),
                   transitionDuration: Duration.zero,
                   reverseTransitionDuration: Duration.zero,
                 ),
@@ -500,7 +500,7 @@ class _CourseScreenState extends State<CourseScreen> {
                               if (courses.length == 0)
                                 Container(
                                   height:
-                                  MediaQuery.of(context).size.height * 0.25,
+                                      MediaQuery.of(context).size.height * 0.25,
                                   child: Center(
                                     child: Text(
                                       '불러올 코스가 없습니다',
@@ -510,7 +510,7 @@ class _CourseScreenState extends State<CourseScreen> {
                                     ),
                                   ),
                                 ),
-                              if(courses.length>0)
+                            if (courses.length > 0)
                               ...courses.asMap().entries.map((entry) {
                                 final course = entry.value;
                                 return GestureDetector(

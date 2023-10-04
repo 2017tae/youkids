@@ -5,6 +5,7 @@ import com.capsule.youkids.group.entity.GroupJoin;
 import com.capsule.youkids.group.repository.GroupInfoRepository;
 import com.capsule.youkids.group.repository.GroupJoinRepository;
 import com.capsule.youkids.user.dto.RequestDto.DeleteMyInfoRequestDto;
+import com.capsule.youkids.user.dto.RequestDto.FcmTokenRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.ModifyMyInfoRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.PartnerRegistRequestDto;
 import com.capsule.youkids.user.dto.RequestDto.addUserInfoRequestDto;
@@ -277,6 +278,16 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
 
+        return true;
+    }
+    
+    // fcmToken 기기에서 받아와서 리뉴얼하기
+    @Override
+    public boolean updateFcmToken(FcmTokenRequestDto request) {
+        User user = userRepository.findByUserIdAndRoleNot(request.getUserId(), Role.DELETED).orElseThrow(()-> new IllegalArgumentException());
+
+        user.updateFcmToken(request.getFcmToken());
+        userRepository.save(user);
         return true;
     }
 

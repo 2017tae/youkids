@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/screens/home/indoor_recom_list_screen.dart';
 import 'package:youkids/src/screens/home/rank_recom_list_screen.dart';
 import 'package:youkids/src/screens/message/firebase_api.dart';
+import 'package:youkids/src/screens/shop/festival_info_page.dart';
 import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
 import 'package:youkids/src/screens/shop/shop_more_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
@@ -340,19 +341,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisSpacing: 10,
                   crossAxisCount: 3,
                   children: [
-                    _buildIconButton(context, '테마파크', Icons.local_play, ShopMoreScreen()),
-                    _buildIconButton(context, '박물관', Icons.museum, ShopMoreScreen()),
-                    _buildIconButton(context, '키즈카페', Icons.local_cafe, ShopMoreScreen()),
-                    _buildIconButton(context, '공연', Icons.music_note, ShopMoreScreen()),
-                    _buildIconButton(context, '순위', Icons.leaderboard, ShopMoreScreen()),
-                    _buildIconButton(context, '카페', Icons.coffee, ShopMoreScreen()),
+                    _buildIconButton(context, '테마파크', Icons.local_play, ShopMoreScreen(PushselectedCategory: "테마파크")),
+                    _buildIconButton(context, '박물관', Icons.museum, ShopMoreScreen(PushselectedCategory : "박물관")),
+                    _buildIconButton(context, '키즈카페', Icons.local_cafe, ShopMoreScreen(PushselectedCategory : "키즈카페")),
+                    _buildIconButton(context, '공연', Icons.music_note, IndoorRecomListScreen()),
+                    _buildIconButton(context, '순위', Icons.leaderboard, RankRecomlistScreen()),
+                    _buildIconButton(context, '카페', Icons.coffee, ShopMoreScreen(PushselectedCategory: "전체")),
                   ],
                 ),
               ),
               setHomeMenu(
                 context,
                 '이번 주 추천 장소',
-                const ShopMoreScreen(),
+                const ShopMoreScreen(PushselectedCategory: "전체"),
               ),
               Column(
                 children: [

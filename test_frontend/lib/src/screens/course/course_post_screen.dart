@@ -43,9 +43,6 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
   void initState() async {
     super.initState();
     userId = await getUserId();
-    getUserId().then((userId) {
-      if (userId != null) {}
-    });
   }
 
   Future<void> showSuccessDialog(BuildContext context) async {

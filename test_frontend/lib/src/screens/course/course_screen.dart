@@ -103,16 +103,14 @@ class _CourseScreenState extends State<CourseScreen> {
   void initState() async {
     super.initState();
     userId = await getUserId();
-    getUserId().then((userId) {
-      if (userId != null) {
-        initCourses().then((_) {
-          setState(() {
-            isLoading = false;
-          });
+    if (userId != null) {
+      initCourses().then((_) {
+        setState(() {
+          isLoading = false;
         });
-        initBookmark();
-      }
-    });
+      });
+      initBookmark();
+    }
     // _initCurrentLocation();
     scrollController = ScrollController();
     scrollController.addListener(() {

@@ -323,9 +323,6 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
   void initState() async {
     super.initState();
     userId = await getUserId();
-    getUserId().then((userId) {
-      if (userId != null) {}
-    });
     scrollController = ScrollController();
     scrollController.addListener(() {
       // maxheight에 도달했으면

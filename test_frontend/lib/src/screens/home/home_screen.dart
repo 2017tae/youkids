@@ -96,6 +96,11 @@ class _HomeScreenState extends State<HomeScreen> {
     prefs.remove('userId');
   }
 
+  Future<int?> getFestivalId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('festivalId'); // Returns 'john_doe' if it exists, otherwise returns null.
+  }
+
   Future<void> _checkLoginStatus() async {
     userId = await getUserId();
 
@@ -108,9 +113,17 @@ class _HomeScreenState extends State<HomeScreen> {
       headers: {'Content-Type': 'application/json'},
     );
 
+    int? festivalId = await getFestivalId();
+
+    if(festivalId == null){
+      festivalId = 2;
+    }
+
     final response2 = await http.get(
-        Uri.parse('https://j9a604.p.ssafy.io/api/festival/recommdiv'),
-        headers: {'Content-Type': 'application/json'});
+        Uri.parse('https://j9a604.p.ssafy.io/fastapi/festival/'+festivalId.toString()),
+        headers: {'Content-Type': 'application/json'},
+    );
+
 
     // 응답을 처리하는 코드 (예: 상태를 업데이트하는 등)를 여기에 추가합니다.
     if (response.statusCode == 200) {
@@ -126,9 +139,9 @@ class _HomeScreenState extends State<HomeScreen> {
     if (response2.statusCode == 200) {
       var jsonString2 = utf8.decode(response2.bodyBytes);
       Map<String, dynamic> decodedJson2 = jsonDecode(jsonString2);
-      print(decodedJson2['result']['onGoingFestivals']);
+      print(decodedJson2['recommended_festival']);
       setState(() {
-        festivals = decodedJson2['result']['onGoingFestivals'];
+        festivals = decodedJson2['recommended_festival'];
       });
 
       for (int i = 0; i < festivals!.length; i++) {
@@ -136,9 +149,9 @@ class _HomeScreenState extends State<HomeScreen> {
             festivals!.length > i &&
             festivals![i]['poster'] != null) {
           imgUrls.add(festivals![i]['poster']);
-          festivalPlace.add(festivals![i]['placeName']);
-          festivalDate.add(festivals![i]['startDate']);
-          festivalChildId.add(festivals![i]['festivalChildId']);
+          festivalPlace.add(festivals![i]['place_name']);
+          festivalDate.add(festivals![i]['start_date']);
+          festivalChildId.add(festivals![i]['festival_child_id']);
         } else {
           imgUrls.add(
               "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png");
@@ -710,7 +723,12 @@ Widget _buildIconButton(BuildContext context, String title, IconData icon, Widge
       children: <Widget>[
         Icon(icon, size: 40.0, color: Color(0xffFF7E76)),
         SizedBox(height: 5),
-        Text(title),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 18.0, // 원하는 크기로 설정하세요.
+          ),
+        ),
       ],
     ),
   );

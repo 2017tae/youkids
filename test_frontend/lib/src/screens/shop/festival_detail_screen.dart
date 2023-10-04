@@ -34,6 +34,13 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
     loadDataFuture = _checkLoginStatus();
   }
 
+  saveFestivalId(int id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('festivalId', id);
+  }
+
+
+
   _checkLoginStatus() async {
     String? email = await getEmail();
     print(email);
@@ -58,6 +65,9 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
       setState(() {
         _festival = festival;
       });
+
+      saveFestivalId(widget.festivalId);
+
 
       print(_festival?.images);
     } else {

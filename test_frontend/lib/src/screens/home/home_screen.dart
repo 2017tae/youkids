@@ -215,9 +215,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Padding(
+        child:
+        Padding(
           padding: const EdgeInsets.all(20),
-          child: Column(
+          child:
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               loadingSetHomeMenu("이번 주 추천 장소"),
@@ -303,18 +305,6 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
                 height: 24),
           ),
-          // _isLoggedIn == false ? IconButton(
-          //   onPressed: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(builder: (context)=> LoginScreen()),
-          //     );
-          //   },
-          //   icon: const Icon(
-          //     Icons.account_circle_rounded,
-          //     size: 28,
-          //   ),
-          // ) : Container(),
           IconButton(
             onPressed: () {
               Navigator.push(
@@ -342,19 +332,23 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // _isLoggedIn == true
-              //     ? const Padding(
-              //         padding: EdgeInsets.symmetric(vertical: 10),
-              //         child: Text(
-              //           '아이 맞춤 형 장소',
-              //           style: TextStyle(
-              //             fontSize: 22,
-              //             fontWeight: FontWeight.bold,
-              //           ),
-              //         ),
-              //       )
-              //     : Container(),
-              // _isLoggedIn == true ? const ChildIconWidget() : Container(),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
+                child: GridView.count(
+                  shrinkWrap: true,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  crossAxisCount: 3,
+                  children: [
+                    _buildIconButton(context, '테마파크', Icons.local_play, ShopMoreScreen()),
+                    _buildIconButton(context, '박물관', Icons.museum, ShopMoreScreen()),
+                    _buildIconButton(context, '키즈카페', Icons.local_cafe, ShopMoreScreen()),
+                    _buildIconButton(context, '공연', Icons.music_note, ShopMoreScreen()),
+                    _buildIconButton(context, '순위', Icons.leaderboard, ShopMoreScreen()),
+                    _buildIconButton(context, '카페', Icons.coffee, ShopMoreScreen()),
+                  ],
+                ),
+              ),
               setHomeMenu(
                 context,
                 '이번 주 추천 장소',
@@ -434,6 +428,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
+
               setHomeMenu(
                 context,
                 '저번 주 리뷰 많은 장소',
@@ -699,4 +694,23 @@ class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
       ],
     );
   }
+}
+// 이 함수는 각 이모티콘 버튼을 생성합니다.
+Widget _buildIconButton(BuildContext context, String title, IconData icon, Widget targetPage) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => targetPage),
+      );
+    },
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Icon(icon, size: 40.0, color: Color(0xffFF7E76)),
+        SizedBox(height: 5),
+        Text(title),
+      ],
+    ),
+  );
 }

@@ -24,7 +24,7 @@ class _CapsuleBigDetailScreen extends State<CapsuleBigDetailScreen> {
   Future? loadDataFuture;
   String? userId;
   bool _isLoggedIn = false;
-  List? memory;
+  Memory? memory;
 
   @override
   void initState() {
@@ -35,7 +35,7 @@ class _CapsuleBigDetailScreen extends State<CapsuleBigDetailScreen> {
 
   Future<void> _getMemory() async {
     final response = await http.get(
-      Uri.parse('https://j9a604.p.ssafy.io/api/capsule/memory' +
+      Uri.parse('https://j9a604.p.ssafy.io/api/capsule/memory/' +
           widget.memoryId.toString()),
       headers: {'Content-Type': 'application/json'},
     );
@@ -44,9 +44,13 @@ class _CapsuleBigDetailScreen extends State<CapsuleBigDetailScreen> {
     if (response.statusCode == 200) {
       var jsonString = utf8.decode(response.bodyBytes);
       Map<String, dynamic> decodedJson = jsonDecode(jsonString);
+      Memory memoryData = Memory.fromJson(decodedJson['result']);
       setState(() {
-
+        memory = memoryData;
       });
+
+      print(memory?.description);
+
     }
   }
 
@@ -79,28 +83,134 @@ class _CapsuleBigDetailScreen extends State<CapsuleBigDetailScreen> {
             ),
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬을 위해
-            children: [
-              Text(
-                "사진첩",
-                style: TextStyle(
-                  fontSize: 22,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
+        body:
+        Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween, // 추가: 양 끝으로 항목 분배
+                children: [
+                  // 프로필 사진 및 닉네임 및 날짜
+                  Row(
+                    children: [
+                      ClipOval(
+                        child: (memory?.userImage != null)
+                            ? Image.network(
+                          memory!.userImage!,
+                          width: 48.0,
+                          height: 48.0,
+                          fit: BoxFit.cover,
+                        )
+                            : Image.network(
+                          'https://youkids.s3.ap-northeast-2.amazonaws.com/image/c1d3f954-a735-470e-ab2d-c4e170f8a82b.jpeg',
+                          width: 48.0,
+                          height: 48.0,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            memory!.nickname,  // 닉네임을 입력하세요.
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          Text(
+                            '${memory?.year}.${memory?.month?.toString().padLeft(2, '0')}.${memory?.day?.toString().padLeft(2, '0')}',
+                            style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  // 위치와 이모티콘 추가
+                  Row(
+                    children: [
+                      Icon(Icons.location_pin, size: 18, color: Color(0xffFF7E76)),  // 위치 이모티콘
+                      SizedBox(width: 4),
+                      Text(
+                        memory?.location ?? '',
+                        style: TextStyle(color: Color(0xffFF7E76), fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              SizedBox(height: 16.0), // 사진첩 제목과 캐러셀 위젯 간의 간격
-              Expanded(
-                child: CapsuleCarouselWidget(
-                  imgUrls: ["https://picturepractice.s3.ap-northeast-2.amazonaws.com/festival/PF225433.png"],
-                ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 설명
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      memory?.description ?? '',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  // 태그 형식의 childrenList
+                ],
               ),
-            ],
-          ),
+            ),
+            SizedBox(height: 16), // 위치와 날짜와 이미지 사이의 간격 조정
+            // 이미지 슬라이더
+            Container(
+              height: 450.0,  // 원하는 높이로 조정
+              child: CapsuleCarouselWidget(
+                imgUrls: memory!.images,
+              ),
+            ),
+            // 나머지 내용들
+          ],
         )
+    );
+  }
+}
+class Memory {
+  final String nickname;
+  final String? userImage;
+  final int memoryId;
+  final int year, month, day;
+  final String description;
+  final String location;
+  final List<String> images;
+  final List<String?> childrenImageList;
+
+  Memory({
+    required this.nickname,
+    required this.userImage,
+    required this.memoryId,
+    required this.year,
+    required this.month,
+    required this.day,
+    required this.description,
+    required this.location,
+    required this.images,
+    required this.childrenImageList,
+  });
+
+  factory Memory.fromJson(Map<String, dynamic> json) {
+    return Memory(
+      nickname: json['nickname'],
+      userImage: json['userImage'] as String?,
+      memoryId: json['memoryId'],
+      year: json['year'],
+      month: json['month'],
+      day: json['day'],
+      description: json['description'],
+      location: json['location'],
+      images: List<String>.from(json['images']),
+      childrenImageList: List<String?>.from(json['childrenImageList']),
     );
   }
 }

@@ -95,7 +95,6 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
   void _onMapReady(NaverMapController controller) {
     setState(() {
       _controller = controller;
-      loadDataFuture = _checkLoginStatus();
       _initData();
     });
   }
@@ -332,7 +331,7 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
   @override
   void initState() {
     super.initState();
-    getUserId();
+    loadDataFuture = _checkLoginStatus();
     scrollController = ScrollController();
     scrollController.addListener(() {
       // maxheight에 도달했으면

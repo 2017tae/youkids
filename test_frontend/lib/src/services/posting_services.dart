@@ -9,30 +9,38 @@ class PostingServices {
   static Future<void> postingCapsuleImgsContents({
     required String description,
     required String location,
-    required String userId,
-    List<dynamic>? fileList,
+    required dynamic userId,
+    List<String>? fileList,
     List<List<int>>? childrenList,
   }) async {
     final dio = Dio();
     final url = '$baseUrl/capsule/upload';
+    print('================fileLIst===========');
+    print(fileList);
+    print(userId);
     List<MultipartFile> files = [];
     if (fileList != null) {
-      for (var filePath in fileList) {
-        var file = await MultipartFile.fromFile(filePath);
+      for (String filePath in fileList) {
+        MultipartFile file = await MultipartFile.fromFile(filePath);
         files.add(file);
       }
     }
     final formData = FormData.fromMap({
-      "description": description,
       "fileList": files,
-      "childrenList": childrenList,
-      "location": location,
-      "userId": userId,
+      "request": jsonEncode({
+        "description": description,
+        "childrenList": childrenList,
+        "location": location,
+        "userId": '87dad60a-bfff-47e5-8e21-02cb49b23ba6',
+      }),
     });
+    print('===============formData===============');
+    print(formData);
     final response = await dio.post(
       url,
       data: formData,
     );
+    print(response);
 
     if (response.statusCode == 200) {
       return;

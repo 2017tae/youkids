@@ -460,6 +460,8 @@ public class CapsuleServiceImpl implements CapsuleService {
         childrenImageList = new ArrayList<>(child);
 
         MemoryDetailResponseDto response = MemoryDetailResponseDto.builder()
+                .nickname(memory.getCapsule().getUser().getNickname())
+                .userImage(memory.getCapsule().getUser().getProfileImage())
                 .memoryId(memory.getMemoryId())
                 .year(memory.getYear())
                 .month(memory.getMonth())

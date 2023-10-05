@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:youkids/src/screens/shop/create_shop_review_screen.dart';
+import 'package:youkids/src/widgets/bookmark_button_widget.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:http/http.dart' as http;
 
@@ -24,10 +23,11 @@ class ShopDetailScreen extends StatefulWidget {
 }
 
 class _ShopDetailScreenState extends State<ShopDetailScreen> {
-  bool _isLoggedIn = false;
+  // 로그인
+  String? userId;
+
   Place? _place;
   Future? loadDataFuture;
-
 
   @override
   void initState() {
@@ -44,22 +44,17 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
 
   _checkLoginStatus() async {
     String? userId = await getUserId();
-    print(userId);
-    setState(() {
-      _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
-    });
+    setState(() {});
 
-    if(userId != null){
-      final re = await http.put(
-        Uri.parse('https://j9a604.p.ssafy.io/fastapi/clicks/'+userId.toString() +'/'+ widget.placeId.toString()),
-        headers: {'Content-Type': 'application/json'},
-      );
-    }
+    final re = await http.put(
+      Uri.parse(
+          'https://j9a604.p.ssafy.io/fastapi/clicks/$userId/${widget.placeId}'),
+      headers: {'Content-Type': 'application/json'},
+    );
 
     final response = await http.get(
       Uri.parse(
-          'https://j9a604.p.ssafy.io/api/place/87dad60a-bfff-47e5-8e21-02cb49b23ba6/${widget
-              .placeId}'),
+          'https://j9a604.p.ssafy.io/api/place/87dad60a-bfff-47e5-8e21-02cb49b23ba6/${widget.placeId}'),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -68,15 +63,10 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
       var jsonString = utf8.decode(response.bodyBytes);
       Map<String, dynamic> decodedJson = jsonDecode(jsonString);
       Place place = Place.fromJson(decodedJson['result']['place']);
-      print(decodedJson);
       setState(() {
         _place = place;
       });
-
-      print(_place);
-    } else {
-      print("error");
-    }
+    } else {}
   }
 
   Future<String?> getEmail() async {
@@ -86,20 +76,18 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return FutureBuilder(
       future: loadDataFuture,
       builder: (context, snapshot) {
         // if (snapshot.connectionState == ConnectionState.done) {
         if (_place != null) {
-          print(_place);
           return _buildMainContent();
         } else {
           return _buildLoadingMainContent();
         }
       },
     );
-
   }
 
   Widget _buildLoadingMainContent() {
@@ -183,14 +171,13 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
 
   bool _isExpanded = false;
 
-
   Widget _buildMainContent() {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: Text(
           _place!.name,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 22,
             color: Colors.black,
             fontWeight: FontWeight.w500,
@@ -201,12 +188,6 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
         iconTheme: const IconThemeData(
           color: Colors.black,
         ),
-        // actions: [
-        //   IconButton(
-        //     onPressed: () {},
-        //     icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg', height: 24),
-        //   ),
-        // ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -233,20 +214,29 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                   scrollDirection: Axis.horizontal,
                 ),
               ),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-
                 children: [
-                  Text(
-                    _place?.name ?? 'Loading...',
-                    style: TextStyle(
-                      fontSize: 23.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.left,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _place?.name ?? 'Loading...',
+                        style: const TextStyle(
+                          fontSize: 23.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                      (userId != null)
+                          ? BookmarkButtonWidget(
+                              placeId: widget.placeId,
+                              userId: userId,
+                            )
+                          : Container(),
+                    ],
                   ),
                   // Divider(thickness: 0.5, color: Colors.grey[300]),
                   // _detailInfo(title: "전화번호", info: _place != null ? _place!.phoneNumber : 'Loading...'),
@@ -264,12 +254,16 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _place != null ? (_isExpanded || _place!.description.length <= 50 ? _place!.description : _place!.description.substring(0, 50) + '...') : 'Loading...',
+                        _place != null
+                            ? (_isExpanded || _place!.description.length <= 50
+                                ? _place!.description
+                                : '${_place!.description.substring(0, 50)}...')
+                            : 'Loading...',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.grey[700],
@@ -282,17 +276,24 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                               _isExpanded = !_isExpanded;
                             });
                           },
-                          child: Text(_isExpanded ? "접기" : "더보기", style: TextStyle(color: Colors.blue)),
+                          child: Text(_isExpanded ? "접기" : "더보기",
+                              style: const TextStyle(color: Colors.blue)),
                         ),
                     ],
                   ),
 
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Divider(
+                    thickness: 0.5,
+                    color: Colors.grey[300],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
 
-                  SizedBox(height: 10),
-                  Divider(thickness: 0.5, color: Colors.grey[300]),
-                  SizedBox(height: 10),
-
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
@@ -305,9 +306,13 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                       ),
                     ],
                   ),
-                  _addressInfo(info: _place != null ? _place!.address : "Loading..."),
-                  _phoneInfo( phoneNumber: _place != null ? _place!.phoneNumber : 'Loading...'),
-                  _homepageInfo(url: _place != null ? _place!.homepage : 'Loading...'),
+                  _addressInfo(
+                      info: _place != null ? _place!.address : "Loading..."),
+                  _phoneInfo(
+                      phoneNumber:
+                          _place != null ? _place!.phoneNumber : 'Loading...'),
+                  _homepageInfo(
+                      url: _place != null ? _place!.homepage : 'Loading...'),
                 ],
               ),
             ),
@@ -323,15 +328,19 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
-            ),
+          Row(
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+              ),
+            ],
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Text(
             info,
             style: TextStyle(
@@ -353,7 +362,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             "주소",
             style: TextStyle(
               fontSize: 18,
@@ -361,7 +370,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
               color: Colors.black,
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Row(
             children: [
               Expanded(
@@ -376,12 +385,13 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.copy, size: 20, color: Color(0xffFF7E76)),
+                icon:
+                    const Icon(Icons.copy, size: 20, color: Color(0xffFF7E76)),
                 onPressed: () {
                   Clipboard.setData(ClipboardData(text: info));
                   // 복사가 완료되었음을 알리는 스낵바 메시지
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('주소가 복사되었습니다.')),
+                    const SnackBar(content: Text('주소가 복사되었습니다.')),
                   );
                 },
               )
@@ -399,7 +409,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             "홈페이지",
             style: TextStyle(
               fontSize: 18,
@@ -407,7 +417,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
               color: Colors.black,
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Row(
             children: [
               Expanded(
@@ -424,14 +434,15 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
               ),
               if (url.trim().isNotEmpty)
                 IconButton(
-                  icon: Icon(Icons.launch, size: 20, color: Color(0xffFF7E76)),
+                  icon: const Icon(Icons.launch,
+                      size: 20, color: Color(0xffFF7E76)),
                   onPressed: () async {
                     if (await canLaunch(url)) {
                       await launch(url);
                     } else {
                       // 불가능한 URL일 경우 메시지 표시
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('홈페이지를 열 수 없습니다.')),
+                        const SnackBar(content: Text('홈페이지를 열 수 없습니다.')),
                       );
                     }
                   },
@@ -450,7 +461,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             "전화번호",
             style: TextStyle(
               fontSize: 18,
@@ -458,7 +469,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
               color: Colors.black,
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Row(
             children: [
               Expanded(
@@ -474,7 +485,8 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
               ),
               if (phoneNumber.trim().isNotEmpty)
                 IconButton(
-                  icon: Icon(Icons.call, size: 20, color: Color(0xffFF7E76)),
+                  icon: const Icon(Icons.call,
+                      size: 20, color: Color(0xffFF7E76)),
                   onPressed: () async {
                     final url = 'tel:$phoneNumber';
                     if (await canLaunch(url)) {
@@ -482,7 +494,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                     } else {
                       // 불가능한 전화번호일 경우 메시지 표시
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('전화를 걸 수 없습니다.')),
+                        const SnackBar(content: Text('전화를 걸 수 없습니다.')),
                       );
                     }
                   },

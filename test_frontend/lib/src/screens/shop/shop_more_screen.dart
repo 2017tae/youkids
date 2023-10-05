@@ -3,19 +3,28 @@ import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:youkids/src/widgets/bookmark_button_widget.dart';
 
 import '../../widgets/footer_widget.dart';
 
 class ShopMoreScreen extends StatefulWidget {
-  final String? PushselectedCategory;
+  final String? pushselectedCategory;
 
-  const ShopMoreScreen({super.key, required this.PushselectedCategory});
+  const ShopMoreScreen({
+    super.key,
+    required this.pushselectedCategory,
+  });
 
   @override
   State<ShopMoreScreen> createState() => _ShopMoreScreenState();
 }
 
 class _ShopMoreScreenState extends State<ShopMoreScreen> {
+  // 로그인
+  String? userId;
+  Future? loadLoginDataFuture;
+
   List? places;
   final int incrementCount = 10;
   Future? loadDataFuture;
@@ -24,7 +33,23 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
   void initState() {
     super.initState();
     loadDataFuture = _getData();
-    // _loadMoreData();
+    loadLoginDataFuture = _checkLoginStatus();
+
+  }
+
+  Future<String?> getUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(
+      'userId',
+    ); // Returns 'john_doe' if it exists, otherwise returns null.
+  }
+
+  Future<void> _checkLoginStatus() async {
+    // userId = await getUserId();
+    userId = '87dad60a-bfff-47e5-8e21-02cb49b23ba6';
+    setState(() {});
+    print('--------------------------');
+    print(userId);
   }
 
   // _loadMoreData() {
@@ -57,7 +82,7 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
       print("장소");
       print(places);
       setState(() {
-        selectedCategory = widget.PushselectedCategory;
+        selectedCategory = widget.pushselectedCategory;
       });
     } else {
       print("failfail");
@@ -112,11 +137,11 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
         ),
         body: SingleChildScrollView(
           child: Column(children: [
-            SizedBox(
+            const SizedBox(
               height: 15.0,
             ),
             Container(
-              padding: EdgeInsets.only(left: 6.0, right: 6.0),
+              padding: const EdgeInsets.only(left: 6.0, right: 6.0),
               height: 40.0,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
@@ -127,14 +152,14 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                         vertical: 1.0, horizontal: 8.0),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: selectedCategory == categories[index]
-                            ? Color(0xffFF7E76)
+                        backgroundColor: selectedCategory == categories[index]
+                            ? const Color(0xffFF7E76)
                             : Colors.white,
-                        onSurface: Colors.white,
+                        disabledForegroundColor: Colors.white.withOpacity(0.38), disabledBackgroundColor: Colors.white.withOpacity(0.12),
                         elevation: 0,
                         // 그림자를 없애기 위해
                         side: selectedCategory == categories[index]
-                            ? BorderSide(
+                            ? const BorderSide(
                                 color: Colors.transparent,
                                 width: 1.0) // 선택되었을 때 테두리 없음
                             : BorderSide(
@@ -144,12 +169,12 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                             vertical: 0.0, horizontal: 16.0), // 버튼의 높이를 더 줄임
                       ),
                       child: Text(
                         categories[index],
-                        style: TextStyle(fontSize: 14, color: Colors.white),
+                        style: const TextStyle(fontSize: 14, color: Colors.white),
                       ),
                       onPressed: () {},
                     ),
@@ -158,7 +183,7 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(left: 10.0, right:10.0, top:30.0),
+              padding: const EdgeInsets.only(left: 10.0, right:10.0, top:30.0),
               child: Column(
                 children: [
                   Row(
@@ -174,7 +199,7 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 40.0,
                   ),
                   Row(
@@ -190,7 +215,7 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 40.0,
                   ),
                   Row(
@@ -226,12 +251,12 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
       ),
       body: CustomScrollView(
         slivers: <Widget>[
-          SliverToBoxAdapter(
+          const SliverToBoxAdapter(
             child: SizedBox(height: 15.0),
           ),
           SliverToBoxAdapter(
             child: Container(
-              padding: EdgeInsets.only(left: 6.0, right: 6.0),
+              padding: const EdgeInsets.only(left: 6.0, right: 6.0,),
               height: 40.0,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
@@ -242,8 +267,8 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                         vertical: 1.0, horizontal: 8.0),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: selectedCategory == categories[index]
-                            ? Color(0xffFF7E76)
+                        backgroundColor: selectedCategory == categories[index]
+                            ? const Color(0xffFF7E76)
                             : Colors.white,
                         onSurface: Colors.white,
                         elevation: 0,
@@ -282,7 +307,7 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
               ),
             ),
           ),
-          SliverToBoxAdapter(
+          const SliverToBoxAdapter(
             child: SizedBox(height: 15.0),
           ),
           SliverPadding(
@@ -315,17 +340,20 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                       // 여기에 추가
                       category: filteredPlaces[index]['category'],
                       imageUrl: filteredPlaces[index]['imageUrl'],
+                      userId: userId,
                     ),
                   );
                 },
-                childCount: places!.where((place) {
-                  if (selectedCategory == '전체') {
-                    return true;
-                  }
-                  return place['category'] == selectedCategory;
-                }).length,
+                childCount: places!.where(
+                  (place) {
+                    if (selectedCategory == '전체') {
+                      return true;
+                    }
+                    return place['category'] == selectedCategory;
+                  },
+                ).length,
               ),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 mainAxisSpacing: 8.0,
                 crossAxisSpacing: 8.0,
@@ -415,20 +443,20 @@ class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
 }
 
 class GridItem extends StatelessWidget {
-  final String placeId;
-  final String name;
-  final String address;
+  final String placeId, name, address, category, imageUrl;
   final TextStyle addressStyle; // 여기에 추가
-  final String category;
-  final String imageUrl;
+  final dynamic userId;
 
-  GridItem(
-      {required this.placeId,
-      required this.name,
-      required this.address,
-      this.addressStyle = const TextStyle(), // default value
-      required this.category,
-      required this.imageUrl});
+  const GridItem({
+    super.key,
+    required this.placeId,
+    required this.name,
+    required this.address,
+    this.addressStyle = const TextStyle(), // default value
+    required this.category,
+    required this.imageUrl,
+    required this.userId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -437,13 +465,29 @@ class GridItem extends StatelessWidget {
         Expanded(
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10.0),
-            child: Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
+            child: Stack(
+              children: [
+                Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: (userId != null)
+                      ? BookmarkButtonWidget(
+                          placeId: int.parse(placeId),
+                          userId: userId,
+                        )
+                      : Container(),
+                ),
+              ],
             ),
           ),
         ),
-        SizedBox(height: 8.0),
+        const SizedBox(
+          height: 8.0,
+        ),
         Text(
           name,
           overflow: TextOverflow.ellipsis, // 내용이 넘칠 때 '...'로 표시
@@ -451,7 +495,7 @@ class GridItem extends StatelessWidget {
         ),
         Text(
           address,
-          style: TextStyle(color: Colors.grey), // 여기에 추가
+          style: const TextStyle(color: Colors.grey), // 여기에 추가
         ),
       ],
     );

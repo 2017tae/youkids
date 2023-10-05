@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
 import 'package:youkids/src/screens/shop/shop_more_screen.dart';
 
 import '../../widgets/bookmark_button_widget.dart';
@@ -166,10 +167,17 @@ class GridItem extends StatelessWidget {
         children: [
           Expanded(
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(10.0),  // 원하는 반지름 값으로 조정
-              child: Image.network(
-                image_url,
-                fit: BoxFit.cover,
+              borderRadius: BorderRadius.circular(10.0),
+              child: InkWell(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ShopDetailScreen(placeId: int.parse(place_id)),
+                  ));
+                },
+                child: Image.network(
+                  image_url,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),

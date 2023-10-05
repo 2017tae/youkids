@@ -79,6 +79,7 @@ class _GroupScreenState extends State<GroupScreen> {
 
   // 멤버 이메일을 보내서 추가 요청을 보내기
   Future<String> addMember() async {
+    print(emailInput);
     if (emailInput == '' || !emailInput.contains('@')) {
       return 'email';
     }
@@ -86,35 +87,42 @@ class _GroupScreenState extends State<GroupScreen> {
       final dio = Dio();
       final response = await dio.post('$uri/group/check',
           data: {'leaderId': userId, 'userEmail': emailInput});
-      if (response.statusCode == 200) {
-        try {
-          final response2 = await dio.post('$uri/user/checkpartner',
-              data: {'userId': userId, 'partnerEmail': emailInput});
-          if (response2.statusCode == 200) {
-            setState(() {
-              request = PartnerModel(
-                  partnerEmail: response2.data['partnerEmail'],
-                  partnerId: response2.data['partnerId'],
-                  nickname: response2.data['nickname'],
-                  profileImage: response2.data['profileImage'],
-                  fcmToken: response2.data['fcmToken']);
-            });
-          } else if (response2.statusCode == 400) {
-            return 'exists';
-          } else {
-            return 'error';
-          }
-        } catch (err) {
-          return 'error';
-        }
+      print('response1 ${response.statusCode ?? ''} $emailInput');
 
+      print('보낼 수 있음');
+      try {
+        final response2 = await dio.post('$uri/user/checkpartner',
+            data: {'userId': userId, 'partnerEmail': emailInput});
+
+        setState(() {
+          request = PartnerModel(
+              partnerEmail: response2.data['partnerEmail'],
+              partnerId: response2.data['partnerId'],
+              nickname: response2.data['nickname'],
+              profileImage: response2.data['profileImage'],
+              fcmToken: response2.data['fcmToken']);
+        });
         return 'success';
-      } else if (response.statusCode == 400) {
-        return 'exists';
-      } else {
+      } on DioException catch (err2) {
+        print('err2 ${err2.response!.statusCode}');
+        if (err2.response!.statusCode == 400) {
+          print('나');
+          return 'me';
+        } else if (err2.response!.statusCode == 404) {
+          print('정보 없음');
+          return 'no';
+        }
         return 'error';
       }
-    } catch (err) {
+    } on DioException catch (err) {
+      print('err1 ${err.response!.statusCode}');
+      if (err.response!.statusCode == 400) {
+        print('이미 그룹에 있음');
+        return 'exists';
+      } else if (err.response!.statusCode == 404) {
+        print('정보 없음');
+        return 'no';
+      }
       return 'error';
     }
   }
@@ -548,11 +556,29 @@ class _GroupScreenState extends State<GroupScreen> {
                                                         (BuildContext context) {
                                                       return const FailDialog(
                                                           message:
-                                                              "알 수 없는 오류입니다.");
+                                                              "해당 유저가 이미 그룹에 존재합니다.");
                                                     },
                                                   );
                                                 }
                                               });
+                                            } else if (result == 'me') {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return const FailDialog(
+                                                      message: "내 이메일입니다.");
+                                                },
+                                              );
+                                            } else if (result == 'no') {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return const FailDialog(
+                                                      message: "정보가 없습니다.");
+                                                },
+                                              );
                                             } else {
                                               showDialog(
                                                 context: context,
@@ -640,12 +666,12 @@ class SuccessDialog extends StatelessWidget {
               child: GestureDetector(
                 onTap: () {
                   Navigator.of(context).pop();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const MyPageScreen(),
-                    ),
-                  );
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MyPageScreen(),
+                      ),
+                      (route) => false);
                 },
                 child: const Text(
                   "닫기",

@@ -12,6 +12,19 @@ def dataframe_to_object_list(df):
         object_list.append(place_item)
     return object_list
 
+def get_recommendations_by_category(recommendations, category, count, num, ratio):
+    category_recommendations = recommendations[recommendations['category'] == category]
+    start_idx = int(count * num * ratio)
+    end_idx = int((count + 1) * num * ratio)
+    
+    if start_idx >= len(category_recommendations):
+        return []
+    
+    if end_idx > len(category_recommendations):
+        end_idx = len(category_recommendations)
+        
+    return dataframe_to_object_list(category_recommendations[start_idx:end_idx])
+
 def get_recommend_place(df_svd_preds: pd.DataFrame, user_id: str, place, click, count, num=40):
 
     # 최종적으로 만든 pred_df에서 사용자 index에 따라 장소 데이터 정렬 -> 장소 별점이 높은 순으로 정렬됨
@@ -32,18 +45,13 @@ def get_recommend_place(df_svd_preds: pd.DataFrame, user_id: str, place, click, 
     # 'Predictions' 컬럼 삭제
     recommendations = recommendations.drop('Predictions', axis=1)
     
-    # 슬라이싱을 위한 시작과 끝 인덱스
-    start_idx = count * num
-    end_idx = (count + 1) * num
+    kids_cafe_ratio = 0.75
+    theme_park_ratio = 0.25
     
-    # 시작 인덱스가 범위를 벗어난 경우 빈 리스트 리턴
-    if start_idx >= len(recommendations):
-        return []
+    kids_cafe_recommendations = get_recommendations_by_category(recommendations, '키즈카페', count, num, kids_cafe_ratio)
+    theme_park_recommendations = get_recommendations_by_category(recommendations, '테마파크', count, num, theme_park_ratio)
     
-    if end_idx > len(recommendations):
-        end_idx = len(recommendations)
-
-    result_list = dataframe_to_object_list(recommendations[start_idx:end_idx])
+    result_list = kids_cafe_recommendations + theme_park_recommendations
     random.shuffle(result_list)
     return result_list
 

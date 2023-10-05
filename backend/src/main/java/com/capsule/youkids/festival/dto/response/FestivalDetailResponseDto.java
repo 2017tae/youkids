@@ -2,6 +2,7 @@ package com.capsule.youkids.festival.dto.response;
 
 import com.capsule.youkids.capsule.entity.Memory;
 import com.capsule.youkids.capsule.entity.Memory.MemoryBuilder;
+import com.capsule.youkids.festival.dto.view.FestivalReserveDto;
 import com.capsule.youkids.festival.entity.Festival;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FestivalDetailResponseDto {
 
+    private List<FestivalReserveDto> reserveDtoList;
     private String name;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -28,7 +30,8 @@ public class FestivalDetailResponseDto {
     private List<String> images = new ArrayList<>();
 
     @Builder
-    public FestivalDetailResponseDto(String name, LocalDate startDate, LocalDate endDate,
+    public FestivalDetailResponseDto(List<FestivalReserveDto> reserveDtoList, String name,
+            LocalDate startDate, LocalDate endDate,
             String state,
             String category, String placeName, String age, String price, String whenTime,
             String poster, List<String> images) {
@@ -43,6 +46,7 @@ public class FestivalDetailResponseDto {
         this.whenTime = whenTime;
         this.images = images;
         this.poster = poster;
+        this.reserveDtoList = reserveDtoList;
     }
 
     public static class FestivalDetailResponseDtoBuilder {

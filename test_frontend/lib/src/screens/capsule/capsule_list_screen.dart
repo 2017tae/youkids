@@ -110,7 +110,7 @@ class _CapsuleListScreenState extends State<CapsuleListScreen> {
           print(capsulesList?.length);
           return _buildMainContent();
         } else {
-          return HomeScreen();
+          return Container();
         }
       },
     );

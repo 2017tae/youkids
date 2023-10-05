@@ -140,7 +140,7 @@ class _GroupScreenState extends State<GroupScreen> {
             'data': {
               'do': 'group',
               'leaderId': userId,
-              'userEmail': request!.partnerId,
+              'userEmail': request!.partnerEmail,
               'nickname': widget.nickname
             },
             'to': request!.fcmToken,

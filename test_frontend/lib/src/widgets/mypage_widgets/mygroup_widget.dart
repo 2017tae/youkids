@@ -199,7 +199,7 @@ class _AddGroupMemberState extends State<AddGroupMember> {
             'data': {
               'do': 'group',
               'leaderId': widget.leaderId,
-              'userEmail': request!.partnerId,
+              'userEmail': request!.partnerEmail,
               'nickname': widget.nickname
             },
             'to': request!.fcmToken,

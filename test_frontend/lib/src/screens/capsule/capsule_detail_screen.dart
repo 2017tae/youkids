@@ -93,7 +93,7 @@ class _CapsuleDetailScreenState extends State<CapsuleDetailScreen> {
         ],
       ),
       body: memory == null
-          ? Center(child: CircularProgressIndicator())
+          ? Container()
           : ListView.builder(
         itemCount: memory!.length,
         itemBuilder: (context, index) {

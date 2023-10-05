@@ -4,10 +4,13 @@ import com.capsule.youkids.festival.dto.response.FestivalDetailResponseDto;
 import com.capsule.youkids.festival.dto.response.FestivalDivRecommResponseDto;
 import com.capsule.youkids.festival.dto.response.FestivalRecommResponseDto;
 import com.capsule.youkids.festival.dto.view.FestivalRecommItemDto;
+import com.capsule.youkids.festival.dto.view.FestivalReserveDto;
 import com.capsule.youkids.festival.entity.Festival;
 import com.capsule.youkids.festival.entity.FestivalImage;
+import com.capsule.youkids.festival.entity.FestivalReserve;
 import com.capsule.youkids.festival.repository.FestivalImageRepository;
 import com.capsule.youkids.festival.repository.FestivalRepository;
+import com.capsule.youkids.festival.repository.FestivalReserveRepository;
 import com.capsule.youkids.global.common.constant.Code;
 import com.capsule.youkids.global.common.exception.RestApiException;
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ public class FestivalServiceImpl implements FestivalService{
 
     private final FestivalRepository festivalRepository;
     private final FestivalImageRepository festivalImageRepository;
+    private final FestivalReserveRepository festivalReserveRepository;
 
     @Override
     public FestivalRecommResponseDto getMixedFestivalRecomm() {
@@ -75,6 +79,13 @@ public class FestivalServiceImpl implements FestivalService{
         Festival festival = festivalRepository.findById(festivalId)
                 .orElseThrow(()-> new RestApiException(Code.FESTIVAL_EMPTY));
 
+        List<FestivalReserve> festivalReserveList = festivalReserveRepository.findAllByFestivalChildId(festival.getEachId());
+
+        List<FestivalReserveDto> festivalReserveDtos = new ArrayList<>();
+        for(FestivalReserve festivalReserve : festivalReserveList){
+            festivalReserveDtos.add(new FestivalReserveDto(festivalReserve));
+        }
+
         // 반환 하기 위해 스트링으로 변환한다.
         List<String> imageList = new ArrayList<>();
         for(FestivalImage festivalImage : festival.getImages()){
@@ -85,6 +96,7 @@ public class FestivalServiceImpl implements FestivalService{
         return FestivalDetailResponseDto.builder()
                 .festival(festival)
                 .images(imageList)
+                .reserveDtoList(festivalReserveDtos)
                 .build();
     }
 }

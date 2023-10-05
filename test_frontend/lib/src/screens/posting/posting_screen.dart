@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:youkids/src/screens/capsule/capsule_list_screen.dart';
+import 'package:youkids/src/screens/home/home_screen.dart';
 import 'package:youkids/src/services/posting_services.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:youkids/src/widgets/posting_content_widget.dart';
@@ -15,7 +17,6 @@ class PostingScreen extends StatefulWidget {
 class _PostingScreenState extends State<PostingScreen> {
   String? userId;
   Future? loadDataFuture;
-  bool _isLoggedIn = false;
 
   String _postingContent = ''; // 내용 담기는 변수
   String _postingLocation = ''; // 위치 담기는 변수
@@ -36,10 +37,7 @@ class _PostingScreenState extends State<PostingScreen> {
 
   Future<void> _checkLoginStatus() async {
     userId = await getUserId();
-
-    setState(() {
-      _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
-    });
+    setState(() {});
   }
 
   void _updatePostingContent(String content) {
@@ -79,17 +77,92 @@ class _PostingScreenState extends State<PostingScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              if (_postingContent.isEmpty || _postingLocation.isEmpty) {
-                // _postingContent나 _postingLocation 중 하나라도 비어 있다면 아무 작업도 수행하지 않음
-                return;
-              } else {
-                PostingServices.postingCapsuleImgsContents(
-                  description: _postingContent,
-                  fileList: _postingImgs,
-                  childrenList: _childrenList,
-                  location: _postingLocation,
-                  userId: userId,
+              if (_postingContent.trim().isEmpty) {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      content: const Text('내용을 입력해 주세요'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Ok'),
+                        ),
+                      ],
+                    );
+                  },
                 );
+              } else if (_postingLocation.trim().isEmpty) {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      content: const Text('장소를 입력해 주세요'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Ok'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              } else {
+                try {
+                  PostingServices.postingCapsuleImgsContents(
+                    description: _postingContent,
+                    fileList: _postingImgs,
+                    childrenList: _childrenList,
+                    location: _postingLocation,
+                    userId: userId,
+                  );
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        content: Icon(
+                          Icons.check_circle_outline_rounded,
+                          color: Colors.green[400],
+                          size: 30,
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const HomeScreen(),
+                                ),
+                              );
+                            },
+                            child: const Text('Ok'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } catch (e) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        content: const Text('다시 시도해 주십시오'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Ok'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
               }
             },
             icon: const Icon(
@@ -101,18 +174,19 @@ class _PostingScreenState extends State<PostingScreen> {
         ],
       ),
       body: SingleChildScrollView(
-          child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            PostingImgsWidget(onUploadedImgsPath: _updatePostingImgs),
-            PostingContentWidget(
-              onPostContentChanged: _updatePostingContent,
-              onPostLocationChanged: _updatePostingLocation,
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            children: [
+              PostingImgsWidget(onUploadedImgsPath: _updatePostingImgs),
+              PostingContentWidget(
+                onPostContentChanged: _updatePostingContent,
+                onPostLocationChanged: _updatePostingLocation,
+              ),
+            ],
+          ),
         ),
-      )),
+      ),
       bottomNavigationBar: const FooterWidget(
         currentIndex: 2,
       ),

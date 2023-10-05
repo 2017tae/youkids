@@ -50,8 +50,11 @@ def cal_preds_place(place_df, click_df, user_id):
     # R_user_mean은 사용자-장소에 대해 사용자 평균 평점을 뺀 것
     matrix_user_mean = matrix - user_click_mean.reshape(-1, 1)
     
+    
+    
     # scipy에서 제공해주는 svd
-    U, sigma, Vt = svds(matrix_user_mean, k = 4)
+    # k는 함께 파라미터로 전달되는 배열 A의 row크기보다 작아야 함, 따라서 양수 중 최대 12로 조정
+    U, sigma, Vt = svds(matrix_user_mean, k = min(max(matrix_user_mean.shape[0]-1, 0), 12))
     
     sigma = np.diag(sigma)
     

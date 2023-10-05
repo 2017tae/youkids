@@ -17,10 +17,10 @@ class FooterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 75.0,
+      height: 65.0,
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
-            topRight: Radius.circular(30), topLeft: Radius.circular(30)),
+            topRight: Radius.circular(20), topLeft: Radius.circular(20)),
         boxShadow: [
           BoxShadow(
               color: Color.fromRGBO(0, 0, 0, 0.16),
@@ -97,23 +97,26 @@ class SetBottomButton extends StatelessWidget {
     ];
     return Column(
       children: [
-        IconButton(
-          onPressed: () {
-            Navigator.pushReplacement(
-              // stack 다 지우려고 한 건데 핸드폰 자체 뒤로가기 누르면 앱이 종료된다.
-              //돌리려면 push 만 사용하면 됨
-              context,
-              PageRouteBuilder(
-                pageBuilder: (context, animation1, animation2) =>
-                    widgetOptions[targetIndex],
-                transitionDuration: Duration.zero,
-                reverseTransitionDuration: Duration.zero,
-              ),
-            );
-          },
-          icon: currentIndex == targetIndex
-              ? SvgPicture.asset(activeIcon)
-              : SvgPicture.asset(deactiveIcon),
+        SizedBox(
+          width: 48,
+          height: 40,
+          child: IconButton(
+            padding: EdgeInsets.only(top:10),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation1, animation2) =>
+                  widgetOptions[targetIndex],
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                ),
+              );
+            },
+            icon: currentIndex == targetIndex
+                ? SvgPicture.asset(activeIcon)
+                : SvgPicture.asset(deactiveIcon),
+          ),
         ),
         Text(
           label,

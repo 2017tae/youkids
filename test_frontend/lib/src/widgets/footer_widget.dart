@@ -9,6 +9,7 @@ import 'package:youkids/src/screens/posting/posting_screen.dart';
 class FooterWidget extends StatelessWidget {
   // currentIndex가 5이면 footer 다섯개를 제외한 나머지 페이지
   final int currentIndex;
+
   const FooterWidget({
     super.key,
     required this.currentIndex,
@@ -101,13 +102,13 @@ class SetBottomButton extends StatelessWidget {
           width: 48,
           height: 40,
           child: IconButton(
-            padding: EdgeInsets.only(top:10),
+            padding: EdgeInsets.only(top: 10),
             onPressed: () {
               Navigator.pushReplacement(
                 context,
                 PageRouteBuilder(
                   pageBuilder: (context, animation1, animation2) =>
-                  widgetOptions[targetIndex],
+                      widgetOptions[targetIndex],
                   transitionDuration: Duration.zero,
                   reverseTransitionDuration: Duration.zero,
                 ),
@@ -118,12 +119,28 @@ class SetBottomButton extends StatelessWidget {
                 : SvgPicture.asset(deactiveIcon),
           ),
         ),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 13,
-          ),
-        )
+        GestureDetector(
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation1, animation2) =>
+                      widgetOptions[targetIndex],
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                ),
+              );
+            },
+            child: SizedBox(
+              width: 48,
+              child: Text(
+                textAlign: TextAlign.center,
+                label,
+                style: const TextStyle(
+                  fontSize: 13,
+                ),
+              ),
+            ))
       ],
     );
   }

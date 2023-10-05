@@ -135,6 +135,24 @@ class _MyPageScreenState extends State<MyPageScreen> {
           );
           if (response2.statusCode == 200) {
             var jsonString = utf8.decode(response2.bodyBytes);
+            // 그룹이 내 그룹이고 파트너도 있으면 파트너 정보도 넣자
+            if (group.groupId == userId && partnerInfo != null) {
+              // 파트너 정보 불러오기
+              final response3 = await http.get(
+                Uri.parse('$uri/user/mypage/${partnerInfo!.partnerId}'),
+                headers: {'Content-Type': 'application/json'},
+              );
+              if (response3.statusCode == 200) {
+                var jsonString = utf8.decode(response3.bodyBytes);
+                Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+                final partner = UserModel(
+                    userId: partnerInfo!.partnerId,
+                    description: jsonMap['getMyInfoDto']['description'],
+                    nickname: jsonMap['getMyInfoDto']['nickname'],
+                    profileImage: jsonMap['getMyInfoDto']['profileImage']);
+                group.groupMember.add(partner);
+              }
+            }
             List<dynamic> memberList = jsonDecode(jsonString);
             for (var m in memberList) {
               final member = UserModel.fromJson(m);
@@ -253,7 +271,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                                   },
                                   pageBuilder:
                                       (context, animation1, animation2) =>
-                                          SettingsScreen(),
+                                          const SettingsScreen(),
                                 ),
                               );
                             },
@@ -368,6 +386,8 @@ class _MyPageScreenState extends State<MyPageScreen> {
                     return MyGroup(
                         nickname: myInfo.nickname,
                         group: group[index],
+                        partnerId:
+                            partnerInfo != null ? partnerInfo!.partnerId : null,
                         myGroup: userId == group[index].groupId,
                         partnerGroup: (partnerInfo != null &&
                             partnerInfo!.partnerId == group[index].groupId));

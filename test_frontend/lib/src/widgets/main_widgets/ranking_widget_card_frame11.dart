@@ -70,18 +70,32 @@ class RankingWidgetCardFrame11 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        AspectRatio(
-          aspectRatio: 2 / 1,
-          child: Container(
-            height: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-                color: const Color(0xffF5EEEC),
-                borderRadius: BorderRadius.circular(10),
-                image: DecorationImage(
-                  image: NetworkImage(imageUrl),
-                  fit: BoxFit.cover,
-                )),
-          ),
+        Stack(
+          children: [
+            AspectRatio(
+              aspectRatio: 2 / 1,
+              child: Container(
+                height: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                    color: const Color(0xffF5EEEC),
+                    borderRadius: BorderRadius.circular(10),
+                    image: DecorationImage(
+                      image: NetworkImage(imageUrl),
+                      fit: BoxFit.cover,
+                    )),
+              ),
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: (userId != null)
+                  ? BookmarkButtonWidget(
+                      placeId: placeId,
+                      userId: userId,
+                    )
+                  : Container(),
+            )
+          ],
         ),
         Positioned(
           top: 0,

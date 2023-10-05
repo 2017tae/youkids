@@ -105,7 +105,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _checkLoginStatus() async {
     // userId = await getUserId();
-    userId = '87dad60a-bfff-47e5-8e21-02cb49b23ba6';
     setState(() {
        _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
       // userId = "c96c76ed-041d-4396-8efe-dcbd4f4827cd";
@@ -115,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if(userId !=null){
       response = await http.get(
-        Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/1/c96c76ed-041d-4396-8efe-dcbd4f4827cd/0'),
+        Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/1/'+userId!+'/0'),
         headers: {'Content-Type': 'application/json'},
       );
     }else{

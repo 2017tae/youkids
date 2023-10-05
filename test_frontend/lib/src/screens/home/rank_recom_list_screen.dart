@@ -222,17 +222,17 @@ class _RankRecomlistScreen extends State<RankRecomlistScreen> {
                     }
                     return place['category'] == selectedCategory;
                   }).toList();
+
                   return GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => ShopDetailScreen(
-                              placeId: filteredPlaces[index]
-                              ['place_id']), // 여기에 원하는 화면 위젯을 넣으세요.
-                        ),
-                      );
-                    },
-                    child: Column(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ShopDetailScreen(
+                                placeId: filteredPlaces[index]['place_id']), // 여기에 원하는 화면 위젯을 넣으세요.
+                          ),
+                        );
+                      },
+                      child: Column(
                         children: [
                           GestureDetector(
                             onTap: () {
@@ -240,29 +240,29 @@ class _RankRecomlistScreen extends State<RankRecomlistScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ShopDetailScreen(
-                                    placeId: places?[index]['placeId'],
+                                    placeId: filteredPlaces[index]['placeId'], // 이 부분을 filteredPlaces로 변경
                                   ),
                                 ),
                               );
                             },
                             child: RankingWidgetCardFrame11(
-                              placeId: places?[index]['placeId'],
+                              placeId: filteredPlaces[index]['placeId'], // 이 부분을 filteredPlaces로 변경
                               userId: widget.userId,
                               imageUrl: (places?.isNotEmpty ?? false)
-                                  ? places![index]['imageUrl']
+                                  ? filteredPlaces[index]['imageUrl'] // 이 부분을 filteredPlaces로 변경
                                   : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
-                              name: places![index]['name'],
-                              address: places![index]['address'],
+                              name: filteredPlaces[index]['name'], // 이 부분을 filteredPlaces로 변경
+                              address: filteredPlaces[index]['address'], // 이 부분을 filteredPlaces로 변경
                               rank: '${index + 1}',
                             ),
                           ),
                         ],
-                    )
+                      )
                   );
                 },
                 childCount: places!.where(
                       (place) {
-                        if (selectedCategory == '전체') {
+                    if (selectedCategory == '전체') {
                       return true;
                     }
                     return place['category'] == selectedCategory;
@@ -277,6 +277,7 @@ class _RankRecomlistScreen extends State<RankRecomlistScreen> {
               ),
             ),
           ),
+
           SliverToBoxAdapter(
             child: SizedBox(height: 10.0), // 원하는 높이로 조정
           ),

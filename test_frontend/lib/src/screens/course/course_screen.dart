@@ -115,8 +115,8 @@ class _CourseScreenState extends State<CourseScreen> {
           marker.setOnTapListener((NMarker marker) {
             var cameraUpdate = NCameraUpdate.fromCameraPosition(
               NCameraPosition(
-                target:
-                NLatLng(marker.position.latitude, marker.position.longitude),
+                target: NLatLng(
+                    marker.position.latitude, marker.position.longitude),
                 zoom: 10,
               ),
             )..setPivot(NPoint(0.5, 1 / 4));
@@ -135,8 +135,8 @@ class _CourseScreenState extends State<CourseScreen> {
                 return StatefulBuilder(
                   builder: (BuildContext context, StateSetter setState) {
                     final matchingBookmark = bookmarks!.firstWhere(
-                          (bookmark) =>
-                      bookmark['latitude'] == marker.position.latitude &&
+                      (bookmark) =>
+                          bookmark['latitude'] == marker.position.latitude &&
                           bookmark['longitude'] == marker.position.longitude,
                       orElse: () => null,
                     );
@@ -150,7 +150,8 @@ class _CourseScreenState extends State<CourseScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Column( // 위아래로 배치
+                                Column(
+                                  // 위아래로 배치
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
@@ -180,10 +181,11 @@ class _CourseScreenState extends State<CourseScreen> {
                               Navigator.push(
                                 context,
                                 PageRouteBuilder(
-                                  pageBuilder: (context, animation1,
-                                      animation2) =>
-                                      ShopDetailScreen(
-                                          placeId: matchingBookmark?['placeId']),
+                                  pageBuilder:
+                                      (context, animation1, animation2) =>
+                                          ShopDetailScreen(
+                                              placeId:
+                                                  matchingBookmark?['placeId']),
                                   transitionDuration: Duration.zero,
                                   reverseTransitionDuration: Duration.zero,
                                 ),
@@ -201,10 +203,11 @@ class _CourseScreenState extends State<CourseScreen> {
                               Navigator.push(
                                 context,
                                 PageRouteBuilder(
-                                  pageBuilder: (context, animation1,
-                                      animation2) =>
-                                      ShopDetailScreen(
-                                          placeId: matchingBookmark?['placeId']),
+                                  pageBuilder:
+                                      (context, animation1, animation2) =>
+                                          ShopDetailScreen(
+                                              placeId:
+                                                  matchingBookmark?['placeId']),
                                   transitionDuration: Duration.zero,
                                   reverseTransitionDuration: Duration.zero,
                                 ),
@@ -234,14 +237,14 @@ class _CourseScreenState extends State<CourseScreen> {
                                                 Flexible(
                                                   child: Text(
                                                     matchingBookmark?[
-                                                    'address'] ??
+                                                            'address'] ??
                                                         '',
                                                     style: TextStyle(
                                                       fontSize: 16,
                                                       color: Colors.grey[700],
                                                     ),
                                                     overflow:
-                                                    TextOverflow.ellipsis,
+                                                        TextOverflow.ellipsis,
                                                   ),
                                                 ),
                                               ],
@@ -252,7 +255,8 @@ class _CourseScreenState extends State<CourseScreen> {
                                     ],
                                   ),
                                   Container(
-                                    margin: EdgeInsets.symmetric(horizontal: 10),
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 10),
                                     child: Divider(
                                       color: Color(0xFF949494),
                                       thickness: 0.5,
@@ -404,7 +408,7 @@ class _CourseScreenState extends State<CourseScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('코스 삭제'),
+          title: Text('삭제'),
           content: Text('해당 코스를 삭제합니다.'),
           actions: <Widget>[
             TextButton(
@@ -417,7 +421,7 @@ class _CourseScreenState extends State<CourseScreen> {
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
-              child: Text('삭제'),
+              child: Text('확인'),
             ),
           ],
         );
@@ -551,10 +555,10 @@ class _CourseScreenState extends State<CourseScreen> {
         actions: [
           Container(
             height: 35,
-            width: 60,
+            width: 65,
             margin: EdgeInsets.zero,
             child: Padding(
-              padding: const EdgeInsets.only(right: 10.0),
+              padding: const EdgeInsets.only(right: 10.0, top: 0, bottom: 0),
               child: TextButton(
                 onPressed: () {
                   if (userId != null) {
@@ -573,8 +577,8 @@ class _CourseScreenState extends State<CourseScreen> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text("오류"),
-                            content: Text("찜 목록이 비었습니다"),
+                            title: Text("알림"),
+                            content: Text("찜 목록이 비었습니다."),
                             actions: [
                               TextButton(
                                 onPressed: () {
@@ -608,6 +612,7 @@ class _CourseScreenState extends State<CourseScreen> {
                   }
                 },
                 style: ButtonStyle(
+                  padding: MaterialStatePropertyAll(EdgeInsets.zero),
                   shape: MaterialStateProperty.all(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
@@ -616,9 +621,10 @@ class _CourseScreenState extends State<CourseScreen> {
                 ),
                 child: Text(
                   '생성',
+                  textAlign: TextAlign.center,
                   style: TextStyle(
-                      fontSize: 13.0,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w400,
                       color: Color(0xFFF6766E)),
                 ),
               ),
@@ -754,11 +760,11 @@ class _CourseScreenState extends State<CourseScreen> {
                                                     fontSize: 20,
                                                   ),
                                                   overflow:
-                                                      TextOverflow.ellipsis,
+                                                  TextOverflow.ellipsis,
                                                 ),
                                                 subtitle: Padding(
                                                   padding:
-                                                      EdgeInsets.only(top: 8.0),
+                                                  EdgeInsets.only(top: 8.0),
                                                   child: Row(
                                                     children: [
                                                       SvgPicture.asset(
@@ -769,7 +775,7 @@ class _CourseScreenState extends State<CourseScreen> {
                                                       Flexible(
                                                         child: Text(
                                                           bookmark?[
-                                                                  'address'] ??
+                                                          'address'] ??
                                                               '',
                                                           overflow: TextOverflow
                                                               .ellipsis,
@@ -927,32 +933,55 @@ class _CourseScreenState extends State<CourseScreen> {
                                           final place = placeEntry.value;
                                           return Column(
                                             children: [
-                                              ListTile(
-                                                contentPadding: EdgeInsets.only(
-                                                  left: 16.0,
-                                                  right: 16.0,
-                                                ),
-                                                title: Text(place.name),
-                                                subtitle: Padding(
-                                                  padding:
-                                                      EdgeInsets.only(top: 8.0),
-                                                  child: Row(
-                                                    children: [
-                                                      SvgPicture.asset(
-                                                        'lib/src/assets/icons/course_white.svg',
-                                                        height: 16,
-                                                      ),
-                                                      SizedBox(width: 5.0),
-                                                      Flexible(
-                                                        child: Text(
-                                                          place.address,
+                                              Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: 10.0),
+                                                    child: Image.asset(
+                                                      "lib/src/assets/icons/mark" +
+                                                          (place.order)
+                                                              .toString() +
+                                                          ".png",
+                                                      height: 35,
+                                                      alignment:
+                                                          AlignmentDirectional
+                                                              .center,
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 12.0),
+                                                  Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        SizedBox(height: 20.0),
+                                                        Text(
+                                                          place.name,
+                                                          style: TextStyle(
+                                                            fontSize: 20,
+                                                          ),
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                         ),
-                                                      ),
-                                                    ],
+                                                        Text(
+                                                          place.address,
+                                                          style: TextStyle(
+                                                            fontSize: 12,
+                                                            color: Colors
+                                                                .grey[700],
+                                                          ),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                        SizedBox(height: 20.0)
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
+                                                ],
                                               ),
                                               Container(
                                                 margin: EdgeInsets.symmetric(

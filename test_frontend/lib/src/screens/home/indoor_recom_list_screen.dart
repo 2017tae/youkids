@@ -1,10 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:youkids/src/widgets/footer_widget.dart';
-import 'package:youkids/src/widgets/home_widgets/card_frame_widget.dart';
-import 'package:youkids/src/widgets/home_widgets/child_icon_widget.dart';
 import 'package:http/http.dart' as http;
 
 import '../shop/festival_detail_screen.dart';
@@ -37,10 +33,8 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
       setState(() {
         festivals = decodedJson2['result']['onGoingFestivals'];
       });
-      print("abcd");
       print(festivals);
     } else {
-      print("not");
     }
   }
 

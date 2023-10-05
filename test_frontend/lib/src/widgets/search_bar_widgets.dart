@@ -17,27 +17,27 @@ class _SearchBarState extends State<SearchBarWidget> {
   List? places;
   List? _places;
 
-  Future<void> _postSearchQuery(String query) async {
-
-    final response = await http.put(
-      Uri.parse(
-          'https://j9a604.p.ssafy.io/api/place/search/'+query),
-      headers: {'Content-Type': 'application/json'},
-    );
-
-    // 응답을 처리하는 코드 (예: 상태를 업데이트하는 등)를 여기에 추가합니다.
-    if (response.statusCode == 200) {
-      var jsonString = utf8.decode(response.bodyBytes);
-      Map<String, dynamic> decodedJson = jsonDecode(jsonString);
-      places = decodedJson['result']['places'];
-      setState(() {
-        _places = places;
-      });
-
-      print(places);
-    }
-
-  }
+  // Future<void> _postSearchQuery(String query) async {
+  //
+  //   final response = await http.put(
+  //     Uri.parse(
+  //         'https://j9a604.p.ssafy.io/api/place/search/'+query),
+  //     headers: {'Content-Type': 'application/json'},
+  //   );
+  //
+  //   // 응답을 처리하는 코드 (예: 상태를 업데이트하는 등)를 여기에 추가합니다.
+  //   if (response.statusCode == 200) {
+  //     var jsonString = utf8.decode(response.bodyBytes);
+  //     Map<String, dynamic> decodedJson = jsonDecode(jsonString);
+  //     places = decodedJson['result']['places'];
+  //     setState(() {
+  //       _places = places;
+  //     });
+  //
+  //     print(places);
+  //   }
+  //
+  // }
 
   @override
   Widget build(BuildContext context) {

@@ -479,7 +479,7 @@ class SuccessDialog extends StatelessWidget {
                   );
                 },
                 child: const Text(
-                  "확인",
+                  "닫기",
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -513,7 +513,7 @@ class FailDialog extends StatelessWidget {
                   Navigator.of(context).pop();
                 },
                 child: const Text(
-                  "확인",
+                  "닫기",
                   textAlign: TextAlign.center,
                 ),
               ),

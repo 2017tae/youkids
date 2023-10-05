@@ -473,7 +473,7 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'YouKids',
+          '코스',
           style: TextStyle(
             fontSize: 22,
             color: Colors.black,

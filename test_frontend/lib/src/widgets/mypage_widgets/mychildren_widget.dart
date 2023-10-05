@@ -68,10 +68,14 @@ class AddChild extends StatelessWidget {
       onTap: () {
         // 내 애기 추가하기
         Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const ChildrenCreateScreen(),
-            ));
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) =>
+                ChildrenCreateScreen(),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero,
+          ),
+        );
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -116,8 +120,11 @@ class Child extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => ChildrenScreen(children: child),
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) =>
+                ChildrenScreen(children: child),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero,
           ),
         );
       },

@@ -31,6 +31,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
 
   MyinfoModel myInfo =
       MyinfoModel(email: ' ', nickname: ' ', leader: true, car: false);
+
   // leader == false이고 partnerInfo가 존재하면 partner 기준으로 정보 가져오기
   PartnerModel? partnerInfo;
   List<ChildrenModel> children = [];
@@ -46,8 +47,10 @@ class _MyPageScreenState extends State<MyPageScreen> {
     if (id == null) {
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => LoginScreen(),
+        PageRouteBuilder(
+          pageBuilder: (context, animation1, animation2) => LoginScreen(),
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
         ),
       );
     } else {
@@ -229,8 +232,28 @@ class _MyPageScreenState extends State<MyPageScreen> {
                               print('settings');
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) => const SettingsScreen(),
+                                PageRouteBuilder(
+                                  transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) {
+                                    var begin = const Offset(1.0, 0);
+                                    var end = Offset.zero;
+                                    var curve = Curves.ease;
+                                    var tween = Tween(
+                                      begin: begin,
+                                      end: end,
+                                    ).chain(
+                                      CurveTween(
+                                        curve: curve,
+                                      ),
+                                    );
+                                    return SlideTransition(
+                                      position: animation.drive(tween),
+                                      child: child,
+                                    );
+                                  },
+                                  pageBuilder:
+                                      (context, animation1, animation2) =>
+                                          SettingsScreen(),
                                 ),
                               );
                             },
@@ -306,11 +329,15 @@ class _MyPageScreenState extends State<MyPageScreen> {
                               // 프로필 수정 페이지로
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) => MyinfoUpdateScreen(
+                                PageRouteBuilder(
+                                  pageBuilder:
+                                      (context, animation1, animation2) =>
+                                          MyinfoUpdateScreen(
                                     myInfo: myInfo,
                                     partnerInfo: partnerInfo,
                                   ),
+                                  transitionDuration: Duration.zero,
+                                  reverseTransitionDuration: Duration.zero,
                                 ),
                               );
                             },

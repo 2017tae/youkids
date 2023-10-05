@@ -57,8 +57,11 @@ class _CapsuleListScreenState extends State<CapsuleListScreen> {
     if (userId == null) {
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => LoginScreen(),
+        PageRouteBuilder(
+          pageBuilder: (context, animation1, animation2) =>
+              LoginScreen(),
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
         ),
       );
     }else{

@@ -201,30 +201,6 @@ class _HomeScreenState extends State<HomeScreen> {
         iconTheme: const IconThemeData(
           color: Colors.black,
         ),
-        actions: [
-          // IconButton(
-          //   onPressed: () {},
-          //   icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
-          //       height: 24),
-          // ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      LoginScreen(),
-                  transitionDuration: Duration.zero,
-                  reverseTransitionDuration: Duration.zero,
-                ),
-              );
-            },
-            icon: const Icon(
-              Icons.account_circle_rounded,
-              size: 28,
-            ),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -337,32 +313,6 @@ class _HomeScreenState extends State<HomeScreen> {
         iconTheme: const IconThemeData(
           color: Colors.black,
         ),
-        actions: [
-          // IconButton(
-          //   onPressed: () {},
-          //   icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
-          //       height: 24),
-          // ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LoginScreen()),
-              );
-            },
-            icon: const Icon(
-              Icons.account_circle_rounded,
-              size: 28,
-            ),
-          ),
-          // IconButton(
-          //   icon: Icon(Icons.delete),  // 예시 아이콘. 원하는 아이콘으로 변경하세요.
-          //   onPressed: () async {
-          //     await removeData();
-          //     print('userId removed from SharedPreferences');
-          //   },
-          // )
-        ],
       ),
       body: SingleChildScrollView(
         child: Padding(

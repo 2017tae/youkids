@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../shop/festival_detail_screen.dart';
 import 'banner_widget.dart';
@@ -21,21 +22,50 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
     loadDataFuture = _checkLoginStatus();
   }
 
+  Future<int?> getFestivalId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(
+        'festivalId'); // Returns 'john_doe' if it exists, otherwise returns null.
+  }
+
   Future<void> _checkLoginStatus() async {
+    // final response2 = await http.get(
+    //     Uri.parse('https://j9a604.p.ssafy.io/api/festival/recommdiv'),
+    //     headers: {'Content-Type': 'application/json'});
+    //
+    // if (response2.statusCode == 200) {
+    //   var jsonString2 = utf8.decode(response2.bodyBytes);
+    //   Map<String, dynamic> decodedJson2 = jsonDecode(jsonString2);
+    //   print(decodedJson2['result']['onGoingFestivals']);
+    //   setState(() {
+    //     festivals = decodedJson2['result']['onGoingFestivals'];
+    //   });
+    //   print(festivals);
+    // } else {
+    // }
+
+    int? festivalId = await getFestivalId();
+
+    festivalId ??= 2;
+
     final response2 = await http.get(
-        Uri.parse('https://j9a604.p.ssafy.io/api/festival/recommdiv'),
-        headers: {'Content-Type': 'application/json'});
+      Uri.parse('https://j9a604.p.ssafy.io/fastapi/festival/${festivalId}'),
+      headers: {'Content-Type': 'application/json'},
+    );
 
     if (response2.statusCode == 200) {
       var jsonString2 = utf8.decode(response2.bodyBytes);
       Map<String, dynamic> decodedJson2 = jsonDecode(jsonString2);
-      print(decodedJson2['result']['onGoingFestivals']);
+      print(decodedJson2['recommended_festival']);
       setState(() {
-        festivals = decodedJson2['result']['onGoingFestivals'];
+        festivals = decodedJson2['recommended_festival'];
       });
       print(festivals);
     } else {
     }
+
+
+
   }
 
   @override
@@ -127,7 +157,7 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
                   MaterialPageRoute(
                     builder: (context) => FestivalDetailScreen(
                         festivalId: festivals?[festivalIndex]
-                            ['festivalChildId']),
+                            ['festival_child_id']),
                   ),
                 );
               },
@@ -160,9 +190,9 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
                         SizedBox(height: 10),
                         Text(
                           '기간: ' +
-                              (festivals?[festivalIndex]['startDate'] +
+                              (festivals?[festivalIndex]['start_date'] +
                                       ' ~ ' +
-                                      festivals?[festivalIndex]['endDate'] ??
+                                      festivals?[festivalIndex]['end_date'] ??
                                   '정보 없음'),
                           style: TextStyle(
                             color: Colors.grey[600],
@@ -172,7 +202,7 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
                         SizedBox(height: 5),
                         Text(
                           '장소: ' +
-                              (festivals?[festivalIndex]['placeName'] ??
+                              (festivals?[festivalIndex]['place_name'] ??
                                   '정보 없음'),
                           style: TextStyle(
                             color: Colors.grey[600],

@@ -15,17 +15,20 @@ import com.capsule.youkids.place.dto.ReviewImageInfoDto;
 import com.capsule.youkids.place.dto.ReviewInfoDto;
 import com.capsule.youkids.place.dto.ReviewUpdateRequestDto;
 import com.capsule.youkids.place.dto.ReviewWriteRequestDto;
+import com.capsule.youkids.place.dto.TopReviewPlacesDto;
 import com.capsule.youkids.place.entity.Bookmark;
 import com.capsule.youkids.place.entity.BookmarkMongo;
 import com.capsule.youkids.place.entity.Place;
 import com.capsule.youkids.place.entity.PlaceImage;
 import com.capsule.youkids.place.entity.Review;
 import com.capsule.youkids.place.entity.ReviewImage;
+import com.capsule.youkids.place.entity.TopReviewPlace;
 import com.capsule.youkids.place.repository.BookmarkMongoRepository;
 import com.capsule.youkids.place.repository.BookmarkRepository;
 import com.capsule.youkids.place.repository.PlaceRepository;
 import com.capsule.youkids.place.repository.ReviewImageRepository;
 import com.capsule.youkids.place.repository.ReviewRepository;
+import com.capsule.youkids.place.repository.TopReviewPlaceRepository;
 import com.capsule.youkids.user.entity.User;
 import com.capsule.youkids.user.repository.UserRepository;
 import java.io.IOException;
@@ -53,6 +56,7 @@ public class PlaceServiceImpl implements PlaceService {
     private final ReviewImageRepository reviewImageRepository;
     private final UserRepository userRepository;
     private final AwsS3Service awsS3Service;
+    private final TopReviewPlaceRepository topReviewPlaceRepository;
 
     // Review 엔티티의 내용을 ReviewInfoDto로 옮기는 작업
     private ReviewInfoDto moveToReviewDto(Review review) {
@@ -159,7 +163,9 @@ public class PlaceServiceImpl implements PlaceService {
 
         // 찜 개수 체크
         int cnt = bookmarkRepository.countByUserId(userId);
-        if(cnt > 100) throw new RestApiException(Code.PLACE_BOOKMARK_FULL);
+        if (cnt > 100) {
+            throw new RestApiException(Code.PLACE_BOOKMARK_FULL);
+        }
 
         // MongoDB를 위한 Key id
         String id = userId.toString() + String.valueOf(placeId);
@@ -279,7 +285,7 @@ public class PlaceServiceImpl implements PlaceService {
         Review review = result.get();
 
         // 리뷰 작성자와 현재 사용자가 다른 경우
-        if(!reviewDeleteRequestDto.getUserId().equals(review.getUser().getUserId())) {
+        if (!reviewDeleteRequestDto.getUserId().equals(review.getUser().getUserId())) {
             throw new RestApiException(Code.PlACE_DIFFERENT_USER);
         }
 
@@ -328,7 +334,7 @@ public class PlaceServiceImpl implements PlaceService {
         Review review = reviewOptional.get();
 
         // 리뷰 작성자와 현재 사용자가 다른 경우
-        if(!reviewUpdateRequestDto.getUserId().equals(review.getUser().getUserId())) {
+        if (!reviewUpdateRequestDto.getUserId().equals(review.getUser().getUserId())) {
             throw new RestApiException(Code.PlACE_DIFFERENT_USER);
         }
 
@@ -376,5 +382,36 @@ public class PlaceServiceImpl implements PlaceService {
         Collections.shuffle(placeList);
 
         return PlaceRecommDto.builder().places(placeList).build();
+    }
+
+    // 리뷰 많은 순으로 10개 뿌리기
+    @Override
+    public TopReviewPlacesDto getReviewTopPlace() {
+        // 카테고리 상관없이 10개 가져오기
+        List<PlaceRecommItemDto> mixed = topReviewPlaceRepository.findTen()
+                .stream().map(place -> new PlaceRecommItemDto(place)).collect(Collectors.toList());
+
+        List<PlaceRecommItemDto> themeParks = new ArrayList<>();
+        List<PlaceRecommItemDto> kidsCafe = new ArrayList<>();
+        List<PlaceRecommItemDto> museum = new ArrayList<>();
+
+        List<TopReviewPlace> all = topReviewPlaceRepository.findTotal();
+        // 10개씩 테마파크, 키즈카페, 박물관순으로 저장했음
+        for (int i = 0; i < all.size(); i++) {
+            PlaceRecommItemDto now = new PlaceRecommItemDto(all.get(i));
+            if (i >= 0 && i < 10) {
+                themeParks.add(now);
+            } else if (i < 20) {
+                kidsCafe.add(now);
+            } else {
+                museum.add(now);
+            }
+        }
+        return TopReviewPlacesDto.builder()
+                .mixed(mixed)
+                .themeParks(themeParks)
+                .kidsCafe(kidsCafe)
+                .museum(museum)
+                .build();
     }
 }

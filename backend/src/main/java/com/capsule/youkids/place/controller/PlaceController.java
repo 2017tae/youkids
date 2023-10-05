@@ -100,8 +100,15 @@ public class PlaceController {
         }
     }
 
+    // 장소 랜덤 추천
     @GetMapping("/recomm")
     public BaseResponse<?> recommPlaces() {
         return BaseResponse.success(Code.SUCCESS, placeService.recommPlace());
+    }
+
+    // 리뷰 많은 순으로 n개 장소 추천
+    @GetMapping("/reviewtop")
+    public BaseResponse<?> recommTopReviewPlaces() {
+        return BaseResponse.success(Code.SUCCESS, placeService.getReviewTopPlace());
     }
 }

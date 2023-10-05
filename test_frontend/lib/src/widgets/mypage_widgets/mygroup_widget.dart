@@ -13,12 +13,14 @@ import 'package:http/http.dart' as http;
 class MyGroup extends StatefulWidget {
   final String nickname;
   final GroupModel group;
+  final String? partnerId;
   final bool myGroup;
   final bool partnerGroup;
   const MyGroup(
       {super.key,
       required this.nickname,
       required this.group,
+      this.partnerId,
       required this.myGroup,
       required this.partnerGroup});
 
@@ -61,11 +63,11 @@ class _MyGroupState extends State<MyGroup> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => GroupScreen(
-                    nickname: widget.nickname,
-                    group: widget.group,
-                    myGroup: widget.myGroup,
-                    partnerGroup: widget.partnerGroup,
-                  ),
+                      nickname: widget.nickname,
+                      group: widget.group,
+                      myGroup: widget.myGroup,
+                      partnerGroup: widget.partnerGroup,
+                      partnerId: widget.partnerId),
                 ),
               );
             },

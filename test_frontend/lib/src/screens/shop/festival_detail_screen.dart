@@ -301,7 +301,7 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
                       tabs: const [
                         Tab(text: "공연정보"),
                         Tab(text: "판매정보"),
-                        Tab(text: "관람후기"),
+                        // Tab(text: "관람후기"),
                       ],
                     ),
                   ),

@@ -60,8 +60,8 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
 
   Future<void> _getData() async {
     userId = await getUserId();
-    // userId = '87dad60a-bfff-47e5-8e21-02cb49b23ba6';
     setState(() {
+    userId = '87dad60a-bfff-47e5-8e21-02cb49b23ba6';
       _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
 
     });

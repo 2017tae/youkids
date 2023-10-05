@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kakao_flutter_sdk_navi/kakao_flutter_sdk_navi.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -332,7 +333,7 @@ class _CourseScreenState extends State<CourseScreen> {
       _controller!.updateCamera(
         NCameraUpdate.fitBounds(bounds,
             padding:
-                EdgeInsets.only(bottom: 150, top: 200, right: 50, left: 50))
+                EdgeInsets.only(bottom: 150, top: 250, right: 50, left: 50))
           ..setPivot(NPoint(0.5, 1 / 4)),
       );
 
@@ -640,102 +641,102 @@ class _CourseScreenState extends State<CourseScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: ListTile(
-                                                title: Text(
-                                                  course.courseName,
-                                                  style:
-                                                      TextStyle(fontSize: 20),
-                                                ),
+                                        Slidable(
+                                          endActionPane: ActionPane(
+                                            motion: const DrawerMotion(),
+                                            extentRatio: 0.15,
+                                            closeThreshold: 0.01,
+                                            children: [
+                                              SlidableAction(
+                                                backgroundColor: Colors.red,
+                                                padding: EdgeInsets.zero,
+                                                spacing: 5.0,
+                                                icon: Icons.delete,
+                                                onPressed: (context) async {
+                                                  bool confirmDelete =
+                                                      await _deleteConfirmDialog(
+                                                          context);
+                                                  if (confirmDelete) {
+                                                    _onDeleteCourse(course);
+                                                  }
+                                                },
                                               ),
-                                            ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Container(
-                                                  height: 40,
-                                                  width: 40,
-                                                  margin: EdgeInsets.symmetric(
-                                                      horizontal: 10),
-                                                  child: TextButton(
-                                                    onPressed: () async {
-                                                      _startNavigation(course);
-                                                    },
-                                                    style: ButtonStyle(
-                                                      backgroundColor:
-                                                          MaterialStateProperty
-                                                              .all<Color>(Color(
-                                                                  0xFFF6766E)),
-                                                      shape: MaterialStateProperty
-                                                          .all<
-                                                              RoundedRectangleBorder>(
-                                                        RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      50.0),
+                                            ],
+                                            openThreshold: 0.001,
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: ListTile(
+                                                      title: Text(
+                                                        course.courseName,
+                                                        style: TextStyle(
+                                                            fontSize: 20),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Container(
+                                                        height: 40,
+                                                        width: 40,
+                                                        margin: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 10),
+                                                        child: TextButton(
+                                                          onPressed: () async {
+                                                            _startNavigation(
+                                                                course);
+                                                          },
+                                                          style: ButtonStyle(
+                                                            backgroundColor:
+                                                                MaterialStateProperty
+                                                                    .all<Color>(
+                                                                        Color(
+                                                                            0xFFF6766E)),
+                                                            shape: MaterialStateProperty
+                                                                .all<
+                                                                    RoundedRectangleBorder>(
+                                                              RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            50.0),
+                                                              ),
+                                                            ),
+                                                            padding:
+                                                                MaterialStateProperty.all<
+                                                                        EdgeInsetsGeometry>(
+                                                                    EdgeInsets
+                                                                        .zero),
+                                                          ),
+                                                          child:
+                                                              SvgPicture.asset(
+                                                            'lib/src/assets/icons/navi.svg',
+                                                            width: 24,
+                                                            height: 24,
+                                                          ),
                                                         ),
                                                       ),
-                                                      padding: MaterialStateProperty
-                                                          .all<EdgeInsetsGeometry>(
-                                                              EdgeInsets.zero),
-                                                    ),
-                                                    child: SvgPicture.asset(
-                                                      'lib/src/assets/icons/navi.svg',
-                                                      width: 24,
-                                                      height: 24,
-                                                    ),
+                                                      Text(
+                                                        '경로 안내',
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          fontSize: 10,
+                                                          color: Colors.grey,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                ),
-                                                Text(
-                                                  '경로 안내',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w700,
-                                                    fontSize: 10,
-                                                    color: Colors.grey,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                        Container(
-                                          height: 40,
-                                          width: 40,
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: 10),
-                                          child: TextButton(
-                                            onPressed: () async {
-                                              bool confirmDelete =
-                                                  await _deleteConfirmDialog(
-                                                      context);
-                                              if (confirmDelete) {
-                                                _onDeleteCourse(course);
-                                              }
-                                            },
-                                            style: ButtonStyle(
-                                              backgroundColor:
-                                                  MaterialStateProperty.all<
-                                                      Color>(Colors.red),
-                                              shape: MaterialStateProperty.all<
-                                                  RoundedRectangleBorder>(
-                                                RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          50.0),
-                                                ),
+                                                ],
                                               ),
-                                              padding: MaterialStateProperty
-                                                  .all<EdgeInsetsGeometry>(
-                                                      EdgeInsets.zero),
-                                            ),
-                                            child: Icon(
-                                              Icons.delete,
-                                              color: Colors.white,
-                                            ),
+                                            ],
                                           ),
                                         ),
                                         ...course.places
@@ -748,14 +749,13 @@ class _CourseScreenState extends State<CourseScreen> {
                                             children: [
                                               ListTile(
                                                 contentPadding: EdgeInsets.only(
-                                                    left: 16.0, right: 16.0),
-                                                // 왼쪽 패딩 조정
+                                                  left: 16.0,
+                                                  right: 16.0,
+                                                ),
                                                 title: Text(place.name),
-
                                                 subtitle: Padding(
                                                   padding:
                                                       EdgeInsets.only(top: 8.0),
-                                                  // title과 subtitle 사이의 간격을 조절
                                                   child: Row(
                                                     children: [
                                                       SvgPicture.asset(
@@ -763,13 +763,13 @@ class _CourseScreenState extends State<CourseScreen> {
                                                         height: 16,
                                                       ),
                                                       SizedBox(width: 5.0),
-                                                      // 아이콘과 텍스트 사이 간격 조정
                                                       Flexible(
-                                                          child: Text(
-                                                        place.address,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      )),
+                                                        child: Text(
+                                                          place.address,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ),
                                                     ],
                                                   ),
                                                 ),

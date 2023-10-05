@@ -103,7 +103,7 @@ class _MyGroupState extends State<MyGroup> {
                     },
                   ),
                   // 내 그룹이면
-                  widget.myGroup
+                  widget.myGroup || widget.partnerGroup
                       ? AddGroupMember(
                           nickname: widget.nickname,
                           leaderId: widget.group.groupId)

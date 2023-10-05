@@ -7,6 +7,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:kakao_flutter_sdk_navi/kakao_flutter_sdk_navi.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:youkids/src/screens/home/home_screen.dart';
 import 'package:youkids/src/screens/message/firebase_api.dart';
 import 'package:youkids/src/screens/message/message_screen.dart';
@@ -14,6 +15,7 @@ import 'package:youkids/src/screens/message/message_screen.dart';
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  await requestNotificationPermission();
   // firebase, notification 시작
   await Firebase.initializeApp();
   initializeNotification();
@@ -25,6 +27,9 @@ void main() async {
   runApp(const YouKids());
 }
 
+Future<void> requestNotificationPermission() async {
+  final PermissionStatus status = await Permission.notification.request();
+}
 class YouKids extends StatelessWidget {
   const YouKids({super.key});
 

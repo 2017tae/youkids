@@ -312,13 +312,23 @@ class _GroupScreenState extends State<GroupScreen> {
               );
             }
           },
-          child: Text(
-            groupName,
-            style: const TextStyle(
-              fontSize: 22,
-              color: Colors.black,
-              fontWeight: FontWeight.w500,
-            ),
+          child: Row(
+            children: [
+              Text(
+                groupName,
+                style: const TextStyle(
+                  fontSize: 22,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              !widget.partnerGroup
+                  ? const Icon(Icons.create, color: Colors.black38)
+                  : Container(),
+            ],
           ),
         ),
         backgroundColor: Colors.white,
@@ -654,7 +664,7 @@ class SuccessDialog extends StatelessWidget {
                   );
                 },
                 child: const Text(
-                  "확인",
+                  "닫기",
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -690,7 +700,7 @@ class FailDialog extends StatelessWidget {
                   Navigator.of(context).pop();
                 },
                 child: const Text(
-                  "확인",
+                  "닫기",
                   textAlign: TextAlign.center,
                 ),
               ),

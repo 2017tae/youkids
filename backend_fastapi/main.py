@@ -8,7 +8,7 @@ from sklearn.preprocessing import MinMaxScaler
 from scipy.sparse import hstack
 from sklearn.metrics.pairwise import cosine_similarity
 from services.festival_recommendation_service import recomm_festival
-from services.place_recommendation_service import cal_preds_place, get_recommend_place
+from services.place_recommendation_service import cal_preds_place, get_recommend_place, dataframe_to_object_list
 from models.region_data import RegionData
 from fastapi import FastAPI, HTTPException
 from decouple import config
@@ -137,14 +137,39 @@ def recommend_place(region_code: int, user_id: str, count: int):
     click = pd.DataFrame(data.click_df)
     place = pd.DataFrame(data.place_df)
     
-    df_svd_preds = pd.DataFrame(data.svd_preds_df, index=click['user_id'].drop_duplicates(), columns=place['place_id'])
+    # 유저가 클릭한 장소의 개수로 판별
+    recommended_place = None
+    user_click_count = count_user_clicks(user_id, click)
     
-    recommended_place = get_recommend_place(df_svd_preds=df_svd_preds, click=click, place=place, user_id=user_id, count=count)
+    if user_click_count >= 5:
+        df_svd_preds = pd.DataFrame(data.svd_preds_df, index=click['user_id'].drop_duplicates(), columns=place['place_id'])
+        recommended_place = get_recommend_place(df_svd_preds=df_svd_preds, click=click, place=place, user_id=user_id, count=count)
+    else:
+        total_users_clicks = calculate_total_users_clicks(click)
+        sorted_places = total_users_clicks.sort_values(by='total_users_clicks', ascending=False)
+        merged_places = sorted_places.merge(place, on='place_id', how='right').fillna(0).sort_values(['total_users_clicks'], ascending=False)
+        
+        start_idx = count * 40
+        end_idx = (count + 1) * 40
+        
+        if start_idx >= len(merged_places):
+            recommended_place = []
+        
+        else:
+            if end_idx > len(merged_places):
+                end_idx = len(merged_places)
+            
+            recommended_place = dataframe_to_object_list(merged_places[start_idx:end_idx])
+    
     return {"recommended_place": recommended_place}
 
 # 클릭 수 Update 
 @app.put("/clicks/{region_code}/{user_id}/{place_id}")
 def update_click_count(region_code: int, user_id: str, place_id: int):
+    
+    if user_id is None:
+        return
+    
     global region_data, dynamodb
     table = dynamodb.Table(region_data[region_code].table)
     try:
@@ -178,6 +203,15 @@ def update_click_count(region_code: int, user_id: str, place_id: int):
         return {"user_id": user_id, "place_id": place_id, "click_count": updated_click_count}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# 1. 특정 유저가 클릭한 place의 개수를 세는 함수
+def count_user_clicks(user_id, click_df):
+    return len(click_df[click_df['user_id'] == user_id])
+
+# 2. 모든 장소에 대해 클릭한 총 유저의 수를 계산하는 함수
+def calculate_total_users_clicks(click_df):
+    total_users_clicks = click_df.groupby('place_id').size().reset_index(name='total_users_clicks')
+    return total_users_clicks
 
 if __name__ == "__main__":
     import uvicorn

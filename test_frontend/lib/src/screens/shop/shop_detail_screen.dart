@@ -276,8 +276,10 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                               _isExpanded = !_isExpanded;
                             });
                           },
-                          child: Text(_isExpanded ? "접기" : "더보기",
-                              style: const TextStyle(color: Colors.blue)),
+                            child: Text(
+                                _isExpanded ? "접기" : "더보기",
+                                style: TextStyle(color: Color(0xffFF7E76))
+                            )
                         ),
                     ],
                   ),

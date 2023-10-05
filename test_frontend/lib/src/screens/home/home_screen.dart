@@ -8,12 +8,14 @@ import 'package:youkids/src/screens/home/indoor_recom_list_screen.dart';
 import 'package:youkids/src/screens/home/rank_recom_list_screen.dart';
 import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
 import 'package:youkids/src/screens/shop/shop_more_screen.dart';
+import 'package:youkids/src/widgets/bookmarked_total_list.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:youkids/src/widgets/home_widgets/card_frame_widget.dart';
 import 'package:http/http.dart' as http;
 import 'package:youkids/src/widgets/show_carousel_widget.dart';
 
 import '../../widgets/main_widgets/ranking_widget_card_frame11.dart';
+import '../../widgets/search_bar_widgets.dart';
 import '../login/login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -25,6 +27,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _isLoggedIn = false;
+
+  bool _showSearch = false; // 기본적으로 검색 화면은 보이지 않도록 설정
 
   List? places;
 
@@ -98,17 +102,26 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _checkLoginStatus() async {
-    userId = await getUserId();
-
+    // userId = await getUserId();
+    userId = '87dad60a-bfff-47e5-8e21-02cb49b23ba6';
     setState(() {
        _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
-      userId = "c96c76ed-041d-4396-8efe-dcbd4f4827cd";
+      // userId = "c96c76ed-041d-4396-8efe-dcbd4f4827cd";
     });
 
-    final response = await http.get(
-      Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/' + userId!),
-      headers: {'Content-Type': 'application/json'},
-    );
+    var response;
+
+    if(userId !=null){
+      response = await http.get(
+        Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/' + userId!),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }else{
+      response = await http.get(
+        Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/c96c76ed-041d-4396-8efe-dcbd4f4827cd'),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }
 
     int? festivalId = await getFestivalId();
 
@@ -120,6 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     // 응답을 처리하는 코드 (예: 상태를 업데이트하는 등)를 여기에 추가합니다.
+
     if (response.statusCode == 200) {
       var jsonString = utf8.decode(response.bodyBytes);
       Map<String, dynamic> decodedJson = jsonDecode(jsonString);
@@ -320,6 +334,11 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Column(
+                children: <Widget>[
+                  SearchBarWidget(),
+                ],
+              ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 20.0),
                 child: GridView.count(
@@ -529,6 +548,29 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+      floatingActionButton: (userId != null)
+          ? FloatingActionButton(
+              backgroundColor: const Color(0xffF6766E),
+              shape: const CircleBorder(),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation1, animation2) =>
+                        BookmarkedTotalList(
+                      userId: userId,
+                    ),
+                    transitionDuration: Duration.zero,
+                    reverseTransitionDuration: Duration.zero,
+                  ),
+                );
+              },
+              child: const Icon(
+                Icons.favorite_outline_rounded,
+                color: Colors.white,
+              ),
+            )
+          : Container(),
       bottomNavigationBar: const FooterWidget(
         currentIndex: 0,
       ),

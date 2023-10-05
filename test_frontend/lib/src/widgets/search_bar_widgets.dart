@@ -84,10 +84,47 @@ class _SearchBarState extends State<SearchBarWidget> {
               });
             },
               onSubmitted: (value) {
-              print(value);
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => SearchResultPage(query: value),
-                ));
+                if (value.length < 2) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(
+                        '알림',
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xffFF7E76),
+                        ),
+                      ),
+                      content: Text(
+                        '검색어는 2글자 이상 입력해주세요.',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          child: Text(
+                            '확인',
+                            style: TextStyle(
+                              color: Color(0xffFF7E76),
+                              fontSize: 18.0,
+                            ),
+                          ),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                      ],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      backgroundColor: Colors.white,
+                    ),
+                  );
+
+                } else {
+                  _postSearchQuery(value);
+                }
+
               }
 
 

@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kakao_flutter_sdk_navi/kakao_flutter_sdk_navi.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/screens/course/course_create_screen.dart';
+import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:youkids/src/models/course_models/course_detail_model.dart';
 import 'package:youkids/src/providers/course_providers.dart';
@@ -110,6 +111,165 @@ class _CourseScreenState extends State<CourseScreen> {
             id: i.toString(),
             position: NLatLng(place['latitude'], place['longitude']),
           );
+
+          marker.setOnTapListener((NMarker marker) {
+            var cameraUpdate = NCameraUpdate.fromCameraPosition(
+              NCameraPosition(
+                target:
+                NLatLng(marker.position.latitude, marker.position.longitude),
+                zoom: 10,
+              ),
+            )..setPivot(NPoint(0.5, 1 / 4));
+
+            cameraUpdate.setAnimation(
+                animation: NCameraAnimation.linear,
+                duration: Duration(seconds: 1));
+
+            _controller!.updateCamera(cameraUpdate);
+
+            showModalBottomSheet(
+              barrierColor: Colors.transparent,
+              backgroundColor: Colors.white,
+              context: context,
+              builder: (BuildContext context) {
+                return StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                    final matchingBookmark = bookmarks!.firstWhere(
+                          (bookmark) =>
+                      bookmark['latitude'] == marker.position.latitude &&
+                          bookmark['longitude'] == marker.position.longitude,
+                      orElse: () => null,
+                    );
+                    return Container(
+                      height: MediaQuery.of(context).size.height * 0.5,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 15), // 좌우 패딩 값 설정
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column( // 위아래로 배치
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      matchingBookmark?['name'] ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 23.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    Text(
+                                      matchingBookmark?['category'] ?? '',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        // fontWeight: FontWeight.w600,
+                                        color: Colors.grey[500],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation1,
+                                      animation2) =>
+                                      ShopDetailScreen(
+                                          placeId: matchingBookmark?['placeId']),
+                                  transitionDuration: Duration.zero,
+                                  reverseTransitionDuration: Duration.zero,
+                                ),
+                              );
+                            },
+                            child: Image.network(
+                              matchingBookmark['imageUrl'],
+                              fit: BoxFit.fitWidth,
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.width * 0.5,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation1,
+                                      animation2) =>
+                                      ShopDetailScreen(
+                                          placeId: matchingBookmark?['placeId']),
+                                  transitionDuration: Duration.zero,
+                                  reverseTransitionDuration: Duration.zero,
+                                ),
+                              );
+                            },
+                            child: Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: ListTile(
+                                          title: Text(
+                                            "주소",
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          subtitle: Padding(
+                                            padding: EdgeInsets.only(top: 8.0),
+                                            child: Row(
+                                              children: [
+                                                Flexible(
+                                                  child: Text(
+                                                    matchingBookmark?[
+                                                    'address'] ??
+                                                        '',
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.grey[700],
+                                                    ),
+                                                    overflow:
+                                                    TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.symmetric(horizontal: 10),
+                                    child: Divider(
+                                      color: Color(0xFF949494),
+                                      thickness: 0.5,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+            );
+          });
           i++;
 
           // 마커 지도 위에 렌더링
@@ -389,60 +549,80 @@ class _CourseScreenState extends State<CourseScreen> {
           color: Colors.black,
         ),
         actions: [
-          IconButton(
-            onPressed: () {
-              if (userId != null) {
-                if (bookmarks != null && bookmarks!.isNotEmpty) {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation1, animation2) =>
-                          CourseCreateScreen(),
-                      transitionDuration: Duration.zero,
-                      reverseTransitionDuration: Duration.zero,
-                    ),
-                  );
-                } else {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text("오류"),
-                        content: Text("찜 목록이 비었습니다"),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text("확인"),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                }
-              } else {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text("로그인"),
-                      content: Text("로그인을 해주세요"),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text("확인"),
+          Container(
+            height: 35,
+            width: 60,
+            margin: EdgeInsets.zero,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: TextButton(
+                onPressed: () {
+                  if (userId != null) {
+                    if (bookmarks != null && bookmarks!.isNotEmpty) {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (context, animation1, animation2) =>
+                              CourseCreateScreen(),
+                          transitionDuration: Duration.zero,
+                          reverseTransitionDuration: Duration.zero,
                         ),
-                      ],
+                      );
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("오류"),
+                            content: Text("찜 목록이 비었습니다"),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text("확인"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("로그인"),
+                          content: Text("로그인을 해주세요"),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text("확인"),
+                            ),
+                          ],
+                        );
+                      },
                     );
-                  },
-                );
-              }
-            },
-            icon: SvgPicture.asset('lib/src/assets/icons/add_white.svg',
-                height: 24),
+                  }
+                },
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                  ),
+                ),
+                child: Text(
+                  '생성',
+                  style: TextStyle(
+                      fontSize: 13.0,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFFF6766E)),
+                ),
+              ),
+            ),
           ),
         ],
       ),

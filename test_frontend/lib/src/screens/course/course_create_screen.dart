@@ -119,7 +119,7 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text("닫기"),
+                  child: Text("확인"),
                 ),
               ],
             );
@@ -169,43 +169,113 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
                     orElse: () => null,
                   );
                   return Container(
-                    height: 500,
+                    height: MediaQuery.of(context).size.height * 0.5,
                     child: Column(
                       children: [
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                if (coursePlaces.contains(marker)) {
-                                  removePlace(marker, matchingBookmark);
-                                } else if (coursePlaces.length < 4) {
-                                  addPlace(marker, matchingBookmark);
-                                } else if (coursePlaces.length >= 4) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text("오류"),
-                                        content: Text("장소는 최대 4개까지 선택 가능합니다."),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text("닫기"),
-                                          ),
-                                        ],
-                                      );
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 20), // 좌우 패딩 값 설정
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column( // 위아래로 배치
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    matchingBookmark?['name'] ?? '',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  SizedBox(height: 8), // 텍스트 사이 간격 조정
+                                  Text(
+                                    matchingBookmark?['category'] ?? '',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey, // 선택적으로 색상 설정
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                height: 40,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 0.0),
+                                  child: TextButton(
+                                    onPressed: () async {
+                                      if (coursePlaces.contains(marker)) {
+                                        removePlace(marker, matchingBookmark);
+                                      } else if (coursePlaces.length < 4) {
+                                        addPlace(marker, matchingBookmark);
+                                      } else if (coursePlaces.length >= 4) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text("오류"),
+                                              content: Text("장소는 최대 4개까지 선택 가능합니다."),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text("확인"),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      }
+                                      setState(() {});
                                     },
-                                  );
-                                }
-                                setState(() {});
-                              },
-                              child: Text(
-                                  coursePlaces.contains(marker) ? '제거' : '추가'),
-                            ),
+                                    style: ButtonStyle(
+                                      side: MaterialStateProperty.all(
+                                        BorderSide(
+                                          color: Color(0xFFF6766E),
+                                          width: 2.0,
+                                        ),
+                                      ),
+                                      shape: MaterialStateProperty.all(
+                                        RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10.0),
+                                        ),
+                                      ),
+                                      backgroundColor: MaterialStateProperty.all(Color(0xFFF6766E)),
+                                    ),
+                                    child: Text(
+                                      coursePlaces.contains(marker) ? '제거' : '추가',
+                                      style: TextStyle(
+                                        fontSize: 14.0,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder: (context, animation1,
+                                        animation2) =>
+                                    ShopDetailScreen(
+                                        placeId: matchingBookmark?['placeId']),
+                                transitionDuration: Duration.zero,
+                                reverseTransitionDuration: Duration.zero,
+                              ),
+                            );
+                          },
+                          child: Image.network(
+                            matchingBookmark['imageUrl'],
+                            fit: BoxFit.fitWidth,
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.width * 0.5,
                           ),
                         ),
                         GestureDetector(
@@ -223,7 +293,6 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
                             );
                           },
                           child: Container(
-                            margin: EdgeInsets.symmetric(horizontal: 10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -232,9 +301,11 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
                                     Expanded(
                                       child: ListTile(
                                         title: Text(
-                                          matchingBookmark?['name'] ?? '',
+                                          "주소",
                                           style: TextStyle(
-                                            fontSize: 20,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.black,
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -242,16 +313,15 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
                                           padding: EdgeInsets.only(top: 8.0),
                                           child: Row(
                                             children: [
-                                              SvgPicture.asset(
-                                                'lib/src/assets/icons/course_white.svg',
-                                                height: 16,
-                                              ),
-                                              SizedBox(width: 5.0),
                                               Flexible(
                                                 child: Text(
                                                   matchingBookmark?[
                                                           'address'] ??
                                                       '',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.grey[700],
+                                                  ),
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                 ),
@@ -413,23 +483,43 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
           color: Colors.black,
         ),
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      CoursePostScreen(
-                    coursePlacesInfo: coursePlacesInfo,
-                    coursePlaces: coursePlaces,
+          Container(
+            height: 35,
+            width: 60,
+            margin: EdgeInsets.zero,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation1, animation2) =>
+                          CoursePostScreen(
+                        coursePlacesInfo: coursePlacesInfo,
+                        coursePlaces: coursePlaces,
+                      ),
+                      transitionDuration: Duration.zero,
+                      reverseTransitionDuration: Duration.zero,
+                    ),
+                  );
+                },
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
                   ),
-                  transitionDuration: Duration.zero,
-                  reverseTransitionDuration: Duration.zero,
                 ),
-              );
-            },
-            icon: SvgPicture.asset('lib/src/assets/icons/add_white.svg',
-                height: 24),
+                child: Text(
+                  '생성',
+                  style: TextStyle(
+                      fontSize: 13.0,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFFF6766E)),
+                ),
+              ),
+            ),
           ),
         ],
       ),

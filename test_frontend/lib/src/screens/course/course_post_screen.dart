@@ -344,9 +344,9 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
                   children: [
                     Expanded(
                       child: Container(
-                        height: 50,
+                        height: 40,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          padding: const EdgeInsets.only(left: 20.0, right:10.0),
                           child: TextFormField(
                             controller: _courseNameController,
                             decoration: InputDecoration(
@@ -360,14 +360,14 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
                                   color: Color(0xFFF6766E),
                                   width: 2.0,
                                 ),
-                                borderRadius: BorderRadius.circular(15.0),
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color(0xFFF6766E),
                                   width: 2.0,
                                 ),
-                                borderRadius: BorderRadius.circular(15.0),
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
                               contentPadding: EdgeInsets.symmetric(
                                   vertical: 10, horizontal: 16),
@@ -378,9 +378,9 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
                       ),
                     ),
                     Container(
-                      height: 50,
+                      height: 40,
                       child: Padding(
-                        padding: const EdgeInsets.only(right: 10.0),
+                        padding: const EdgeInsets.only(right: 20.0),
                         child: TextButton(
                           onPressed: () {
                             String courseName = _courseNameController.text;
@@ -415,7 +415,7 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
                             ),
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15.0),
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
                             ),
                             backgroundColor:
@@ -424,7 +424,7 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
                           child: Text(
                             '등록',
                             style: TextStyle(
-                                fontSize: 16.0,
+                                fontSize: 14.0,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white),
                           ),

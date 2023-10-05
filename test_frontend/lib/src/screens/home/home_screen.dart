@@ -2,22 +2,17 @@ import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/screens/home/indoor_recom_list_screen.dart';
 import 'package:youkids/src/screens/home/rank_recom_list_screen.dart';
-import 'package:youkids/src/screens/message/firebase_api.dart';
-import 'package:youkids/src/screens/shop/festival_info_page.dart';
 import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
 import 'package:youkids/src/screens/shop/shop_more_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:youkids/src/widgets/home_widgets/card_frame_widget.dart';
-import 'package:youkids/src/widgets/home_widgets/child_icon_widget.dart';
 import 'package:http/http.dart' as http;
 import 'package:youkids/src/widgets/show_carousel_widget.dart';
 
-import '../../providers/auth_model.dart';
 import '../../widgets/main_widgets/ranking_widget_card_frame11.dart';
 import '../login/login_screen.dart';
 
@@ -71,12 +66,12 @@ class _HomeScreenState extends State<HomeScreen> {
       fcmToken = await FirebaseMessaging.instance.getToken();
       if (fcmToken != null) {
         final response =
-        await http.post(Uri.parse('https://j9a604.p.ssafy.io/api/user/fcm'),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({
-              'userId': userId,
-              'fcmToken': fcmToken,
-            }));
+            await http.post(Uri.parse('https://j9a604.p.ssafy.io/api/user/fcm'),
+                headers: {'Content-Type': 'application/json'},
+                body: jsonEncode({
+                  'userId': userId,
+                  'fcmToken': fcmToken,
+                }));
         if (response.statusCode == 200) {
           print('fcm renewed');
         } else {
@@ -116,16 +111,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
     int? festivalId = await getFestivalId();
 
-    if (festivalId == null) {
-      festivalId = 2;
-    }
+    festivalId ??= 2;
 
     final response2 = await http.get(
-      Uri.parse('https://j9a604.p.ssafy.io/fastapi/festival/' +
-          festivalId.toString()),
+      Uri.parse('https://j9a604.p.ssafy.io/fastapi/festival/$festivalId'),
       headers: {'Content-Type': 'application/json'},
     );
-
 
     // 응답을 처리하는 코드 (예: 상태를 업데이트하는 등)를 여기에 추가합니다.
     if (response.statusCode == 200) {
@@ -235,11 +226,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: SingleChildScrollView(
-        child:
-        Padding(
+        child: Padding(
           padding: const EdgeInsets.all(10),
-          child:
-          Column(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
@@ -251,22 +240,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisCount: 3,
                   children: [
                     _buildIconButton(context, '테마파크', Icons.local_play,
-                        ShopMoreScreen(PushselectedCategory: "테마파크")),
+                        const ShopMoreScreen(pushselectedCategory: "테마파크")),
                     _buildIconButton(context, '박물관', Icons.museum,
-                        ShopMoreScreen(PushselectedCategory: "박물관")),
+                        const ShopMoreScreen(pushselectedCategory: "박물관")),
                     _buildIconButton(context, '키즈카페', Icons.local_cafe,
-                        ShopMoreScreen(PushselectedCategory: "키즈카페")),
+                        const ShopMoreScreen(pushselectedCategory: "키즈카페")),
                     _buildIconButton(context, '공연', Icons.music_note,
                         IndoorRecomListScreen()),
                     _buildIconButton(context, '순위', Icons.leaderboard,
-                        RankRecomlistScreen()),
+                        const RankRecomlistScreen()),
                     _buildIconButton(context, '카페', Icons.coffee,
-                        ShopMoreScreen(PushselectedCategory: "전체")),
+                        const ShopMoreScreen(pushselectedCategory: "전체")),
                   ],
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 6),
+                padding: const EdgeInsets.only(left: 6),
                 child: loadingSetHomeMenu("이번 주 추천 장소"),
               ),
               Column(
@@ -294,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               Padding(
-                padding: EdgeInsets.only(left: 6),
+                padding: const EdgeInsets.only(left: 6),
                 child: loadingSetHomeMenu("저번 주 리뷰 많은 장소"),
               ),
               Column(
@@ -389,27 +378,26 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisCount: 3,
                   children: [
                     _buildIconButton(context, '테마파크', Icons.local_play,
-                        ShopMoreScreen(PushselectedCategory: "테마파크")),
+                        const ShopMoreScreen(pushselectedCategory: "테마파크")),
                     _buildIconButton(context, '박물관', Icons.museum,
-                        ShopMoreScreen(PushselectedCategory: "박물관")),
+                        const ShopMoreScreen(pushselectedCategory: "박물관")),
                     _buildIconButton(context, '키즈카페', Icons.local_cafe,
-                        ShopMoreScreen(PushselectedCategory: "키즈카페")),
+                        const ShopMoreScreen(pushselectedCategory: "키즈카페")),
                     _buildIconButton(context, '공연', Icons.music_note,
                         IndoorRecomListScreen()),
                     _buildIconButton(context, '순위', Icons.leaderboard,
-                        RankRecomlistScreen()),
+                        const RankRecomlistScreen()),
                     _buildIconButton(context, '카페', Icons.coffee,
-                        ShopMoreScreen(PushselectedCategory: "전체")),
+                        const ShopMoreScreen(pushselectedCategory: "전체")),
                   ],
                 ),
               ),
-
               Padding(
-                padding: EdgeInsets.only(left: 6),
+                padding: const EdgeInsets.only(left: 6),
                 child: setHomeMenu(
                   context,
                   '이번 주 추천 장소',
-                  const ShopMoreScreen(PushselectedCategory: "전체"),
+                  const ShopMoreScreen(pushselectedCategory: "전체"),
                 ),
               ),
               Column(
@@ -419,10 +407,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                ShopDetailScreen(
-                                  placeId: places?[0]['placeId'],
-                                ),
+                            builder: (context) => ShopDetailScreen(
+                              placeId: places?[0]['placeId'],
+                            ),
                           ),
                         );
                       },
@@ -446,10 +433,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  ShopDetailScreen(
-                                    placeId: places?[1]['placeId'],
-                                  ),
+                              builder: (context) => ShopDetailScreen(
+                                placeId: places?[1]['placeId'],
+                              ),
                             ),
                           );
                         },
@@ -468,10 +454,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  ShopDetailScreen(
-                                    placeId: places?[2]['placeId'],
-                                  ),
+                              builder: (context) => ShopDetailScreen(
+                                placeId: places?[2]['placeId'],
+                              ),
                             ),
                           );
                         },
@@ -489,9 +474,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Padding(
-                padding: EdgeInsets.only(left: 6),
+                padding: const EdgeInsets.only(left: 6),
                 child: setHomeMenu(
                   context,
                   '저번 주 리뷰 많은 장소',
@@ -507,10 +492,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                ShopDetailScreen(
-                                  placeId: places?[3]['placeId'],
-                                ),
+                            builder: (context) => ShopDetailScreen(
+                              placeId: places?[3]['placeId'],
+                            ),
                           ),
                         );
                       },
@@ -532,10 +516,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                ShopDetailScreen(
-                                  placeId: places?[4]['placeId'],
-                                ),
+                            builder: (context) => ShopDetailScreen(
+                              placeId: places?[4]['placeId'],
+                            ),
                           ),
                         );
                       },
@@ -557,10 +540,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                ShopDetailScreen(
-                                  placeId: places?[5]['placeId'],
-                                ),
+                            builder: (context) => ShopDetailScreen(
+                              placeId: places?[5]['placeId'],
+                            ),
                           ),
                         );
                       },
@@ -576,16 +558,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       )),
                 ],
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Padding(
-                padding: EdgeInsets.only(left: 6),
+                padding: const EdgeInsets.only(left: 6),
                 child: setHomeMenu(
                   context,
-                  '공연 예약',
+                  '공연 정보',
                   IndoorRecomListScreen(),
                 ),
               ),
-
               ShowCarouselWidget(
                   itemCount: 6,
                   festivalChildId: festivalChildId,
@@ -677,8 +658,7 @@ class _LoadingCardFrame21WidgetState extends State<LoadingCardFrame21Widget>
       duration: const Duration(
         milliseconds: 180,
       ),
-    )
-      ..repeat(reverse: true);
+    )..repeat(reverse: true);
 
     _colorAnimation = ColorTween(
       begin: const Color(0xffd0d0d0),
@@ -700,10 +680,7 @@ class _LoadingCardFrame21WidgetState extends State<LoadingCardFrame21Widget>
         animation: _colorAnimation,
         builder: (context, child) {
           return Container(
-            width: MediaQuery
-                .of(context)
-                .size
-                .width,
+            width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: _colorAnimation.value,
@@ -736,8 +713,7 @@ class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
       duration: const Duration(
         milliseconds: 180,
       ),
-    )
-      ..repeat(reverse: true);
+    )..repeat(reverse: true);
 
     _colorAnimation = ColorTween(
       begin: const Color(0xffd0d0d0),
@@ -759,14 +735,8 @@ class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
           animation: _colorAnimation,
           builder: (context, child) {
             return Container(
-              height: (MediaQuery
-                  .of(context)
-                  .size
-                  .width - 30) * 0.5,
-              width: (MediaQuery
-                  .of(context)
-                  .size
-                  .width - 30) * 0.5,
+              height: (MediaQuery.of(context).size.width - 30) * 0.5,
+              width: (MediaQuery.of(context).size.width - 30) * 0.5,
               decoration: BoxDecoration(
                 color: _colorAnimation.value,
                 borderRadius: BorderRadius.circular(10),
@@ -778,9 +748,10 @@ class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
     );
   }
 }
+
 // 이 함수는 각 이모티콘 버튼을 생성합니다.
-Widget _buildIconButton(BuildContext context, String title, IconData icon,
-    Widget targetPage) {
+Widget _buildIconButton(
+    BuildContext context, String title, IconData icon, Widget targetPage) {
   return GestureDetector(
     onTap: () {
       Navigator.push(
@@ -791,11 +762,11 @@ Widget _buildIconButton(BuildContext context, String title, IconData icon,
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Icon(icon, size: 40.0, color: Color(0xffFF7E76)),
-        SizedBox(height: 5),
+        Icon(icon, size: 40.0, color: const Color(0xffFF7E76)),
+        const SizedBox(height: 5),
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 18.0, // 원하는 크기로 설정하세요.
           ),
         ),

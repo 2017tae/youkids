@@ -1,12 +1,9 @@
 import 'dart:convert';
-import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/widgets/bookmark_button_widget.dart';
-
-import '../../widgets/footer_widget.dart';
 
 class ShopMoreScreen extends StatefulWidget {
   final String? pushselectedCategory;
@@ -38,6 +35,14 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
     loadLoginDataFuture = _checkLoginStatus();
   }
 
+  Future<void> _checkLoginStatus() async {
+    // userId = await getUserId();
+    setState(() {
+      _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
+      // userId = "c96c76ed-041d-4396-8efe-dcbd4f4827cd";
+    });
+  }
+
   Future<String?> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(
@@ -62,13 +67,11 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
   Future<void> _getData() async {
     userId = await getUserId();
     setState(() {
-    userId = '87dad60a-bfff-47e5-8e21-02cb49b23ba6';
       _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
-
     });
 
     final response = await http.get(
-      Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/'+ userId!),
+      Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/${userId!}'),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -470,31 +473,31 @@ class GridItem extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-            child: Stack(
-              children: [
-                AspectRatio(
-                  aspectRatio: 2 / 3,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                    ),
+          child: Stack(
+            children: [
+              AspectRatio(
+                aspectRatio: 2 / 3,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: Image.network(
+                    image_url,
+                    fit: BoxFit.cover,
                   ),
                 ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: (userId != null)
-                      ? BookmarkButtonWidget(
-                          placeId: int.parse(place_id),
-                          userId: userId,
-                        )
-                      : Container(),
-                ),
-              ],
-            ),
+              ),
+              Positioned(
+                top: 0,
+                right: 0,
+                child: (userId != null)
+                    ? BookmarkButtonWidget(
+                        placeId: int.parse(place_id),
+                        userId: userId,
+                      )
+                    : Container(),
+              ),
+            ],
           ),
+        ),
         const SizedBox(
           height: 8.0,
         ),

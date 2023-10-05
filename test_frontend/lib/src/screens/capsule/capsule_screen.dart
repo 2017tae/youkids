@@ -4,7 +4,7 @@ import 'package:youkids/src/screens/capsule/capsule_list_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 
 class CapsuleScreen extends StatelessWidget {
-  const CapsuleScreen();
+  const CapsuleScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class CapsuleScreen extends StatelessWidget {
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: CapsuleListScreen(),
       ),
       bottomNavigationBar: const FooterWidget(

@@ -10,6 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface TopReviewPlaceRepository extends JpaRepository<TopReviewPlace, Integer> {
     // 전체 반환
     @Query("select new com.capsule.youkids.place.dto.PlaceRecommItemDto(p)"
-    + "from TopReviewPlace p")
+    + "from TopReviewPlace p order by p.naverReviewNum desc")
     List<PlaceRecommItemDto> findTotal();
 }

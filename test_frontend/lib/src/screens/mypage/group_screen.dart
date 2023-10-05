@@ -99,7 +99,7 @@ class _GroupScreenState extends State<GroupScreen> {
                   profileImage: response2.data['profileImage'],
                   fcmToken: response2.data['fcmToken']);
             });
-          } else if (response.statusCode == 400) {
+          } else if (response2.statusCode == 400) {
             return 'exists';
           } else {
             return 'error';

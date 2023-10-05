@@ -49,8 +49,13 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<bool> _onBackPressed() async {
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => HomeScreen()),
-          (Route<dynamic> route) => false,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => HomeScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return child;
+        },
+      ),
+      (Route<dynamic> route) => false,
     );
     return false; // 실제로 화면에서 뒤로 갈 수 없게 설정합니다. 이미 Navigator.pop으로 전 화면으로 돌아갔기 때문입니다.
   }

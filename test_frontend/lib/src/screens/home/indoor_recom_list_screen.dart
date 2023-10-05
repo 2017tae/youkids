@@ -84,7 +84,7 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
                     child: const LoadingGridItem(),
                   ),
                   const SizedBox(
-                    height: 30,
+                    height: 50,
                   ),
                   GestureDetector(
                     onTap: () {},
@@ -125,7 +125,7 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
 
           return Padding(
             padding:
-                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
             child: GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -242,7 +242,7 @@ class _LoadingGridItemState extends State<LoadingGridItem>
           animation: _colorAnimation,
           builder: (context, child) {
             return Container(
-              height: 500,
+              height: 320,
               decoration: BoxDecoration(
                 color: _colorAnimation.value,
                 borderRadius: BorderRadius.circular(5),
@@ -296,6 +296,7 @@ class _LoadingGridItem2State extends State<LoadingGridItem2>
         Row(
           children: [
             Container(
+              margin: EdgeInsets.only(left:6.0),
               height: 140.0,
               width: 100.0,
               decoration: BoxDecoration(
@@ -316,6 +317,8 @@ class _LoadingGridItem2State extends State<LoadingGridItem2>
                       borderRadius: BorderRadius.circular(2.0),
                     ),
                     margin: EdgeInsets.only(bottom:140.0/8),
+                    padding: EdgeInsets.only(right:6.0),
+
                   ),
 
                 // 마지막 줄

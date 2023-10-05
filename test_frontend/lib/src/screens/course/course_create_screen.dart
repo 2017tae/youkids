@@ -112,8 +112,8 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text("오류"),
-              content: Text("찜 목록을 불러오는 데 오류가 발생했습니다"),
+              title: Text("알림"),
+              content: Text("찜 목록을 불러오는 데 실패하였습니다."),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -183,17 +183,19 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
                                 children: [
                                   Text(
                                     matchingBookmark?['name'] ?? '',
-                                    style: TextStyle(
-                                      fontSize: 20,
+                                    style: const TextStyle(
+                                      fontSize: 23.0,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                     overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.left,
                                   ),
-                                  SizedBox(height: 8), // 텍스트 사이 간격 조정
                                   Text(
                                     matchingBookmark?['category'] ?? '',
                                     style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey, // 선택적으로 색상 설정
+                                      fontSize: 15,
+                                      // fontWeight: FontWeight.w600,
+                                      color: Colors.grey[500],
                                     ),
                                   ),
                                 ],
@@ -213,7 +215,7 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
                                           context: context,
                                           builder: (BuildContext context) {
                                             return AlertDialog(
-                                              title: Text("오류"),
+                                              title: Text("알림"),
                                               content: Text("장소는 최대 4개까지 선택 가능합니다."),
                                               actions: [
                                                 TextButton(
@@ -485,26 +487,48 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
         actions: [
           Container(
             height: 35,
-            width: 60,
+            width: 65,
             margin: EdgeInsets.zero,
             child: Padding(
-              padding: const EdgeInsets.only(right: 10.0),
+              padding: const EdgeInsets.only(right: 10.0, top: 0, bottom: 0),
               child: TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation1, animation2) =>
-                          CoursePostScreen(
-                        coursePlacesInfo: coursePlacesInfo,
-                        coursePlaces: coursePlaces,
+                  if(coursePlaces.isEmpty){
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("알림"),
+                          content: Text("코스로 선정된 장소가 없습니다."),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text("확인"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                  if(coursePlaces.isNotEmpty) {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation1, animation2) =>
+                            CoursePostScreen(
+                              coursePlacesInfo: coursePlacesInfo,
+                              coursePlaces: coursePlaces,
+                            ),
+                        transitionDuration: Duration.zero,
+                        reverseTransitionDuration: Duration.zero,
                       ),
-                      transitionDuration: Duration.zero,
-                      reverseTransitionDuration: Duration.zero,
-                    ),
-                  );
+                    );
+                  }
                 },
                 style: ButtonStyle(
+                  padding: MaterialStatePropertyAll(EdgeInsets.zero),
                   shape: MaterialStateProperty.all(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
@@ -513,9 +537,10 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
                 ),
                 child: Text(
                   '생성',
+                  textAlign: TextAlign.center,
                   style: TextStyle(
-                      fontSize: 13.0,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w400,
                       color: Color(0xFFF6766E)),
                 ),
               ),
@@ -601,48 +626,60 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
                                 child: Container(
                                   margin: EdgeInsets.symmetric(horizontal: 10),
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                         children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 10.0),
+                                            child: Image.asset(
+                                              "lib/src/assets/icons/mark" +
+                                                  (index+1)
+                                                      .toString() +
+                                                  ".png",
+                                              height: 35,
+                                              alignment:
+                                              AlignmentDirectional
+                                                  .center,
+                                            ),
+                                          ),
+                                          SizedBox(width: 12.0),
                                           Expanded(
-                                            child: ListTile(
-                                              title: Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 8.0, bottom: 8.0),
-                                                child: Row(
-                                                  children: [
-                                                    Image.asset(
-                                                      "lib/src/assets/icons/mark" +
-                                                          (index + 1)
-                                                              .toString() +
-                                                          ".png",
-                                                      height: 35,
-                                                    ),
-                                                    SizedBox(width: 12.0),
-                                                    Flexible(
-                                                      child: Text(
-                                                        matchingBookmark?[
-                                                                'name'] ??
-                                                            '',
-                                                        style: TextStyle(
-                                                          fontSize: 20,
-                                                        ),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                    ),
-                                                  ],
+                                            child: Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment
+                                                  .start,
+                                              children: [
+                                                SizedBox(height: 10.0),
+                                                Text(
+                                                  matchingBookmark['name'],
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                  ),
+                                                  overflow: TextOverflow
+                                                      .ellipsis,
                                                 ),
-                                              ),
+                                                Text(
+                                                  matchingBookmark['address'],
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors
+                                                        .grey[700],
+                                                  ),
+                                                  overflow: TextOverflow
+                                                      .ellipsis,
+                                                ),
+                                                SizedBox(height: 10.0)
+                                              ],
                                             ),
                                           ),
                                         ],
                                       ),
                                       Container(
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal: 10),
+                                        margin:
+                                        EdgeInsets.symmetric(horizontal: 10),
                                         child: Divider(
                                           color: Color(0xFF949494),
                                           thickness: 0.5,

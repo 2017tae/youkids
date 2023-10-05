@@ -80,7 +80,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
 
   _checkLoginStatus() async {
     var response;
-    String? userId = await getUserId();
+    userId = await getUserId();
     setState(() {});
 
     if (userId == null) {
@@ -256,12 +256,15 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                           textAlign: TextAlign.left,
                         ),
                       ),
-                      (userId != null)
-                          ? BookmarkButtonWidget(
-                        placeId: widget.placeId,
-                        userId: userId,
-                      )
-                          : Container(),
+                      if (userId != null)
+                        BookmarkButtonWidget(
+                          placeId: widget.placeId,
+                          userId: userId,
+                        ),
+                      if( userId == null)
+                        Container(),
+                      
+                      
                     ],
                   ),
 

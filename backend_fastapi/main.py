@@ -2,6 +2,7 @@ import pymysql
 import pandas as pd
 import numpy as np
 import boto3
+import random
 from datetime import datetime
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.preprocessing import MinMaxScaler
@@ -126,15 +127,18 @@ def recommend_place(region_code: int, user_id: str, count: int):
     data = region_data[region_code]
     table = dynamodb.Table(data.table)
     
-    if (data.click_df == None) or (data.svd_preds_df == None) or (data.update_date != datetime.today()):
-        # click_df or svd_preds_df 값이 없거나 갱신한 날짜가 지났으면 갱신 작업
-        response = table.scan()
-        items = response['Items']
-        data.click_df = items
-        data.svd_preds_df = cal_preds_place(pd.DataFrame(data.place_df), pd.DataFrame(data.click_df)).to_dict(orient='records')
-        data.update_date = datetime.today()
+    # if (data.click_df == None) or (data.svd_preds_df == None) or (data.update_date != datetime.today()):
+    #     # click_df or svd_preds_df 값이 없거나 갱신한 날짜가 지났으면 갱신 작업
+    #     response = table.scan()
+    #     items = response['Items']
+    #     data.click_df = items
+    #     data.svd_preds_df = cal_preds_place(pd.DataFrame(data.place_df), pd.DataFrame(data.click_df)).to_dict(orient='records')
+    #     data.update_date = datetime.today()
     
-    click = pd.DataFrame(data.click_df)
+    response = table.scan()
+    items = response['Items']
+    
+    click = pd.DataFrame(items)
     place = pd.DataFrame(data.place_df)
     
     # 유저가 클릭한 장소의 개수로 판별
@@ -160,6 +164,7 @@ def recommend_place(region_code: int, user_id: str, count: int):
                 end_idx = len(merged_places)
             
             recommended_place = dataframe_to_object_list(merged_places[start_idx:end_idx])
+            random.shuffle(recommended_place)
     
     return {"recommended_place": recommended_place}
 

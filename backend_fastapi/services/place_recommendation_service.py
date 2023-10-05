@@ -45,13 +45,15 @@ def get_recommend_place(df_svd_preds: pd.DataFrame, user_id: str, place, click, 
     # 'Predictions' 컬럼 삭제
     recommendations = recommendations.drop('Predictions', axis=1)
     
-    kids_cafe_ratio = 0.75
+    kids_cafe_ratio = 0.5
     theme_park_ratio = 0.25
+    museum_ratio = 0.25
     
     kids_cafe_recommendations = get_recommendations_by_category(recommendations, '키즈카페', count, num, kids_cafe_ratio)
     theme_park_recommendations = get_recommendations_by_category(recommendations, '테마파크', count, num, theme_park_ratio)
+    museum_recommendations = get_recommendations_by_category(recommendations, '박물관', count, num, museum_ratio)
     
-    result_list = kids_cafe_recommendations + theme_park_recommendations
+    result_list = kids_cafe_recommendations + theme_park_recommendations + museum_recommendations
     random.shuffle(result_list)
     return result_list
 

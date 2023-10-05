@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:youkids/src/screens/capsule/capsule_screen.dart';
 import 'package:youkids/src/screens/home/home_screen.dart';
 import 'package:youkids/src/services/posting_services.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
@@ -110,7 +111,25 @@ class _PostingScreenState extends State<PostingScreen> {
                     );
                   },
                 );
-              } else {
+              } else if (_postingImgs.isEmpty) {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      content: const Text('사진을 넣어주세요'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Ok'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
+              else {
                 try {
                   PostingServices.postingCapsuleImgsContents(
                     description: _postingContent,
@@ -128,7 +147,7 @@ class _PostingScreenState extends State<PostingScreen> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const HomeScreen(),
+                                builder: (context) => const CapsuleScreen(),
                               ),
                             );
                           },

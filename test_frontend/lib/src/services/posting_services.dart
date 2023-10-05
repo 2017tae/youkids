@@ -8,7 +8,7 @@ class PostingServices {
     required String description,
     required String location,
     required dynamic userId,
-    List<String>? fileList,
+    required List<String>? fileList,
     List<List<int>>? childrenList,
   }) async {
     final dio = Dio();

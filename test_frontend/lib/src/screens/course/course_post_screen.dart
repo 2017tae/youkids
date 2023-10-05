@@ -197,7 +197,6 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const Drawer(),
       appBar: AppBar(
         title: const Text(
           'YouKids',

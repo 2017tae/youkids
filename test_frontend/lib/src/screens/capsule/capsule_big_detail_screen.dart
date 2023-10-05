@@ -74,14 +74,14 @@ class _CapsuleBigDetailScreen extends State<CapsuleBigDetailScreen> {
           iconTheme: const IconThemeData(
             color: Colors.black,
           ),
-          actions: [
-            IconButton(
-              onPressed: () {},
-              icon: SvgPicture.asset(
-                  'lib/src/assets/icons/bell_white.svg', height: 24,
-                  color: Colors.black),
-            ),
-          ],
+          // actions: [
+          //   IconButton(
+          //     onPressed: () {},
+          //     icon: SvgPicture.asset(
+          //         'lib/src/assets/icons/bell_white.svg', height: 24,
+          //         color: Colors.black),
+          //   ),
+          // ],
         ),
         body:
         Column(

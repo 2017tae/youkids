@@ -394,10 +394,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => ShopDetailScreen(
-                              placeId: places?[0]['place_id'],
-                            ),
+                          PageRouteBuilder(
+                            pageBuilder: (context, animation1, animation2) =>
+                                ShopDetailScreen(
+                                    placeId: places?[0]['place_id']),
+                            transitionDuration: Duration.zero,
+                            reverseTransitionDuration: Duration.zero,
                           ),
                         );
                       },
@@ -420,10 +422,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) => ShopDetailScreen(
-                                placeId: places?[1]['place_id'],
-                              ),
+                            PageRouteBuilder(
+                              pageBuilder: (context, animation1, animation2) =>
+                                  ShopDetailScreen(
+                                      placeId: places?[1]['place_id']),
+                              transitionDuration: Duration.zero,
+                              reverseTransitionDuration: Duration.zero,
                             ),
                           );
                         },
@@ -441,10 +445,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) => ShopDetailScreen(
-                                placeId: places?[2]['place_id'],
-                              ),
+                            PageRouteBuilder(
+                              pageBuilder: (context, animation1, animation2) =>
+                                  ShopDetailScreen(
+                                    placeId: places?[2]['place_id']),
+                              transitionDuration: Duration.zero,
+                              reverseTransitionDuration: Duration.zero,
                             ),
                           );
                         },
@@ -479,10 +485,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => ShopDetailScreen(
-                              placeId: _places?[0]['placeId'],
-                            ),
+                          PageRouteBuilder(
+                            pageBuilder: (context, animation1, animation2) =>
+                                ShopDetailScreen(
+                                    placeId: _places?[0]['placeId']),
+                            transitionDuration: Duration.zero,
+                            reverseTransitionDuration: Duration.zero,
                           ),
                         );
                       },
@@ -503,10 +511,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => ShopDetailScreen(
-                              placeId: _places?[1]['placeId'],
-                            ),
+                          PageRouteBuilder(
+                            pageBuilder: (context, animation1, animation2) =>
+                                ShopDetailScreen(
+                                    placeId: _places?[1]['placeId']),
+                            transitionDuration: Duration.zero,
+                            reverseTransitionDuration: Duration.zero,
                           ),
                         );
                       },
@@ -527,10 +537,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => ShopDetailScreen(
-                              placeId: _places?[2]['placeId'],
-                            ),
+                          PageRouteBuilder(
+                            pageBuilder: (context, animation1, animation2) =>
+                                ShopDetailScreen(
+                                    placeId: _places?[2]['placeId']),
+                            transitionDuration: Duration.zero,
+                            reverseTransitionDuration: Duration.zero,
                           ),
                         );
                       },

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -25,9 +26,11 @@ class ShopDetailScreen extends StatefulWidget {
 class _ShopDetailScreenState extends State<ShopDetailScreen> {
   // 로그인
   String? userId;
-
+  NaverMapController? _controller;
   Place? _place;
   Future? loadDataFuture;
+  double? latitude = 37.5110317;
+  double? longitude = 127.0602133;
 
   @override
   void initState() {
@@ -42,10 +45,42 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
     ); // Returns 'john_doe' if it exists, otherwise returns null.
   }
 
+  void _onMapReady(NaverMapController controller) {
+    setState(() {
+      _controller = controller;
+      _updateMarker();
+    });
+  }
+
+  void _updateMarker() {
+    if (_controller != null) {
+      _controller!.clearOverlays();
+      if (latitude != null && longitude != null) {
+        _controller!.addOverlay(NMarker(
+          id: "a",
+          position: NLatLng(latitude!, longitude!),
+          icon:
+              NOverlayImage.fromAssetImage("lib/src/assets/icons/mapMark.png"),
+          size: NMarker.autoSize,
+        ));
+
+        var cameraUpdate = NCameraUpdate.fromCameraPosition(
+          NCameraPosition(
+            target: NLatLng(latitude!, longitude!),
+            zoom: 10,
+          ),
+        );
+
+        cameraUpdate.setAnimation(duration: Duration(seconds: 0));
+
+        _controller!.updateCamera(cameraUpdate);
+      }
+    }
+  }
+
   _checkLoginStatus() async {
     String? userId = await getUserId();
     setState(() {});
-
     final re = await http.put(
       Uri.parse(
           'https://j9a604.p.ssafy.io/fastapi/clicks/$userId/${widget.placeId}'),
@@ -65,8 +100,11 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
       Place place = Place.fromJson(decodedJson['result']['place']);
       setState(() {
         _place = place;
+
+        latitude = double.tryParse(place.latitude!);
+        longitude = double.tryParse(place.longitude!);
       });
-    } else {}
+    }
   }
 
   Future<String?> getEmail() async {
@@ -271,16 +309,13 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                       ),
                       if (_place != null && _place!.description.length > 50)
                         InkWell(
-                          onTap: () {
-                            setState(() {
-                              _isExpanded = !_isExpanded;
-                            });
-                          },
-                            child: Text(
-                                _isExpanded ? "접기" : "더보기",
-                                style: TextStyle(color: Color(0xffFF7E76))
-                            )
-                        ),
+                            onTap: () {
+                              setState(() {
+                                _isExpanded = !_isExpanded;
+                              });
+                            },
+                            child: Text(_isExpanded ? "접기" : "더보기",
+                                style: TextStyle(color: Color(0xffFF7E76)))),
                     ],
                   ),
 
@@ -315,6 +350,39 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                           _place != null ? _place!.phoneNumber : 'Loading...'),
                   _homepageInfo(
                       url: _place != null ? _place!.homepage : 'Loading...'),
+
+                  Padding(padding: const EdgeInsets.only(top: 5)),
+                  Text(
+                    "지도",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                  Padding(padding: const EdgeInsets.only(top: 15)),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(5.0),
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      child: NaverMap(
+                          options: NaverMapViewOptions(
+                            initialCameraPosition: NCameraPosition(
+                              target: NLatLng(37.5110317, 127.0602133),
+                              zoom: 10,
+                            ),
+                            locale: Locale.fromSubtags(languageCode: 'Ko'),
+                            rotationGesturesEnable: false,
+                            scrollGesturesEnable: false,
+                            tiltGesturesEnable: false,
+                            zoomGesturesEnable: true,
+                            stopGesturesEnable: false,
+                          ),
+                          onMapReady: _onMapReady),
+                    ),
+                  ),
+                  Padding(padding: const EdgeInsets.symmetric(vertical: 5)),
+                  Divider(thickness: 0.5, color: Colors.grey[300]),
                 ],
               ),
             ),

@@ -60,7 +60,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
           id: "a",
           position: NLatLng(latitude!, longitude!),
           icon:
-              NOverlayImage.fromAssetImage("lib/src/assets/icons/mapMark.png"),
+          NOverlayImage.fromAssetImage("lib/src/assets/icons/mapMark.png"),
           size: NMarker.autoSize,
         ));
 
@@ -89,7 +89,8 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
 
     final response = await http.get(
       Uri.parse(
-          'https://j9a604.p.ssafy.io/api/place/87dad60a-bfff-47e5-8e21-02cb49b23ba6/${widget.placeId}'),
+          'https://j9a604.p.ssafy.io/api/place/87dad60a-bfff-47e5-8e21-02cb49b23ba6/${widget
+              .placeId}'),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -153,7 +154,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -163,46 +164,11 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                     onTap: () {},
                     child: const LoadingCardFrame11Widget(),
                   ),
-                  const SizedBox(
-                    height: 500,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {},
-                        child: const LoadingCardFrame11Widget(),
-                      ),
-                      GestureDetector(
-                        onTap: () {},
-                        child: const LoadingCardFrame11Widget(),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {},
-                        child: const LoadingCardFrame11Widget(),
-                      ),
-                      GestureDetector(
-                        onTap: () {},
-                        child: const LoadingCardFrame11Widget(),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ],
           ),
         ),
-      ),
-      bottomNavigationBar: const FooterWidget(
-        currentIndex: 0,
       ),
     );
   }
@@ -237,7 +203,10 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                   return Image.network(
                     _place!.images[index],
                     fit: BoxFit.cover,
-                    width: MediaQuery.of(context).size.width,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width,
                   );
                 },
                 options: CarouselOptions(
@@ -270,9 +239,9 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                       ),
                       (userId != null)
                           ? BookmarkButtonWidget(
-                              placeId: widget.placeId,
-                              userId: userId,
-                            )
+                        placeId: widget.placeId,
+                        userId: userId,
+                      )
                           : Container(),
                     ],
                   ),
@@ -299,8 +268,8 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                       Text(
                         _place != null
                             ? (_isExpanded || _place!.description.length <= 50
-                                ? _place!.description
-                                : '${_place!.description.substring(0, 50)}...')
+                            ? _place!.description
+                            : '${_place!.description.substring(0, 50)}...')
                             : 'Loading...',
                         style: TextStyle(
                           fontSize: 16,
@@ -347,7 +316,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                       info: _place != null ? _place!.address : "Loading..."),
                   _phoneInfo(
                       phoneNumber:
-                          _place != null ? _place!.phoneNumber : 'Loading...'),
+                      _place != null ? _place!.phoneNumber : 'Loading...'),
                   _homepageInfo(
                       url: _place != null ? _place!.homepage : 'Loading...'),
 
@@ -364,7 +333,10 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(5.0),
                     child: Container(
-                      height: MediaQuery.of(context).size.height * 0.3,
+                      height: MediaQuery
+                          .of(context)
+                          .size
+                          .height * 0.3,
                       child: NaverMap(
                           options: NaverMapViewOptions(
                             initialCameraPosition: NCameraPosition(
@@ -456,7 +428,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
               ),
               IconButton(
                 icon:
-                    const Icon(Icons.copy, size: 20, color: Color(0xffFF7E76)),
+                const Icon(Icons.copy, size: 20, color: Color(0xffFF7E76)),
                 onPressed: () {
                   Clipboard.setData(ClipboardData(text: info));
                   // 복사가 완료되었음을 알리는 스낵바 메시지
@@ -502,7 +474,9 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              if (url.trim().isNotEmpty)
+              if (url
+                  .trim()
+                  .isNotEmpty)
                 IconButton(
                   icon: const Icon(Icons.launch,
                       size: 20, color: Color(0xffFF7E76)),
@@ -553,7 +527,9 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              if (phoneNumber.trim().isNotEmpty)
+              if (phoneNumber
+                  .trim()
+                  .isNotEmpty)
                 IconButton(
                   icon: const Icon(Icons.call,
                       size: 20, color: Color(0xffFF7E76)),
@@ -655,7 +631,8 @@ class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
       duration: const Duration(
         milliseconds: 180,
       ),
-    )..repeat(reverse: true);
+    )
+      ..repeat(reverse: true);
 
     _colorAnimation = ColorTween(
       begin: const Color(0xffd0d0d0),
@@ -676,13 +653,43 @@ class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
         AnimatedBuilder(
           animation: _colorAnimation,
           builder: (context, child) {
-            return Container(
-              height: MediaQuery.of(context).size.width * 0.44,
-              width: MediaQuery.of(context).size.width * 0.44,
-              decoration: BoxDecoration(
-                color: _colorAnimation.value,
-                borderRadius: BorderRadius.circular(10),
-              ),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height * 0.30,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                  decoration: BoxDecoration(
+                    color: _colorAnimation.value,
+                  ),
+                ),
+                SizedBox(height: 25,),
+                Container(
+                  alignment: Alignment.bottomLeft,
+                  height: 20,
+                  width: MediaQuery.of(context).size.width/2-40,
+                  decoration: BoxDecoration(
+                    color: _colorAnimation.value,
+                    borderRadius: BorderRadius.circular(2.0),
+                  ),
+                  margin: EdgeInsets.only(bottom:140.0/8, left: 20.0),
+                ),
+                Container(
+                  height: 20,
+                  width: MediaQuery.of(context).size.width-40,
+                  decoration: BoxDecoration(
+                    color: _colorAnimation.value,
+                    borderRadius: BorderRadius.circular(2.0),
+                  ),
+                  margin: EdgeInsets.only(bottom:140.0/8, left: 20.0),
+                ),
+              ],
             );
           },
         ),

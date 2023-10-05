@@ -180,15 +180,15 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
                               onPressed: () async {
                                 if (coursePlaces.contains(marker)) {
                                   removePlace(marker, matchingBookmark);
-                                } else if (coursePlaces.length < 5) {
+                                } else if (coursePlaces.length < 4) {
                                   addPlace(marker, matchingBookmark);
-                                } else if (coursePlaces.length >= 5) {
+                                } else if (coursePlaces.length >= 4) {
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
                                         title: Text("오류"),
-                                        content: Text("장소는 최대 5개까지 선택 가능합니다."),
+                                        content: Text("장소는 최대 4개까지 선택 가능합니다."),
                                         actions: [
                                           TextButton(
                                             onPressed: () {

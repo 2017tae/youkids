@@ -15,7 +15,6 @@ import com.capsule.youkids.place.dto.ReviewImageInfoDto;
 import com.capsule.youkids.place.dto.ReviewInfoDto;
 import com.capsule.youkids.place.dto.ReviewUpdateRequestDto;
 import com.capsule.youkids.place.dto.ReviewWriteRequestDto;
-import com.capsule.youkids.place.dto.TopReviewPlacesDto;
 import com.capsule.youkids.place.entity.Bookmark;
 import com.capsule.youkids.place.entity.BookmarkMongo;
 import com.capsule.youkids.place.entity.Place;
@@ -386,32 +385,11 @@ public class PlaceServiceImpl implements PlaceService {
 
     // 리뷰 많은 순으로 10개 뿌리기
     @Override
-    public TopReviewPlacesDto getReviewTopPlace() {
-        // 카테고리 상관없이 10개 가져오기
-        List<PlaceRecommItemDto> mixed = topReviewPlaceRepository.findTen()
-                .stream().map(place -> new PlaceRecommItemDto(place)).collect(Collectors.toList());
-
-        List<PlaceRecommItemDto> themeParks = new ArrayList<>();
-        List<PlaceRecommItemDto> kidsCafe = new ArrayList<>();
-        List<PlaceRecommItemDto> museum = new ArrayList<>();
-
-        List<TopReviewPlace> all = topReviewPlaceRepository.findTotal();
-        // 10개씩 테마파크, 키즈카페, 박물관순으로 저장했음
-        for (int i = 0; i < all.size(); i++) {
-            PlaceRecommItemDto now = new PlaceRecommItemDto(all.get(i));
-            if (i >= 0 && i < 10) {
-                themeParks.add(now);
-            } else if (i < 20) {
-                kidsCafe.add(now);
-            } else {
-                museum.add(now);
-            }
-        }
-        return TopReviewPlacesDto.builder()
-                .mixed(mixed)
-                .themeParks(themeParks)
-                .kidsCafe(kidsCafe)
-                .museum(museum)
+    public PlaceRecommDto getReviewTopPlace() {
+        // 전부 가져오기
+        List<PlaceRecommItemDto> all = topReviewPlaceRepository.findTotal();
+        return PlaceRecommDto.builder()
+                .places(all)
                 .build();
     }
 }

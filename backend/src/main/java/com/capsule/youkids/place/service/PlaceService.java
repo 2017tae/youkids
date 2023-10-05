@@ -7,7 +7,6 @@ import com.capsule.youkids.place.dto.PlaceRecommDto;
 import com.capsule.youkids.place.dto.ReviewDeleteRequestDto;
 import com.capsule.youkids.place.dto.ReviewUpdateRequestDto;
 import com.capsule.youkids.place.dto.ReviewWriteRequestDto;
-import com.capsule.youkids.place.dto.TopReviewPlacesDto;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,5 +35,5 @@ public interface PlaceService {
     public PlaceRecommDto recommPlace();
 
     // 리뷰 많은 순으로 장소 뿌리기
-    public TopReviewPlacesDto getReviewTopPlace();
+    public PlaceRecommDto getReviewTopPlace();
 }

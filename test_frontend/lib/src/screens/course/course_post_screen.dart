@@ -39,7 +39,6 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
         'order': order,
       };
     }).toList();
-    print(placesData);
   }
 
   @override
@@ -49,8 +48,7 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
   }
 
   Future<void> _checkLoginStatus() async {
-    // userId = await getUserId();
-    userId = "f17deece-a278-4fc3-84b7-215294a8498e";
+    userId = await getUserId();
 
     setState(() {
       _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단

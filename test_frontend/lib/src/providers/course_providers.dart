@@ -8,7 +8,7 @@ class CourseProviders {
 
     final response = await http.get(uri);
 
-    if (response.statusCode == 200) {
+    if (jsonDecode(utf8.decode(response.bodyBytes))['code'] == 1000) {
       courses = jsonDecode(utf8.decode(response.bodyBytes))['result']
           .map<Course_detail_model>((result) {
         return Course_detail_model.fromMap(result);

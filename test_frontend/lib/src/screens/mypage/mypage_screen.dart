@@ -11,6 +11,7 @@ import 'package:youkids/src/models/mypage_models/partner_model.dart';
 import 'package:youkids/src/models/mypage_models/user_model.dart';
 import 'package:youkids/src/screens/login/login_screen.dart';
 import 'package:youkids/src/screens/mypage/myinfo_update_screen.dart';
+import 'package:youkids/src/screens/mypage/settings_screen.dart';
 import 'package:youkids/src/widgets/mypage_widgets/mychildren_widget.dart';
 import 'package:youkids/src/widgets/mypage_widgets/mygroup_widget.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
@@ -26,8 +27,7 @@ class MyPageScreen extends StatefulWidget {
 class _MyPageScreenState extends State<MyPageScreen> {
   // 모든 정보를 다 가지고 오고 false로 바꾸기
   bool isLoading = true;
-  // String uri = 'http://10.0.2.2:8080';
-  String uri = 'https://j9a604.p.ssafy.io/api';
+  String uri = dotenv.get("api_key");
   String? userId;
 
   MyinfoModel myInfo =
@@ -214,7 +214,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(10),
             child: Column(
               children: [
                 Padding(
@@ -228,6 +228,12 @@ class _MyPageScreenState extends State<MyPageScreen> {
                             onTap: () {
                               // settings 페이지로
                               print('settings');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const SettingsScreen(),
+                                ),
+                              );
                             },
                             child: const Icon(
                               Icons.settings,

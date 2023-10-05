@@ -31,8 +31,7 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
   String errMsg = '';
   PartnerModel? requestPartner;
 
-  // String uri = 'http://10.0.2.2:8080';
-  String uri = 'https://j9a604.p.ssafy.io/api';
+  String uri = dotenv.get("api_key");
 
   Future<void> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -282,73 +281,66 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                             height: 5,
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          updateMyinfo().then((result) {
-                                            // 이전 dialog 닫고
-                                            Navigator.of(context).pop();
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        updateMyinfo().then((result) {
+                                          // 이전 dialog 닫고
+                                          Navigator.of(context).pop();
 
-                                            if (!result) {
-                                              showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return FailDialog(
-                                                      text:
-                                                          "정보 수정에 실패했습니다. $errMsg");
-                                                },
-                                              );
-                                            } else {
-                                              showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return const SuccessDialog(
-                                                      text: "정보 수정에 성공했습니다.");
-                                                },
-                                              );
-                                            }
-                                          });
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                const Color(0XFFF6766E),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(5)),
-                                            padding: const EdgeInsets.all(2)),
-                                        child: const Text(
-                                          "수정하기",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
+                                          if (!result) {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return FailDialog(
+                                                    text:
+                                                        "정보 수정에 실패했습니다. $errMsg");
+                                              },
+                                            );
+                                          } else {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return const SuccessDialog(
+                                                    text: "정보 수정에 성공했습니다.");
+                                              },
+                                            );
+                                          }
+                                        });
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                          minimumSize: const Size(90, 40),
+                                          backgroundColor:
+                                              const Color(0XFFF6766E),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5)),
+                                          padding: const EdgeInsets.all(2)),
+                                      child: const Text(
+                                        "수정하기",
+                                        style: TextStyle(color: Colors.white),
                                       ),
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    GestureDetector(
+                                  ),
+                                  Expanded(
+                                    child: GestureDetector(
                                       onTap: () {
                                         Navigator.of(context).pop();
                                       },
-                                      child: const Text("닫기"),
-                                    )
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
+                                      child: const Text(
+                                        "닫기",
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              )),
                         ],
                       );
                     },
@@ -369,7 +361,7 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
           ]),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(10),
           child: Column(
             children: [
               Padding(
@@ -419,6 +411,7 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                               onChanged: (value) {
                                 nickname = value;
                               },
+                              maxLength: 20,
                               decoration: InputDecoration(
                                 labelText: nickname,
                                 focusedBorder: const OutlineInputBorder(
@@ -517,85 +510,74 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                                                       .symmetric(
                                                       horizontal: 20,
                                                       vertical: 10),
-                                                  child: Column(
+                                                  child: Row(
                                                     children: [
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                              child:
-                                                                  ElevatedButton(
-                                                            onPressed: () {
-                                                              sendPartnerRequest()
-                                                                  .then(
-                                                                      (result) {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                                if (result) {
-                                                                  showDialog(
-                                                                      context:
-                                                                          context,
-                                                                      builder:
-                                                                          (BuildContext
-                                                                              context) {
-                                                                        return const FailDialog(
-                                                                            text:
-                                                                                "요청을 보냈습니다");
-                                                                      });
-                                                                } else {
-                                                                  showDialog(
-                                                                      context:
-                                                                          context,
-                                                                      builder:
-                                                                          (BuildContext
-                                                                              context) {
-                                                                        return const FailDialog(
-                                                                            text:
-                                                                                "실패했습니다");
-                                                                      });
-                                                                }
-                                                              });
-                                                            },
-                                                            style: ElevatedButton.styleFrom(
-                                                                backgroundColor:
-                                                                    const Color(
-                                                                        0XFFF6766E),
-                                                                shape: RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
+                                                      Expanded(
+                                                          child: ElevatedButton(
+                                                        onPressed: () {
+                                                          sendPartnerRequest()
+                                                              .then((result) {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            if (result) {
+                                                              showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (BuildContext
+                                                                          context) {
+                                                                    return const FailDialog(
+                                                                        text:
+                                                                            "요청을 보냈습니다");
+                                                                  });
+                                                            } else {
+                                                              showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (BuildContext
+                                                                          context) {
+                                                                    return const FailDialog(
+                                                                        text:
+                                                                            "실패했습니다");
+                                                                  });
+                                                            }
+                                                          });
+                                                        },
+                                                        style: ElevatedButton.styleFrom(
+                                                            backgroundColor:
+                                                                const Color(
+                                                                    0XFFF6766E),
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
                                                                             5)),
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(
-                                                                        2)),
-                                                            child: const Text(
-                                                              "요청 보내기",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                          )),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(2)),
+                                                        child: const Text(
+                                                          "요청 보내기",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white),
+                                                        ),
+                                                      )),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                          child: const Text(
+                                                            "닫기",
+                                                            textAlign: TextAlign
                                                                 .center,
-                                                        children: [
-                                                          GestureDetector(
-                                                            onTap: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                            child: const Text(
-                                                                "닫기"),
-                                                          )
-                                                        ],
-                                                      ),
+                                                          ),
+                                                        ),
+                                                      )
                                                     ],
                                                   ),
                                                 )
@@ -648,7 +630,7 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                                       widget.partnerInfo!.partnerEmail),
                                 ),
                               ),
-                              const SizedBox(width: 10), // TextField와 버튼 사이의 간격
+                              // TextField와 버튼 사이의 간격
                               // ElevatedButton(
                               //   onPressed: () {
                               //     partnerDelete().then((result) {
@@ -711,6 +693,7 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                             ),
                             TextField(
                               maxLines: 5,
+                              maxLength: 200,
                               onChanged: (value) {
                                 description = value;
                               },

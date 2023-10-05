@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:youkids/src/screens/mypage/mypage_screen.dart';
 
-String uri = 'https://j9a604.p.ssafy.io/api';
+String uri = dotenv.get("api_key");
 
 Future<bool> registPartner(String userId, String partnerId) async {
   // checkpartner 하고나서 알람을 보내는 데 성공할 경우 data로 넘어옴

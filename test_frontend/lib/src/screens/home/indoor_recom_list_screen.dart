@@ -125,7 +125,7 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
 
           return Padding(
             padding:
-                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
             child: GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -245,7 +245,7 @@ class _LoadingGridItemState extends State<LoadingGridItem>
               height: 500,
               decoration: BoxDecoration(
                 color: _colorAnimation.value,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(5),
               ),
             );
           },

@@ -2,12 +2,14 @@ import pymysql
 import pandas as pd
 import numpy as np
 import boto3
+from datetime import datetime
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.preprocessing import MinMaxScaler
 from scipy.sparse import hstack
 from sklearn.metrics.pairwise import cosine_similarity
 from services.festival_recommendation_service import recomm_festival
-from services.place_recommendation_service import cal_preds_place
+from services.place_recommendation_service import cal_preds_place, get_recommend_place
+from models.region_data import RegionData
 from fastapi import FastAPI, HTTPException
 from decouple import config
 
@@ -16,7 +18,9 @@ app = FastAPI()
 # 모듈 수준의 변수를 사용하여 상태를 유지
 category_cos_sim = None
 festival_dto_df = None
-place_df = None
+
+# 각 인덱스는 각각의 지역에 대한 place 데이터, click 데이터, click 데이터 갱신 날짜, dynamoDB 테이블을 포함
+region_data = [RegionData() for _ in range(6)]
 
 # AWS 자격 증명 설정 (Access Key ID와 Secret Access Key)
 aws_access_key_id = config('AWS_ACCESS_KEY')
@@ -30,7 +34,8 @@ dynamodb = boto3.resource('dynamodb',
                         region_name=aws_region)
 
 # DynamoDB 테이블 연결
-table = dynamodb.Table('ClickCounts')
+for i in range(1, 6):
+    region_data[i].table = f'ClickCounts{i}'
 
 # MySQL 환경변수 가져오기
 MYSQL_HOST = config('MYSQL_HOST')
@@ -99,13 +104,13 @@ def startup_event():
     cal_similarity()
     
     # Place 데이터 조회
-    global place_df
-    sql = "SELECT p.place_id, p.name, p.address, p.category, (SELECT pi.url FROM place_image pi WHERE pi.place_id = p.place_id LIMIT 1) AS image_url\
-        FROM place p;"
-    cursor.execute(sql)
-    result = cursor.fetchall()
-    place_df = pd.DataFrame(result)
-
+    global region_data
+    for i in range(1, 6):
+        sql = f"SELECT p.place_id, p.name, p.address, p.category, (SELECT pi.url FROM place_image pi WHERE pi.place_id = p.place_id LIMIT 1) AS image_url\
+            FROM place p where visited_review_num = {i};"
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        region_data[i].place_df = result
 # festival 추천
 @app.get("/festival/{festival_id}")
 def recommend_festival(festival_id: int):
@@ -115,23 +120,33 @@ def recommend_festival(festival_id: int):
     return {"recommended_festival": recommended_festival}
 
 # place 추천
-@app.get("/place/{user_id}")
-def recommend_place(user_id: str):
-    global table, place_df
+@app.get("/place/{region_code}/{user_id}/{count}")
+def recommend_place(region_code: int, user_id: str, count: int):
+    global region_data, dynamodb
+    data = region_data[region_code]
+    table = dynamodb.Table(data.table)
     
-    # click 데이터 조회
-    response = table.scan()
-    items = response['Items']
-    click_df = pd.DataFrame(items)
+    if (data.click_df == None) or (data.svd_preds_df == None) or (data.update_date != datetime.today()):
+        # click_df or svd_preds_df 값이 없거나 갱신한 날짜가 지났으면 갱신 작업
+        response = table.scan()
+        items = response['Items']
+        data.click_df = items
+        data.svd_preds_df = cal_preds_place(pd.DataFrame(data.place_df), pd.DataFrame(data.click_df)).to_dict(orient='records')
+        data.update_date = datetime.today()
     
-    recommended_place = cal_preds_place(place_df, click_df, user_id)
-    # cal_preds_place(place_df, click_df, user_id)
+    click = pd.DataFrame(data.click_df)
+    place = pd.DataFrame(data.place_df)
+    
+    df_svd_preds = pd.DataFrame(data.svd_preds_df, index=click['user_id'].drop_duplicates(), columns=place['place_id'])
+    
+    recommended_place = get_recommend_place(df_svd_preds=df_svd_preds, click=click, place=place, user_id=user_id, count=count)
     return {"recommended_place": recommended_place}
 
 # 클릭 수 Update 
-@app.put("/clicks/{user_id}/{place_id}")
-def update_click_count(user_id: str, place_id: int):
-    global table
+@app.put("/clicks/{region_code}/{user_id}/{place_id}")
+def update_click_count(region_code: int, user_id: str, place_id: int):
+    global region_data, dynamodb
+    table = dynamodb.Table(region_data[region_code].table)
     try:
         # 기존 아이템을 조회
         existing_item = table.get_item(Key={'user_id': user_id, 'place_id': place_id}).get('Item')
@@ -142,7 +157,7 @@ def update_click_count(user_id: str, place_id: int):
             updated_click_count = existing_item['click_count'] + 1
             # click_count가 1000을 넘지 않는 경우에만 업데이트
             condition_expression = 'click_count < :max_count'
-            expression_attribute_values = {':val': updated_click_count, ':max_count': 1000}
+            expression_attribute_values = {':val': updated_click_count, ':max_count': 100}
             table.update_item(
                 Key={'user_id': user_id, 'place_id': place_id},
                 UpdateExpression='SET click_count = :val',

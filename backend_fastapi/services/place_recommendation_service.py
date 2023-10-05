@@ -11,7 +11,7 @@ def dataframe_to_object_list(df):
         object_list.append(place_item)
     return object_list
 
-def get_recommend_place(df_svd_preds: pd.DataFrame, user_id: str, place, click, num=100):
+def get_recommend_place(df_svd_preds: pd.DataFrame, user_id: str, place, click, count, num=40):
 
     # 최종적으로 만든 pred_df에서 사용자 index에 따라 장소 데이터 정렬 -> 장소 별점이 높은 순으로 정렬됨
     sorted_user_predictions = df_svd_preds.loc[user_id].sort_values(ascending=False)
@@ -30,10 +30,21 @@ def get_recommend_place(df_svd_preds: pd.DataFrame, user_id: str, place, click, 
     recommendations = recommendations.rename(columns={user_id: 'Predictions'}).sort_values('Predictions', ascending=False)
     # 'Predictions' 컬럼 삭제
     recommendations = recommendations.drop('Predictions', axis=1)
+    
+    # 슬라이싱을 위한 시작과 끝 인덱스
+    start_idx = count * num
+    end_idx = (count + 1) * num
+    
+    # 시작 인덱스가 범위를 벗어난 경우 빈 리스트 리턴
+    if start_idx >= len(recommendations):
+        return []
+    
+    if end_idx > len(recommendations):
+        end_idx = len(recommendations)
 
-    return dataframe_to_object_list(recommendations[:num])
+    return dataframe_to_object_list(recommendations[start_idx:end_idx])
 
-def cal_preds_place(place_df, click_df, user_id):
+def cal_preds_place(place_df, click_df):
     # place 데이터와 click 데이터를 조인함
     user_place_click = pd.merge(place_df, click_df, on='place_id', how='left')
     # pivot_table 생성 (sparse matrix)
@@ -62,5 +73,5 @@ def cal_preds_place(place_df, click_df, user_id):
     svd_user_predicted_clicks = np.dot(np.dot(U, sigma), Vt) + user_click_mean.reshape(-1, 1)
     df_svd_preds = pd.DataFrame(svd_user_predicted_clicks, columns = click_pivot.columns, index = click_pivot.index[1:])
     
-    return get_recommend_place(df_svd_preds, user_id, place_df, click_df)
+    return df_svd_preds
     

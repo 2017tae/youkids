@@ -36,4 +36,6 @@ public interface PlaceService {
 
     // 리뷰 많은 순으로 장소 뿌리기
     public PlaceRecommDto getReviewTopPlace();
+
+    PlaceRecommDto getSearchPlace(String request);
 }

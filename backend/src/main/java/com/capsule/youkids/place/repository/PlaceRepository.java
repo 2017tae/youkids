@@ -17,4 +17,6 @@ public interface PlaceRepository extends JpaRepository<Place, Integer> {
     @Query("select new com.capsule.youkids.place.dto.PlaceRecommItemDto(p)"
             + "from Place p where p.placeId in :placeIds")
     List<PlaceRecommItemDto> getRecommPlaceInfos(@Param("placeIds") List<Integer> placeIds);
+
+    List<Place> findAllByNameContainingOrderByNaverReviewNumDesc(String name);
 }

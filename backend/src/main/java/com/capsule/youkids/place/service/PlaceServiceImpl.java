@@ -392,4 +392,9 @@ public class PlaceServiceImpl implements PlaceService {
                 .places(all)
                 .build();
     }
+
+    @Override
+    public PlaceRecommDto getSearchPlace(String request) {
+        return null;
+    }
 }

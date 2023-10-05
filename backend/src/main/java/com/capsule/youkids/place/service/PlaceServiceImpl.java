@@ -392,4 +392,16 @@ public class PlaceServiceImpl implements PlaceService {
                 .places(all)
                 .build();
     }
+
+    @Override
+    public PlaceRecommDto getSearchPlace(String request) {
+
+        List<PlaceRecommItemDto> response = placeRepository.findTop100ByNameContainingOrderByNaverReviewNumDesc(request);
+
+        Collections.shuffle(response);
+
+        return PlaceRecommDto.builder()
+                .places(response)
+                .build();
+    }
 }

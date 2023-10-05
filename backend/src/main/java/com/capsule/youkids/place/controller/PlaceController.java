@@ -111,4 +111,9 @@ public class PlaceController {
     public BaseResponse<?> recommTopReviewPlaces() {
         return BaseResponse.success(Code.SUCCESS, placeService.getReviewTopPlace());
     }
+
+    @GetMapping("/search/{searchPlace}")
+    public BaseResponse<?> searchPlaces(@PathVariable String searchPlace) {
+        return BaseResponse.success(Code.SUCCESS, placeService.getSearchPlace(searchPlace));
+    }
 }

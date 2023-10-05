@@ -70,7 +70,6 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
 
   Widget _buildLoadingMainContent() {
     return Scaffold(
-      drawer: const Drawer(),
       appBar: AppBar(
         title: const Text(
           'YouKids',
@@ -84,17 +83,17 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
         iconTheme: const IconThemeData(
           color: Colors.black,
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
-                height: 24),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {},
+        //     icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
+        //         height: 24),
+        //   ),
+        // ],
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

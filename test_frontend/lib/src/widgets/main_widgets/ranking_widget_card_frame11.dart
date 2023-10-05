@@ -98,7 +98,6 @@ class RankingWidgetCardFrame11 extends StatelessWidget {
           top: 0,
           right: 0,
           child: Container(
-            padding: const EdgeInsets.all(10),
             child: (userId != null)
                 ? BookmarkButtonWidget(
                     placeId: placeId,

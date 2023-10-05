@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:youkids/src/screens/shop/create_shop_review_screen.dart';
 import 'package:youkids/src/screens/shop/festival_info_page.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
@@ -80,12 +81,6 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
     }
   }
 
-  Future<String?> getEmail() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(
-        'email'); // Returns 'john_doe' if it exists, otherwise returns null.
-  }
-
   String formatText(String? text) {
     const int maxLength = 14;
 
@@ -119,7 +114,6 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
 
   Widget _buildLoadingMainContent() {
     return Scaffold(
-      drawer: const Drawer(),
       appBar: AppBar(
         title: const Text(
           'YouKids',
@@ -133,13 +127,13 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
         iconTheme: const IconThemeData(
           color: Colors.black,
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
-                height: 24),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {},
+        //     icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
+        //         height: 24),
+        //   ),
+        // ],
       ),
       
       
@@ -306,7 +300,7 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
                       tabs: const [
                         Tab(text: "공연정보"),
                         Tab(text: "판매정보"),
-                        Tab(text: "관람후기"),
+                        // Tab(text: "관람후기"),
                       ],
                     ),
                   ),
@@ -318,8 +312,19 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
             body: TabBarView(
             children: [
             _buildPerformanceInfo(_festival),
-            _buildSalesInfo(),
-            _buildReviewInfo(),
+              _festival?.reserveDtoList.isEmpty ?? true
+                  ? Center(child: Text("없다"))
+                  : ListView.builder(
+                itemCount: _festival?.reserveDtoList.length ?? 0,
+                itemBuilder: (context, index) {
+                  final reserveData = _festival?.reserveDtoList[index];
+                  return _bookingInfoItem(
+                    reserveData!.reserveSite,
+                    reserveData!.reserveUrl,
+                  );
+                },
+              )
+            // _buildReviewInfo(),
         ],
       ),
       ),
@@ -383,6 +388,7 @@ Widget _buildPerformanceInfo(Festival? _festival) {
 
 
 
+
 // 각 정보 항목을 나타내는 위젯
 Widget _infoItem(String title, String info, IconData iconData) {
   return Row(
@@ -415,38 +421,74 @@ Widget _infoItem(String title, String info, IconData iconData) {
   );
 }
 
-Widget _buildSalesInfo() {
-  // 판매정보에 대한 위젯 반환
-  return SingleChildScrollView(
-    child: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            "판매정보",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+Widget _bookingInfoItem(String title, String url) {
+  return Card(
+    elevation: 3,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+    child: InkWell(
+      onTap: () async {
+        if (await canLaunch(url)) {
+          await launch(url);
+        } else {
+          print("Could not launch $url");
+        }
+      },
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.white, Colors.white70],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          SizedBox(height: 10),  // 간격을 주기 위한 위젯
-          Text(
-            "판매정보에 대한 상세 내용이 들어가는 부분입니다.",  // 여기에 판매정보 내용을 적으면 됩니다.
-            style: TextStyle(fontSize: 16),
-          ),
-          SizedBox(height: 20),  // 간격을 주기 위한 위젯
-          InkWell(
-            onTap: () {
-              // 여기에 URL을 열어주는 코드를 추가합니다. 예를 들어, url_launcher 패키지를 사용할 수 있습니다.
-            },
-            child: Text(
-              "판매정보 관련 URL",  // 실제 URL이나 "자세히 보기"와 같은 텍스트를 적으면 됩니다.
-              style: TextStyle(fontSize: 16, color: Colors.blue),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xffFF7E76),  // 인터파크의 빨간색 톤을 사용합니다.
+              ),
             ),
-          ),
-        ],
+            Icon(
+              Icons.arrow_forward_ios,
+              color: Color(0xffFF7E76),  // 인터파크의 빨간색 톤을 사용합니다.
+              size: 24,
+            ),
+          ],
+        ),
       ),
     ),
   );
 }
+
+
+
+
+// Widget _buildSalesInfo(List<Map<String, dynamic>> reserveDtoList) {
+//   return SingleChildScrollView(
+//     child: Padding(
+//       padding: const EdgeInsets.all(16.0),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: <Widget>[
+//           Text(
+//             "판매정보",
+//             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+//           ),
+//           SizedBox(height: 10),  // 간격을 주기 위한 위젯
+//           BookingInfoList(reserveDtoList: reserveDtoList),
+//         ],
+//       ),
+//     ),
+//   );
+// }
 
 Widget _buildReviewInfo() {
   // 관람후기에 대한 위젯 반환
@@ -456,6 +498,7 @@ Widget _buildReviewInfo() {
 }
 
 class Festival {
+  final List<ReserveDto> reserveDtoList;
   final String name;
   final String startDate;
   final String endDate;
@@ -468,6 +511,7 @@ class Festival {
   final List<String> images;
 
   Festival({
+    required this.reserveDtoList,
     required this.name,
     required this.startDate,
     required this.endDate,
@@ -482,7 +526,9 @@ class Festival {
 
   factory Festival.fromJson(Map<String, dynamic> json) {
     return Festival(
-      name: json['name'],
+      reserveDtoList: (json['reserveDtoList'] as List)
+          .map((data) => ReserveDto.fromJson(data))
+          .toList(),      name: json['name'],
       startDate: json['startDate'],
       endDate: json['endDate'],
       category: json['category'],
@@ -511,6 +557,20 @@ Padding loadingSetHomeMenu(String text) {
     ),
   );
 }
+}
+
+class ReserveDto {
+  final String reserveUrl;
+  final String reserveSite;
+
+  ReserveDto({required this.reserveUrl, required this.reserveSite});
+
+  factory ReserveDto.fromJson(Map<String, dynamic> json) {
+    return ReserveDto(
+      reserveUrl: json['reserveUrl'],
+      reserveSite: json['reserveSite'],
+    );
+  }
 }
 
 class LoadingCardFrame11Widget extends StatefulWidget {

@@ -399,7 +399,19 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                             child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            const Text("닉네임"),
+                            const Row(
+                              children: [
+                                Text(
+                                  "닉네임",
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                SizedBox(width: 5),
+                                Icon(
+                                  Icons.create,
+                                  color: Colors.black26,
+                                )
+                              ],
+                            ),
                             const SizedBox(
                               height: 5,
                             ),
@@ -440,7 +452,7 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const Text("배우자"),
+                          const Text("배우자", style: TextStyle(fontSize: 18)),
                           const SizedBox(
                             height: 5,
                           ),
@@ -613,7 +625,10 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const Text("배우자"),
+                          const Text(
+                            "배우자",
+                            style: TextStyle(fontSize: 18),
+                          ),
                           const SizedBox(
                             height: 5,
                           ),
@@ -634,38 +649,38 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                                 ),
                               ),
                               const SizedBox(width: 10), // TextField와 버튼 사이의 간격
-                              ElevatedButton(
-                                onPressed: () {
-                                  partnerDelete().then((result) {
-                                    if (!result) {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return FailDialog(
-                                              text: "배우자 삭제에 실패했습니다. $errMsg");
-                                        },
-                                      );
-                                    } else {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return const SuccessDialog(
-                                              text: "삭제 성공");
-                                        },
-                                      );
-                                    }
-                                  });
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0XFFF6766E),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(5)),
-                                    padding: const EdgeInsets.all(5)),
-                                child: const Text(
-                                  "삭제하기",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
+                              // ElevatedButton(
+                              //   onPressed: () {
+                              //     partnerDelete().then((result) {
+                              //       if (!result) {
+                              //         showDialog(
+                              //           context: context,
+                              //           builder: (BuildContext context) {
+                              //             return FailDialog(
+                              //                 text: "배우자 삭제에 실패했습니다. $errMsg");
+                              //           },
+                              //         );
+                              //       } else {
+                              //         showDialog(
+                              //           context: context,
+                              //           builder: (BuildContext context) {
+                              //             return const SuccessDialog(
+                              //                 text: "삭제 성공");
+                              //           },
+                              //         );
+                              //       }
+                              //     });
+                              //   },
+                              //   style: ElevatedButton.styleFrom(
+                              //       backgroundColor: const Color(0XFFF6766E),
+                              //       shape: RoundedRectangleBorder(
+                              //           borderRadius: BorderRadius.circular(5)),
+                              //       padding: const EdgeInsets.all(5)),
+                              //   child: const Text(
+                              //     "삭제하기",
+                              //     style: TextStyle(color: Colors.white),
+                              //   ),
+                              // ),
                             ],
                           ),
                         ],
@@ -681,7 +696,16 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                             child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            const Text("소개"),
+                            const Row(
+                              children: [
+                                Text("소개", style: TextStyle(fontSize: 18)),
+                                SizedBox(width: 5),
+                                Icon(
+                                  Icons.create,
+                                  color: Colors.black26,
+                                )
+                              ],
+                            ),
                             const SizedBox(
                               height: 5,
                             ),
@@ -726,7 +750,19 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                         child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const Text("차를 가지고 있나요?"),
+                        const Row(
+                          children: [
+                            Text(
+                              "차를 가지고 있나요?",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            SizedBox(width: 5),
+                            Icon(
+                              Icons.create,
+                              color: Colors.black26,
+                            )
+                          ],
+                        ),
                         const SizedBox(
                           height: 5,
                         ),
@@ -803,7 +839,7 @@ class SuccessDialog extends StatelessWidget {
                   );
                 },
                 child: const Text(
-                  "확인",
+                  "닫기",
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -839,7 +875,7 @@ class FailDialog extends StatelessWidget {
                   Navigator.of(context).pop();
                 },
                 child: const Text(
-                  "확인",
+                  "닫기",
                   textAlign: TextAlign.center,
                 ),
               ),

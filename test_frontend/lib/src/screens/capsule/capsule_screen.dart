@@ -9,7 +9,6 @@ class CapsuleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const Drawer(),
       appBar: AppBar(
         scrolledUnderElevation: 0,
         title: const Text(
@@ -24,13 +23,6 @@ class CapsuleScreen extends StatelessWidget {
         iconTheme: const IconThemeData(
           color: Colors.black,
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
-                height: 24),
-          ),
-        ],
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 10),

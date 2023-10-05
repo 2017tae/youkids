@@ -92,7 +92,6 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
 
   Widget _buildLoadingMainContent() {
     return Scaffold(
-      drawer: const Drawer(),
       appBar: AppBar(
         title: const Text(
           'YouKids',
@@ -106,13 +105,13 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
         iconTheme: const IconThemeData(
           color: Colors.black,
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
-                height: 24),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {},
+        //     icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
+        //         height: 24),
+        //   ),
+        // ],
       ),
       body: SingleChildScrollView(
         child: Padding(

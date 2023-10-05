@@ -35,7 +35,6 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
     loadDataFuture = _getData();
     loadLoginDataFuture = _checkLoginStatus();
 
-    // _loadMoreData();
   }
 
   Future<String?> getUserId() async {
@@ -127,82 +126,116 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
 
   Widget _buildLoadingMainContent() {
     return Scaffold(
-      drawer: const Drawer(),
-      appBar: AppBar(
-        title: const Text(
-          'YouKids',
-          style: TextStyle(
-            fontSize: 22,
-            color: Colors.black,
-            fontWeight: FontWeight.w500,
+        appBar: AppBar(
+          title: const Text(
+            '여행 추천',
+            style: TextStyle(fontSize: 20.0),
           ),
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          centerTitle: true,
         ),
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(
-          color: Colors.black,
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
-                height: 24),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
+        body: SingleChildScrollView(
+          child: Column(children: [
+            const SizedBox(
+              height: 15.0,
+            ),
+            Container(
+              padding: const EdgeInsets.only(left: 6.0, right: 6.0),
+              height: 40.0,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: categories.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 1.0, horizontal: 8.0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: selectedCategory == categories[index]
+                            ? const Color(0xffFF7E76)
+                            : Colors.white,
+                        disabledForegroundColor: Colors.white.withOpacity(0.38), disabledBackgroundColor: Colors.white.withOpacity(0.12),
+                        elevation: 0,
+                        // 그림자를 없애기 위해
+                        side: selectedCategory == categories[index]
+                            ? const BorderSide(
+                                color: Colors.transparent,
+                                width: 1.0) // 선택되었을 때 테두리 없음
+                            : BorderSide(
+                                color: Colors.grey.withOpacity(0.4),
+                                width: 1.0),
+                        // 선택되지 않았을 때 회색 테두리
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 0.0, horizontal: 16.0), // 버튼의 높이를 더 줄임
+                      ),
+                      child: Text(
+                        categories[index],
+                        style: const TextStyle(fontSize: 14, color: Colors.white),
+                      ),
+                      onPressed: () {},
+                    ),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0, right:10.0, top:30.0),
+              child: Column(
                 children: [
-                  GestureDetector(
-                    onTap: () {},
-                    child: const LoadingCardFrame11Widget(),
-                  ),
-                  const SizedBox(
-                    height: 500,
-                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(
                         onTap: () {},
-                        child: const LoadingCardFrame11Widget(),
+                        child: const LoadingGridItem(),
                       ),
                       GestureDetector(
                         onTap: () {},
-                        child: const LoadingCardFrame11Widget(),
+                        child: const LoadingGridItem(),
                       ),
                     ],
                   ),
                   const SizedBox(
-                    height: 10,
+                    height: 40.0,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(
                         onTap: () {},
-                        child: const LoadingCardFrame11Widget(),
+                        child: const LoadingGridItem(),
                       ),
                       GestureDetector(
                         onTap: () {},
-                        child: const LoadingCardFrame11Widget(),
+                        child: const LoadingGridItem(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 40.0,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () {},
+                        child: const LoadingGridItem(),
+                      ),
+                      GestureDetector(
+                        onTap: () {},
+                        child: const LoadingGridItem(),
                       ),
                     ],
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: const FooterWidget(
-        currentIndex: 0,
-      ),
-    );
+            ),
+          ]),
+        ));
   }
 
   Widget _buildMainContent() {
@@ -222,7 +255,8 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
             child: SizedBox(height: 15.0),
           ),
           SliverToBoxAdapter(
-            child: SizedBox(
+            child: Container(
+              padding: const EdgeInsets.only(left: 6.0, right: 6.0,),
               height: 40.0,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
@@ -236,20 +270,21 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                         backgroundColor: selectedCategory == categories[index]
                             ? const Color(0xffFF7E76)
                             : Colors.white,
-                        disabledForegroundColor: Colors.white.withOpacity(0.38),
-                        disabledBackgroundColor: Colors.white.withOpacity(0.12),
-                        elevation: 0, // 그림자를 없애기 위해
+                        onSurface: Colors.white,
+                        elevation: 0,
+                        // 그림자를 없애기 위해
                         side: selectedCategory == categories[index]
-                            ? const BorderSide(
+                            ? BorderSide(
                                 color: Colors.transparent,
                                 width: 1.0) // 선택되었을 때 테두리 없음
                             : BorderSide(
                                 color: Colors.grey.withOpacity(0.4),
-                                width: 1.0), // 선택되지 않았을 때 회색 테두리
+                                width: 1.0),
+                        // 선택되지 않았을 때 회색 테두리
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                             vertical: 0.0, horizontal: 16.0), // 버튼의 높이를 더 줄임
                       ),
                       child: Text(
@@ -301,8 +336,8 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                       name: filteredPlaces[index]['name'],
                       address:
                           getFirstTwoWords(filteredPlaces[index]['address']),
-                      addressStyle:
-                          const TextStyle(color: Colors.grey), // 여기에 추가
+                      addressStyle: TextStyle(color: Colors.grey),
+                      // 여기에 추가
                       category: filteredPlaces[index]['category'],
                       imageUrl: filteredPlaces[index]['imageUrl'],
                       userId: userId,
@@ -369,7 +404,7 @@ class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(
-        milliseconds: 180,
+        milliseconds: 90,
       ),
     )..repeat(reverse: true);
 
@@ -393,8 +428,8 @@ class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
           animation: _colorAnimation,
           builder: (context, child) {
             return Container(
-              height: MediaQuery.of(context).size.width * 0.44,
-              width: MediaQuery.of(context).size.width * 0.44,
+              height: 40,
+              width: (MediaQuery.of(context).size.width - 30) * 0.5,
               decoration: BoxDecoration(
                 color: _colorAnimation.value,
                 borderRadius: BorderRadius.circular(10),
@@ -461,6 +496,62 @@ class GridItem extends StatelessWidget {
         Text(
           address,
           style: const TextStyle(color: Colors.grey), // 여기에 추가
+        ),
+      ],
+    );
+  }
+}
+
+class LoadingGridItem extends StatefulWidget {
+  const LoadingGridItem({super.key});
+
+  @override
+  State<LoadingGridItem> createState() => _LoadingGridItemState();
+}
+
+class _LoadingGridItemState extends State<LoadingGridItem>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Color?> _colorAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(
+        milliseconds: 90,
+      ),
+    )..repeat(reverse: true);
+
+    _colorAnimation = ColorTween(
+      begin: const Color(0xffd0d0d0),
+      end: const Color(0xffababab),
+    ).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        AnimatedBuilder(
+          animation: _colorAnimation,
+          builder: (context, child) {
+            return Container(
+              height:(MediaQuery.of(context).size.width - 30) * 0.6,
+              width: (MediaQuery.of(context).size.width - 30) * 0.5,
+              decoration: BoxDecoration(
+                color: _colorAnimation.value,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            );
+          },
         ),
       ],
     );

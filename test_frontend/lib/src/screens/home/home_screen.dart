@@ -187,7 +187,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildLoadingMainContent() {
     return Scaffold(
-      drawer: const Drawer(),
       appBar: AppBar(
         title: const Text(
           'YouKids',
@@ -202,11 +201,11 @@ class _HomeScreenState extends State<HomeScreen> {
           color: Colors.black,
         ),
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
-                height: 24),
-          ),
+          // IconButton(
+          //   onPressed: () {},
+          //   icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
+          //       height: 24),
+          // ),
           IconButton(
             onPressed: () {
               Navigator.push(
@@ -323,7 +322,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildMainContent() {
     return Scaffold(
-      drawer: const Drawer(),
       appBar: AppBar(
         scrolledUnderElevation: 0,
         title: const Text(
@@ -339,11 +337,11 @@ class _HomeScreenState extends State<HomeScreen> {
           color: Colors.black,
         ),
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
-                height: 24),
-          ),
+          // IconButton(
+          //   onPressed: () {},
+          //   icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
+          //       height: 24),
+          // ),
           IconButton(
             onPressed: () {
               Navigator.push(
@@ -565,7 +563,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.only(left: 6),
                 child: setHomeMenu(
                   context,
-                  '공연 예약',
+                  '공연 정보',
                   IndoorRecomListScreen(),
                 ),
               ),

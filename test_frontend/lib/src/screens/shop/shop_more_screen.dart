@@ -32,16 +32,16 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
   void initState() {
     super.initState();
     loadDataFuture = _getData();
-    loadLoginDataFuture = _checkLoginStatus();
+    // loadLoginDataFuture = _checkLoginStatus();
   }
 
-  Future<void> _checkLoginStatus() async {
-    // userId = await getUserId();
-    setState(() {
-      _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
-      // userId = "c96c76ed-041d-4396-8efe-dcbd4f4827cd";
-    });
-  }
+  // Future<void> _checkLoginStatus() async {
+  //   // userId = await getUserId();
+  //   setState(() {
+  //     _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
+  //     // userId = "c96c76ed-041d-4396-8efe-dcbd4f4827cd";
+  //   });
+  // }
 
   Future<String?> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -68,10 +68,11 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
     userId = await getUserId();
     setState(() {
       _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
+      userId = "c96c76ed-041d-4396-8efe-dcbd4f4827cd";
     });
 
     final response = await http.get(
-      Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/${userId!}'),
+      Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/1/c96c76ed-041d-4396-8efe-dcbd4f4827cd/0'),
       headers: {'Content-Type': 'application/json'},
     );
 

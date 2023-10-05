@@ -85,6 +85,7 @@ class _SearchBarState extends State<SearchBarWidget> {
             },
               onSubmitted: (value) {
                 if (value.length < 2) {
+                  // 여기에 경고 다이얼로그나 다른 알림을 표시할 수 있습니다.
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
@@ -120,14 +121,13 @@ class _SearchBarState extends State<SearchBarWidget> {
                       backgroundColor: Colors.white,
                     ),
                   );
-
                 } else {
-                  _postSearchQuery(value);
+                  // 2글자 이상이면 원래의 로직을 수행
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => SearchResultPage(query: value),
+                  ));
                 }
-
               }
-
-
           ),
         ),
 

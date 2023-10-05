@@ -46,6 +46,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List<String> festivalDate = [];
   List<int> festivalChildId = [];
 
+  List? _places;
+
   @override
   void initState() {
     super.initState();
@@ -113,12 +115,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if(userId !=null){
       response = await http.get(
-        Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/' + userId!),
+        Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/1/c96c76ed-041d-4396-8efe-dcbd4f4827cd/0'),
         headers: {'Content-Type': 'application/json'},
       );
     }else{
       response = await http.get(
-        Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/c96c76ed-041d-4396-8efe-dcbd4f4827cd'),
+        Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/1/c96c76ed-041d-4396-8efe-dcbd4f4827cd/0'),
         headers: {'Content-Type': 'application/json'},
       );
     }
@@ -128,8 +130,15 @@ class _HomeScreenState extends State<HomeScreen> {
     festivalId ??= 2;
 
     final response2 = await http.get(
-      Uri.parse('https://j9a604.p.ssafy.io/fastapi/festival/$festivalId'),
+      Uri.parse('https://j9a604.p.ssafy.io/fastapi/festival/9'),
       headers: {'Content-Type': 'application/json'},
+    );
+
+    final response3 = await http.get(
+      Uri.parse('https://j9a604.p.ssafy.io/api/place/reviewtop'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     );
 
     // 응답을 처리하는 코드 (예: 상태를 업데이트하는 등)를 여기에 추가합니다.
@@ -151,6 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         festivals = decodedJson2['recommended_festival'];
       });
+
 
       for (int i = 0; i < festivals!.length; i++) {
         if (festivals != null &&
@@ -176,11 +186,19 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
 
-      print(imgUrls);
-      print(festivalName);
     } else {
       print("not");
     }
+
+
+    // // 응답을 처리하는 코드 (예: 상태를 업데이트하는 등)를 여기에 추가합니다.
+    // if (response3.statusCode == 200) {
+    //   var jsonString = utf8.decode(response.bodyBytes);
+    //   Map<String, dynamic> decodedJson = jsonDecode(jsonString);
+    //   setState(() {
+    //     _places = decodedJson['result']['places'];
+    //   });
+    // }
   }
 
   @override
@@ -387,7 +405,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         placeId: places?[0]['place_id'],
                         userId: userId,
                         imageUrl: (places?.isNotEmpty ?? false)
-                            ? places![0]['image_url']
+                            ? (places![0]['image_url'] ?? "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
                         name: places![0]['name'],
                         address: places![0]['address'],
@@ -413,7 +431,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           placeId: places?[1]['place_id'],
                           userId: userId,
                           imageUrl: (places?.isNotEmpty ?? false)
-                              ? places![1]['image_url']
+                              ? (places![1]['image_url'] ?? "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
                               : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
                           name: places![1]['name'],
                           address: places![1]['address'],
@@ -434,8 +452,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           placeId: places?[2]['place_id'],
                           userId: userId,
                           imageUrl: (places?.isNotEmpty ?? false)
-                              ? places![2]['image_url']
-                              : "https://picturepractice.s3.a p-northeast-2.amazonaws.com/Park/1514459962%233.png",
+                              ? (places![2]['image_url'] ?? "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
+                              : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
                           name: places![2]['name'],
                           address: places![2]['address'],
                         ),
@@ -472,7 +490,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         placeId: places?[3]['place_id'],
                         userId: userId,
                         imageUrl: (places?.isNotEmpty ?? false)
-                            ? places![3]['image_url']
+                            ? (places![3]['image_url'] ?? "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
                         name: places![3]['name'],
                         address: places![3]['address'],
@@ -496,7 +514,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         placeId: places?[4]['place_id'],
                         userId: userId,
                         imageUrl: (places?.isNotEmpty ?? false)
-                            ? places![4]['image_url']
+                            ? (places![4]['image_url'] ?? "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
                         name: places![4]['name'],
                         address: places![4]['address'],
@@ -520,7 +538,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         placeId: places?[5]['place_id'],
                         userId: userId,
                         imageUrl: (places?.isNotEmpty ?? false)
-                            ? places![5]['image_url']
+                            ? (places![5]['image_url'] ?? "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
                         name: places![5]['name'],
                         address: places![5]['address'],

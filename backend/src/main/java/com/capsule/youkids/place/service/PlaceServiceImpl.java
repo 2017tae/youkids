@@ -39,6 +39,9 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -396,7 +399,8 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     public PlaceRecommDto getSearchPlace(String request) {
 
-        List<PlaceRecommItemDto> response = placeRepository.findTop100ByNameContainingOrderByNaverReviewNumDesc(request);
+        Pageable pageRequest = PageRequest.of(0, 100, Sort.by(Sort.Order.desc("naverReviewNum")));
+        List<PlaceRecommItemDto> response = placeRepository.findTop100ByNameContainingOrderByNaverReviewNumDesc(request, pageRequest);
 
         Collections.shuffle(response);
 

@@ -14,6 +14,7 @@ public class PlaceRecommItemDto {
     private String address;
     private String category;
     private String imageUrl;
+    private int visitedReviewNum;
 
     public PlaceRecommItemDto(Place place) {
         this.placeId = place.getPlaceId();
@@ -21,6 +22,7 @@ public class PlaceRecommItemDto {
         this.address = place.getAddress();
         this.category = place.getCategory();
         this.imageUrl = place.getImages().isEmpty() ? "" : place.getImages().get(0).getUrl();
+        this.visitedReviewNum = place.getVisitedReviewNum();
     }
 
     public PlaceRecommItemDto(TopReviewPlace place) {
@@ -29,5 +31,6 @@ public class PlaceRecommItemDto {
         this.address = place.getAddress();
         this.category = place.getCategory();
         this.imageUrl = place.getImageUrl();
+        this.visitedReviewNum = place.getVisitedReviewNum();
     }
 }

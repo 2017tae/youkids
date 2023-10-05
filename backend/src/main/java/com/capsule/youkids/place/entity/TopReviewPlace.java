@@ -30,14 +30,20 @@ public class TopReviewPlace {
     @Column
     private int naverReviewNum;
 
+    @Column
+    private int visitedReviewNum;
+
     @Builder
-    public TopReviewPlace(int placeId, String name, String address, String category, String imageUrl, int naverReviewNum) {
+    public TopReviewPlace(int placeId, String name, String address, String category,
+            String imageUrl,
+            int naverReviewNum, int visitedReviewNum) {
         this.placeId = placeId;
         this.name = name;
         this.address = address;
         this.category = category;
         this.imageUrl = imageUrl;
         this.naverReviewNum = naverReviewNum;
+        this.visitedReviewNum = visitedReviewNum;
     }
 
     public TopReviewPlace(Place place) {
@@ -47,5 +53,6 @@ public class TopReviewPlace {
         this.category = place.getCategory();
         this.imageUrl = place.getImages().isEmpty() ? "" : place.getImages().get(0).getUrl();
         this.naverReviewNum = place.getNaverReviewNum();
+        this.visitedReviewNum = place.getVisitedReviewNum();
     }
 }

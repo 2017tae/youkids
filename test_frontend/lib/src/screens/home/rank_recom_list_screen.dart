@@ -1,13 +1,9 @@
 import 'dart:convert';
-import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
-import '../../models/home_models/child_icon_model.dart';
 import '../../widgets/footer_widget.dart';
-import '../../widgets/home_widgets/child_icon_widget.dart';
 import '../../widgets/main_widgets/ranking_widget_card_frame11.dart';
-import '../login/login_screen.dart';
 import '../shop/shop_detail_screen.dart';
 
 class RankRecomlistScreen extends StatefulWidget {

@@ -245,7 +245,7 @@ class _LoadingGridItemState extends State<LoadingGridItem>
               height: 500,
               decoration: BoxDecoration(
                 color: _colorAnimation.value,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(5),
               ),
             );
           },

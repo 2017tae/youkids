@@ -34,9 +34,7 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
   @override
   void initState() {
     super.initState();
-    loadLoginDataFuture = _checkLoginStatus();
     loadDataFuture = _getData();
-
   }
 
   Future<String?> getUserId() async {
@@ -44,16 +42,6 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
     return prefs.getString(
       'userId',
     ); // Returns 'john_doe' if it exists, otherwise returns null.
-  }
-
-  Future<void> _checkLoginStatus() async {
-    userId = await getUserId();
-    // userId = '87dad60a-bfff-47e5-8e21-02cb49b23ba6';
-    setState(() {
-      _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
-    });
-    print('--------------------------');
-    print(userId);
   }
 
   // _loadMoreData() {
@@ -71,6 +59,13 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
   String? selectedCategory;
 
   Future<void> _getData() async {
+    userId = await getUserId();
+    // userId = '87dad60a-bfff-47e5-8e21-02cb49b23ba6';
+    setState(() {
+      _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
+
+    });
+
     final response = await http.get(
       Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/'+ userId!),
       headers: {'Content-Type': 'application/json'},

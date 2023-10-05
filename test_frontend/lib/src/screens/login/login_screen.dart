@@ -167,9 +167,20 @@ class _LoginScreenState extends State<LoginScreen> {
       onWillPop: _onBackPressed,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Login Page'),
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
+          centerTitle: true,
+          title: Text(
+            "로그인",
+            style: const TextStyle(
+              fontSize: 22,
+              color: Colors.black,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          iconTheme: const IconThemeData(
+            color: Colors.black,
+          ),
         ),
         body: Center(
           child: Column(
@@ -191,25 +202,29 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: MediaQuery
                       .of(context)
                       .size
-                      .height / 3.3),
-              const Text(
-                'YouKids',
-                style: TextStyle(
-                  fontSize: 48.0, // 크기를 24로 설정
+                      .height / 3),
+              Container(
+                child: Image.asset(
+                  "lib/src/assets/icons/splash.png",
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width*0.5,
                 ),
               ),
               SizedBox(
                   height: MediaQuery
                       .of(context)
                       .size
-                      .height / 12),
+                      .height / 8),
               _isLoggedIn == false ? GoogleAuthButton(
                 onPressed: _login,
+                text: "Gmail 로그인",
               ):Container(),
               _isLoggedIn == true ? MaterialButton(
           color: Colors.red,
           child: Text(
-            'Logout',
+            '로그아웃',
             style: TextStyle(color: Colors.white),
           ),
           onPressed: () {

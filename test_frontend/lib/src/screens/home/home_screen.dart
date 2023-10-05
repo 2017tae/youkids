@@ -104,22 +104,24 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _checkLoginStatus() async {
-    // userId = await getUserId();
+    userId = await getUserId();
     setState(() {
-       _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
+      _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
       // userId = "c96c76ed-041d-4396-8efe-dcbd4f4827cd";
     });
 
     var response;
 
-    if(userId !=null){
+    if (userId != null) {
       response = await http.get(
-        Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/1/'+userId!+'/0'),
+        Uri.parse(
+            'https://j9a604.p.ssafy.io/fastapi/place/1/' + userId! + '/0'),
         headers: {'Content-Type': 'application/json'},
       );
-    }else{
+    } else {
       response = await http.get(
-        Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/1/c96c76ed-041d-4396-8efe-dcbd4f4827cd/0'),
+        Uri.parse(
+            'https://j9a604.p.ssafy.io/fastapi/place/1/c96c76ed-041d-4396-8efe-dcbd4f4827cd/0'),
         headers: {'Content-Type': 'application/json'},
       );
     }
@@ -129,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
     festivalId ??= 2;
 
     final response2 = await http.get(
-      Uri.parse('https://j9a604.p.ssafy.io/fastapi/festival/9'),
+      Uri.parse('https://j9a604.p.ssafy.io/fastapi/festival/${festivalId}'),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -160,7 +162,6 @@ class _HomeScreenState extends State<HomeScreen> {
         festivals = decodedJson2['recommended_festival'];
       });
 
-
       for (int i = 0; i < festivals!.length; i++) {
         if (festivals != null &&
             festivals!.length > i &&
@@ -184,11 +185,9 @@ class _HomeScreenState extends State<HomeScreen> {
           festivalName.add("오류!");
         }
       }
-
     } else {
       print("not");
     }
-
 
     // // 응답을 처리하는 코드 (예: 상태를 업데이트하는 등)를 여기에 추가합니다.
     if (response3.statusCode == 200) {
@@ -221,12 +220,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildLoadingMainContent() {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'YouKids',
-          style: TextStyle(
-            fontSize: 22,
-            color: Colors.black,
-            fontWeight: FontWeight.w500,
+        centerTitle: true,
+        title: Container(
+          child: Image.asset(
+            "lib/src/assets/icons/splash.png",
+            width: 120,
           ),
         ),
         backgroundColor: Colors.white,
@@ -333,12 +331,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
-        title: const Text(
-          'YouKids',
-          style: TextStyle(
-            fontSize: 22,
-            color: Colors.black,
-            fontWeight: FontWeight.w500,
+        centerTitle: true,
+        title: Container(
+          child: Image.asset(
+            "lib/src/assets/icons/splash.png",
+            width: 120,
           ),
         ),
         backgroundColor: Colors.white,
@@ -407,7 +404,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         placeId: places?[0]['place_id'],
                         userId: userId,
                         imageUrl: (places?.isNotEmpty ?? false)
-                            ? (places![0]['image_url'] ?? "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
+                            ? (places![0]['image_url'] ??
+                                "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
                         name: places![0]['name'],
                         address: places![0]['address'],
@@ -435,7 +433,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           placeId: places?[1]['place_id'],
                           userId: userId,
                           imageUrl: (places?.isNotEmpty ?? false)
-                              ? (places![1]['image_url'] ?? "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
+                              ? (places![1]['image_url'] ??
+                                  "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
                               : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
                           name: places![1]['name'],
                           address: places![1]['address'],
@@ -448,7 +447,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             PageRouteBuilder(
                               pageBuilder: (context, animation1, animation2) =>
                                   ShopDetailScreen(
-                                    placeId: places?[2]['place_id']),
+                                      placeId: places?[2]['place_id']),
                               transitionDuration: Duration.zero,
                               reverseTransitionDuration: Duration.zero,
                             ),
@@ -458,7 +457,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           placeId: places?[2]['place_id'],
                           userId: userId,
                           imageUrl: (places?.isNotEmpty ?? false)
-                              ? (places![2]['image_url'] ?? "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
+                              ? (places![2]['image_url'] ??
+                                  "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
                               : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
                           name: places![2]['name'],
                           address: places![2]['address'],
@@ -498,7 +498,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         placeId: _places?[0]['placeId'],
                         userId: userId,
                         imageUrl: (_places?.isNotEmpty ?? false)
-                            ? (_places![0]['imageUrl'] ?? "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
+                            ? (_places![0]['imageUrl'] ??
+                                "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
                         name: _places![0]['name'],
                         address: _places![0]['address'],
@@ -524,7 +525,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         placeId: _places?[1]['placeId'],
                         userId: userId,
                         imageUrl: (_places?.isNotEmpty ?? false)
-                            ? (_places![1]['imageUrl'] ?? "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
+                            ? (_places![1]['imageUrl'] ??
+                                "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
                         name: _places![1]['name'],
                         address: _places![1]['address'],
@@ -550,7 +552,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         placeId: _places?[2]['placeId'],
                         userId: userId,
                         imageUrl: (_places?.isNotEmpty ?? false)
-                            ? (_places![2]['imageUrl'] ?? "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
+                            ? (_places![2]['imageUrl'] ??
+                                "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
                         name: _places![2]['name'],
                         address: _places![2]['address'],

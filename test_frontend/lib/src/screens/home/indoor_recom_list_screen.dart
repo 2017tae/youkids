@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../shop/festival_detail_screen.dart';
 import 'banner_widget.dart';
@@ -21,21 +22,50 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
     loadDataFuture = _checkLoginStatus();
   }
 
+  Future<int?> getFestivalId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(
+        'festivalId'); // Returns 'john_doe' if it exists, otherwise returns null.
+  }
+
   Future<void> _checkLoginStatus() async {
+    // final response2 = await http.get(
+    //     Uri.parse('https://j9a604.p.ssafy.io/api/festival/recommdiv'),
+    //     headers: {'Content-Type': 'application/json'});
+    //
+    // if (response2.statusCode == 200) {
+    //   var jsonString2 = utf8.decode(response2.bodyBytes);
+    //   Map<String, dynamic> decodedJson2 = jsonDecode(jsonString2);
+    //   print(decodedJson2['result']['onGoingFestivals']);
+    //   setState(() {
+    //     festivals = decodedJson2['result']['onGoingFestivals'];
+    //   });
+    //   print(festivals);
+    // } else {
+    // }
+
+    int? festivalId = await getFestivalId();
+
+    festivalId ??= 2;
+
     final response2 = await http.get(
-        Uri.parse('https://j9a604.p.ssafy.io/api/festival/recommdiv'),
-        headers: {'Content-Type': 'application/json'});
+      Uri.parse('https://j9a604.p.ssafy.io/fastapi/festival/${festivalId}'),
+      headers: {'Content-Type': 'application/json'},
+    );
 
     if (response2.statusCode == 200) {
       var jsonString2 = utf8.decode(response2.bodyBytes);
       Map<String, dynamic> decodedJson2 = jsonDecode(jsonString2);
-      print(decodedJson2['result']['onGoingFestivals']);
+      print(decodedJson2['recommended_festival']);
       setState(() {
-        festivals = decodedJson2['result']['onGoingFestivals'];
+        festivals = decodedJson2['recommended_festival'];
       });
       print(festivals);
     } else {
     }
+
+
+
   }
 
   @override
@@ -127,7 +157,7 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
                   MaterialPageRoute(
                     builder: (context) => FestivalDetailScreen(
                         festivalId: festivals?[festivalIndex]
-                            ['festivalChildId']),
+                            ['festival_child_id']),
                   ),
                 );
               },
@@ -160,9 +190,9 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
                         SizedBox(height: 10),
                         Text(
                           '기간: ' +
-                              (festivals?[festivalIndex]['startDate'] +
+                              (festivals?[festivalIndex]['start_date'] +
                                       ' ~ ' +
-                                      festivals?[festivalIndex]['endDate'] ??
+                                      festivals?[festivalIndex]['end_date'] ??
                                   '정보 없음'),
                           style: TextStyle(
                             color: Colors.grey[600],
@@ -172,7 +202,7 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
                         SizedBox(height: 5),
                         Text(
                           '장소: ' +
-                              (festivals?[festivalIndex]['placeName'] ??
+                              (festivals?[festivalIndex]['place_name'] ??
                                   '정보 없음'),
                           style: TextStyle(
                             color: Colors.grey[600],
@@ -287,51 +317,61 @@ class _LoadingGridItem2State extends State<LoadingGridItem2>
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Row(
-          children: [
-            Container(
-              margin: EdgeInsets.only(left:6.0),
-              height: 140.0,
-              width: 100.0,
-              decoration: BoxDecoration(
-                color: _colorAnimation.value,
-                borderRadius: BorderRadius.circular(5),
-              ),
-            ),
-            SizedBox(width: 10.0), // 왼쪽 Container와 간격 추가
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        AnimatedBuilder(
+          animation: _colorAnimation,
+          builder: (context, child) {
+            return Stack(
               children: [
-                for (int i = 0; i < 3; i++)
-                  Container(
-                    height: 140.0 / 9,
-                    width: MediaQuery.of(context).size.width - 160,
-                    decoration: BoxDecoration(
-                      color: _colorAnimation.value,
-                      borderRadius: BorderRadius.circular(2.0),
+                Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(left:6.0),
+                      height: 140.0,
+                      width: 100.0,
+                      decoration: BoxDecoration(
+                        color: _colorAnimation.value,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
                     ),
-                    margin: EdgeInsets.only(bottom:140.0/8),
-                    padding: EdgeInsets.only(right:6.0),
+                    SizedBox(width: 10.0), // 왼쪽 Container와 간격 추가
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (int i = 0; i < 3; i++)
+                          Container(
+                            height: 140.0 / 9,
+                            width: MediaQuery.of(context).size.width - 160,
+                            decoration: BoxDecoration(
+                              color: _colorAnimation.value,
+                              borderRadius: BorderRadius.circular(2.0),
+                            ),
+                            margin: EdgeInsets.only(bottom:140.0/8),
+                            padding: EdgeInsets.only(right:6.0),
 
-                  ),
+                          ),
 
-                // 마지막 줄
-                Container(
-                  alignment: Alignment.bottomLeft,
-                  height: 140.0 / 9,
-                  width: (MediaQuery.of(context).size.width-160) / 2,
-                  padding: EdgeInsets.zero,
-                  margin: EdgeInsets.zero,
-                  decoration: BoxDecoration(
-                    color: _colorAnimation.value,
-                    borderRadius: BorderRadius.circular(2.0),
-                  ),
+                        // 마지막 줄
+                        Container(
+                          alignment: Alignment.bottomLeft,
+                          height: 140.0 / 9,
+                          width: (MediaQuery.of(context).size.width-160) / 2,
+                          padding: EdgeInsets.zero,
+                          margin: EdgeInsets.zero,
+                          decoration: BoxDecoration(
+                            color: _colorAnimation.value,
+                            borderRadius: BorderRadius.circular(2.0),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ],
-            ),
-          ],
+            );
+          },
         ),
       ],
     );
+
   }
 }

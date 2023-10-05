@@ -95,8 +95,9 @@ class _PostingImgsWidgetState extends State<PostingImgsWidget> {
                 carouselController: _controller,
                 options: CarouselOptions(
                   enableInfiniteScroll: false,
+                  enlargeCenterPage: true,
                   height: MediaQuery.of(context).size.width,
-                  viewportFraction: 1.0,
+                  viewportFraction: 0.7,
                   onPageChanged: (index, reason) {
                     setState(() {
                       _current = index;

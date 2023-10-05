@@ -36,7 +36,8 @@ class _PostingScreenState extends State<PostingScreen> {
   }
 
   Future<void> _checkLoginStatus() async {
-    userId = await getUserId();
+    // userId = await getUserId();
+    userId = '87dad60a-bfff-47e5-8e21-02cb49b23ba6';
     setState(() {});
   }
 
@@ -128,8 +129,7 @@ class _PostingScreenState extends State<PostingScreen> {
                     );
                   },
                 );
-              }
-              else {
+              } else {
                 try {
                   PostingServices.postingCapsuleImgsContents(
                     description: _postingContent,
@@ -140,6 +140,7 @@ class _PostingScreenState extends State<PostingScreen> {
                   );
                   showDialog(
                     context: context,
+                    barrierDismissible: false,
                     builder: (BuildContext context) {
                       return AlertDialog(
                         content: IconButton(

@@ -40,7 +40,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
 
   Future<void> _postSearchQuery(String query) async {
     final response = await http.get(
-      Uri.parse('https://j9a604.p.ssafy.io/api/place/search/in'),
+      Uri.parse('https://j9a604.p.ssafy.io/api/place/search/'+widget.query),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -110,9 +110,8 @@ class _SearchResultPageState extends State<SearchResultPage> {
                 textAlign: TextAlign.left,  // 텍스트를 왼쪽으로 정렬
               ),
             ),
-
-            // 검색 결과 리스트
-            if (searchResults != null) ...[
+// 검색 결과 리스트
+            if (searchResults != null && searchResults!.isNotEmpty) ...[
               Expanded(
                 child: GridView.builder(
                   padding: const EdgeInsets.all(5), // 여기 값을 조절해서 전체 패딩 조절
@@ -135,8 +134,39 @@ class _SearchResultPageState extends State<SearchResultPage> {
                   },
                 ),
               ),
+            ] else ...[
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.search_off_outlined,
+                      color: Colors.grey[400],
+                      size: 60.0,
+                    ),
+                    SizedBox(height: 20.0),
+                    Text(
+                      "검색결과가 없습니다!",
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    SizedBox(height: 10.0),
+                    Text(
+                      "다른 검색어를 입력해보세요.",
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        color: Colors.grey[500],
+                      ),
+                    ),
+                  ],
+                ),
+              )
             ]
-          ],
+
+        ],
         ),
       ),
     );

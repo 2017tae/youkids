@@ -191,13 +191,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
     // // 응답을 처리하는 코드 (예: 상태를 업데이트하는 등)를 여기에 추가합니다.
-    // if (response3.statusCode == 200) {
-    //   var jsonString = utf8.decode(response.bodyBytes);
-    //   Map<String, dynamic> decodedJson = jsonDecode(jsonString);
-    //   setState(() {
-    //     _places = decodedJson['result']['places'];
-    //   });
-    // }
+    if (response3.statusCode == 200) {
+      var jsonString3 = utf8.decode(response3.bodyBytes);
+      Map<String, dynamic> decodedJson3 = jsonDecode(jsonString3);
+      setState(() {
+        _places = decodedJson3['result']['places'];
+      });
+    }
   }
 
   @override
@@ -208,7 +208,8 @@ class _HomeScreenState extends State<HomeScreen> {
         // if (snapshot.connectionState == ConnectionState.done) {
         if (places != null) {
           print(places);
-          print(festivals?[0]);
+          // print(festivals?[0]);
+          // print(_places);
           return _buildMainContent();
         } else {
           return _buildLoadingMainContent();
@@ -480,19 +481,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ShopDetailScreen(
-                              placeId: places?[3]['place_id'],
+                              placeId: _places?[0]['placeId'],
                             ),
                           ),
                         );
                       },
                       child: RankingWidgetCardFrame11(
-                        placeId: places?[3]['place_id'],
+                        placeId: _places?[0]['placeId'],
                         userId: userId,
-                        imageUrl: (places?.isNotEmpty ?? false)
-                            ? (places![3]['image_url'] ?? "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
+                        imageUrl: (_places?.isNotEmpty ?? false)
+                            ? (_places![0]['imageUrl'] ?? "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
-                        name: places![3]['name'],
-                        address: places![3]['address'],
+                        name: _places![0]['name'],
+                        address: _places![0]['address'],
                         rank: '1',
                       )),
                   const SizedBox(
@@ -504,19 +505,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ShopDetailScreen(
-                              placeId: places?[4]['place_id'],
+                              placeId: _places?[1]['placeId'],
                             ),
                           ),
                         );
                       },
                       child: RankingWidgetCardFrame11(
-                        placeId: places?[4]['place_id'],
+                        placeId: _places?[1]['placeId'],
                         userId: userId,
-                        imageUrl: (places?.isNotEmpty ?? false)
-                            ? (places![4]['image_url'] ?? "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
+                        imageUrl: (_places?.isNotEmpty ?? false)
+                            ? (_places![1]['imageUrl'] ?? "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
-                        name: places![4]['name'],
-                        address: places![4]['address'],
+                        name: _places![1]['name'],
+                        address: _places![1]['address'],
                         rank: '2',
                       )),
                   const SizedBox(
@@ -528,19 +529,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ShopDetailScreen(
-                              placeId: places?[5]['place_id'],
+                              placeId: _places?[2]['placeId'],
                             ),
                           ),
                         );
                       },
                       child: RankingWidgetCardFrame11(
-                        placeId: places?[5]['place_id'],
+                        placeId: _places?[2]['placeId'],
                         userId: userId,
-                        imageUrl: (places?.isNotEmpty ?? false)
-                            ? (places![5]['image_url'] ?? "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
+                        imageUrl: (_places?.isNotEmpty ?? false)
+                            ? (_places![2]['imageUrl'] ?? "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png")
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
-                        name: places![5]['name'],
-                        address: places![5]['address'],
+                        name: _places![2]['name'],
+                        address: _places![2]['address'],
                         rank: '3',
                       )),
                 ],

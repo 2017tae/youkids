@@ -14,6 +14,7 @@ public class BookmarkListItemDto {
     private Double latitude;
     private Double longitude;
     private String category;
+    private String imageUrl;
 
     public BookmarkListItemDto(Place place) {
         this.placeId = place.getPlaceId();
@@ -22,5 +23,6 @@ public class BookmarkListItemDto {
         this.latitude = place.getLatitude();
         this.longitude = place.getLongitude();
         this.category = place.getCategory();
+        this.imageUrl = place.getImages().get(0).getUrl();
     }
 }

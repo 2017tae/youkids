@@ -3,6 +3,8 @@ package com.capsule.youkids.place.repository;
 import com.capsule.youkids.place.dto.BookmarkListItemDto;
 import com.capsule.youkids.place.dto.PlaceRecommItemDto;
 import java.util.List;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.capsule.youkids.place.entity.Place;
@@ -21,5 +23,5 @@ public interface PlaceRepository extends JpaRepository<Place, Integer> {
     @Query("select new com.capsule.youkids.place.dto.PlaceRecommItemDto(p)"
             + "from Place p where p.name like %:name% "
             + "order by p.naverReviewNum desc")
-    List<PlaceRecommItemDto> findTop100ByNameContainingOrderByNaverReviewNumDesc(@Param("name") String name);
+    List<PlaceRecommItemDto> findTop100ByNameContainingOrderByNaverReviewNumDesc(@Param("name") String name, Pageable pageable);
 }

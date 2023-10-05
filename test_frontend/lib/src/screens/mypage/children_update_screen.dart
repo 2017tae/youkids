@@ -451,12 +451,12 @@ class SuccessDialog extends StatelessWidget {
               child: GestureDetector(
                 onTap: () {
                   Navigator.of(context).pop();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const MyPageScreen(),
-                    ),
-                  );
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MyPageScreen(),
+                      ),
+                      (route) => false);
                 },
                 child: const Text(
                   "닫기",

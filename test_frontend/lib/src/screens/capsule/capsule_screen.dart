@@ -12,7 +12,7 @@ class CapsuleScreen extends StatelessWidget {
       appBar: AppBar(
         scrolledUnderElevation: 0,
         title: const Text(
-          'YouKids',
+          '캡슐',
           style: TextStyle(
             fontSize: 22,
             color: Colors.black,

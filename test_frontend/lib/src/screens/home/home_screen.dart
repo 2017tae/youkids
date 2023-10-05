@@ -581,7 +581,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.only(left: 6),
                 child: setHomeMenu(
                   context,
-                  '공연 예약',
+                  '공연 정보',
                   IndoorRecomListScreen(),
                 ),
               ),

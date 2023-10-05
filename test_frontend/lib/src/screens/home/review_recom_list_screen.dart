@@ -20,30 +20,12 @@ class ReviewRecomlistScreen extends StatelessWidget {
     ];
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: const Text(
-          '저번 주 리뷰 많은 장소',
-          style: TextStyle(
-              fontSize: 22,
-              color: Color(0xff707070),
-              fontWeight: FontWeight.bold),
-        ),
+        title: const Text('저번 주 리뷰 많은 장소'),
         backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(
-          color: Colors.black,
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.notifications_outlined,
-              size: 28,
-            ),
-          ),
-        ],
+        foregroundColor: Colors.black,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -65,21 +65,41 @@ class _CourseScreenState extends State<CourseScreen> {
       }
 
       // 만약 찜 목록이라면
-      if (!isCourseList) {
+      if (!isCourseList && bookmarks!.length==1) {
+        _controller!.updateCamera(
+          NCameraUpdate.fromCameraPosition(
+            NCameraPosition(
+              target: NLatLng(
+                  bookmarks![0]['latitude'], bookmarks![0]['longitude']),
+              zoom: 13.5,
+            ),
+          )..setPivot(NPoint(0.5, 1 / 4)),
+        );
+        final marker = NMarker(
+          icon: NOverlayImage.fromAssetImage(
+              "lib/src/assets/icons/mapMark.png"),
+          size: NMarker.autoSize,
+          id: "1000",
+          position: NLatLng(bookmarks![0]['latitude'], bookmarks![0]['longitude']),
+        );
+        // 마커 지도 위에 렌더링
+        _controller!.addOverlay(marker);
+      }
+      if (!isCourseList && bookmarks!.length>1) {
         List<NLatLng> bound = [];
         //모든 찜 목록의 좌표를 bound에 넣음
         for (var place in bookmarks!) {
           bound.add(NLatLng(place['latitude'], place['longitude']));
         }
 
+
         // 좌표가 나올 화면
         var bounds = NLatLngBounds.from(bound);
 
         // 화면을 북마크가 전부 보이게 업데이트
         _controller!.updateCamera(
-          NCameraUpdate.fitBounds(bounds, padding: EdgeInsets.all(50)),
+          NCameraUpdate.fitBounds(bounds, padding: EdgeInsets.all(80)),
         );
-
         int i = 100;
         for (var place in bookmarks!) {
           final marker = NMarker(
@@ -115,6 +135,7 @@ class _CourseScreenState extends State<CourseScreen> {
         bookmarks = decodedJson['result']['bookmarks'];
       });
     }
+    print(bookmarks);
   }
 
   Future<void> getCurrentLocation() async {
@@ -150,7 +171,6 @@ class _CourseScreenState extends State<CourseScreen> {
 
   Future<void> _checkLoginStatus() async {
     userId = await getUserId();
-
     setState(() {
       _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
     });
@@ -159,6 +179,7 @@ class _CourseScreenState extends State<CourseScreen> {
       await initCourses();
       await initBookmark();
     }
+    print(courses);
   }
 
   @override
@@ -343,7 +364,7 @@ class _CourseScreenState extends State<CourseScreen> {
         NCameraUpdate.fromCameraPosition(
           NCameraPosition(
             target: NLatLng(x, y),
-            zoom: 8.5,
+            zoom: 11.5,
           ),
         )..setPivot(NPoint(0.5, 1 / 4)),
       );
@@ -371,7 +392,7 @@ class _CourseScreenState extends State<CourseScreen> {
           IconButton(
             onPressed: () {
               if (userId != null) {
-                if (bookmarks!.isNotEmpty) {
+                if ( bookmarks!= null && bookmarks!.isNotEmpty) {
                   Navigator.push(
                     context,
                     PageRouteBuilder(
@@ -512,8 +533,22 @@ class _CourseScreenState extends State<CourseScreen> {
                                   ),
                                 ),
                               ),
-                            if (!isCourseList)
-                              ...(bookmarks ?? []).map((bookmark) {
+                            if (!isCourseList && userId != null)
+                              if(bookmarks == null || bookmarks!.isEmpty)
+                                Container(
+                                  height:
+                                  MediaQuery.of(context).size.height * 0.25,
+                                  child: Center(
+                                    child: Text(
+                                      '불러올 찜 목록이 없습니다',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                  ),
+                                ),
+                              if(!isCourseList && bookmarks != null && bookmarks!.isNotEmpty)
+                                ...(bookmarks ?? []).map((bookmark) {
                                 return GestureDetector(
                                   onTap: () => {
                                     _onBookmarkClicked(
@@ -578,8 +613,22 @@ class _CourseScreenState extends State<CourseScreen> {
                                   ),
                                 );
                               }),
-                            if (isCourseList)
-                              ...courses.asMap().entries.map((entry) {
+                            if (isCourseList && userId != null)
+                              if(isCourseList && courses.isEmpty)
+                                Container(
+                                  height:
+                                  MediaQuery.of(context).size.height * 0.25,
+                                  child: Center(
+                                    child: Text(
+                                      '불러올 코스 목록이 없습니다',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                  ),
+                                ),
+                              if(isCourseList && courses.isNotEmpty)
+                                ...courses.asMap().entries.map((entry) {
                                 final course = entry.value;
                                 return GestureDetector(
                                   onTap: () => _onCourseClicked(course),

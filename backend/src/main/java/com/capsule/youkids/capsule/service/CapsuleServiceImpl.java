@@ -124,6 +124,7 @@ public class CapsuleServiceImpl implements CapsuleService {
             // 한 그룹에 대한 캡슐 전체 리스트를 저장
             CapsuleResponseDto capsuleResponseDto = CapsuleResponseDto.builder()
                     .groupLeader(groupLeader)
+                    .groupLeaderImage(leader.get().getProfileImage())
                     .capsules(capsuleDtoList)
                     .groupId(group.getGroupId())
                     .build();

@@ -191,7 +191,6 @@ class _MyPageScreenState extends State<MyPageScreen> {
     //   return const CircularProgressIndicator();
     // }
     return Scaffold(
-      drawer: const Drawer(),
       appBar: AppBar(
         title: const Text(
           '마이페이지',
@@ -205,13 +204,13 @@ class _MyPageScreenState extends State<MyPageScreen> {
         iconTheme: const IconThemeData(
           color: Colors.black,
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
-                height: 24),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {},
+        //     icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
+        //         height: 24),
+        //   ),
+        // ],
       ),
       body: SingleChildScrollView(
         child: Padding(

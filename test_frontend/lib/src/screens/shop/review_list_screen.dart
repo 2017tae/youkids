@@ -8,7 +8,6 @@ class ReviewListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const Drawer(),
       appBar: AppBar(
         title: const Text(
           'YouKids',
@@ -22,13 +21,13 @@ class ReviewListScreen extends StatelessWidget {
         iconTheme: const IconThemeData(
           color: Colors.black,
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
-                height: 24),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {},
+        //     icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
+        //         height: 24),
+        //   ),
+        // ],
       ),
       bottomNavigationBar: const FooterWidget(
         currentIndex: 0,

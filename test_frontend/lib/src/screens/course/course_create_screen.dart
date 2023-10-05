@@ -399,7 +399,6 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const Drawer(),
       appBar: AppBar(
         title: const Text(
           'YouKids',

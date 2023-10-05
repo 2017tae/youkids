@@ -66,12 +66,12 @@ class _HomeScreenState extends State<HomeScreen> {
       fcmToken = await FirebaseMessaging.instance.getToken();
       if (fcmToken != null) {
         final response =
-        await http.post(Uri.parse('https://j9a604.p.ssafy.io/api/user/fcm'),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({
-              'userId': userId,
-              'fcmToken': fcmToken,
-            }));
+            await http.post(Uri.parse('https://j9a604.p.ssafy.io/api/user/fcm'),
+                headers: {'Content-Type': 'application/json'},
+                body: jsonEncode({
+                  'userId': userId,
+                  'fcmToken': fcmToken,
+                }));
         if (response.statusCode == 200) {
           print('fcm renewed');
         } else {
@@ -111,16 +111,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
     int? festivalId = await getFestivalId();
 
-    if (festivalId == null) {
-      festivalId = 2;
-    }
+    festivalId ??= 2;
 
     final response2 = await http.get(
-      Uri.parse('https://j9a604.p.ssafy.io/fastapi/festival/' +
-          festivalId.toString()),
+      Uri.parse('https://j9a604.p.ssafy.io/fastapi/festival/$festivalId'),
       headers: {'Content-Type': 'application/json'},
     );
-
 
     // 응답을 처리하는 코드 (예: 상태를 업데이트하는 등)를 여기에 추가합니다.
     if (response.statusCode == 200) {
@@ -231,11 +227,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: SingleChildScrollView(
-        child:
-        Padding(
+        child: Padding(
           padding: const EdgeInsets.all(10),
-          child:
-          Column(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
@@ -247,22 +241,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisCount: 3,
                   children: [
                     _buildIconButton(context, '테마파크', Icons.local_play,
-                        ShopMoreScreen(PushselectedCategory: "테마파크")),
+                        const ShopMoreScreen(pushselectedCategory: "테마파크")),
                     _buildIconButton(context, '박물관', Icons.museum,
-                        ShopMoreScreen(PushselectedCategory: "박물관")),
+                        const ShopMoreScreen(pushselectedCategory: "박물관")),
                     _buildIconButton(context, '키즈카페', Icons.local_cafe,
-                        ShopMoreScreen(PushselectedCategory: "키즈카페")),
+                        const ShopMoreScreen(pushselectedCategory: "키즈카페")),
                     _buildIconButton(context, '공연', Icons.music_note,
                         IndoorRecomListScreen()),
                     _buildIconButton(context, '순위', Icons.leaderboard,
-                        RankRecomlistScreen()),
+                        const RankRecomlistScreen()),
                     _buildIconButton(context, '카페', Icons.coffee,
-                        ShopMoreScreen(PushselectedCategory: "전체")),
+                        const ShopMoreScreen(pushselectedCategory: "전체")),
                   ],
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 6),
+                padding: const EdgeInsets.only(left: 6),
                 child: loadingSetHomeMenu("이번 주 추천 장소"),
               ),
               Column(
@@ -290,7 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               Padding(
-                padding: EdgeInsets.only(left: 6),
+                padding: const EdgeInsets.only(left: 6),
                 child: loadingSetHomeMenu("저번 주 리뷰 많은 장소"),
               ),
               Column(

@@ -64,7 +64,7 @@ class _PostingScreenState extends State<PostingScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'YouKids',
+          '기억 작성',
           style: TextStyle(
             fontSize: 22,
             color: Colors.black,

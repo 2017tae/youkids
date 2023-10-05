@@ -132,7 +132,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'YouKids',
+          '',
           style: TextStyle(
             fontSize: 22,
             color: Colors.black,

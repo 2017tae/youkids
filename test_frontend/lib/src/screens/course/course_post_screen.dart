@@ -201,7 +201,7 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'YouKids',
+          '코스',
           style: TextStyle(
             fontSize: 22,
             color: Colors.black,

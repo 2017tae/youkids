@@ -287,51 +287,61 @@ class _LoadingGridItem2State extends State<LoadingGridItem2>
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Row(
-          children: [
-            Container(
-              margin: EdgeInsets.only(left:6.0),
-              height: 140.0,
-              width: 100.0,
-              decoration: BoxDecoration(
-                color: _colorAnimation.value,
-                borderRadius: BorderRadius.circular(5),
-              ),
-            ),
-            SizedBox(width: 10.0), // 왼쪽 Container와 간격 추가
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        AnimatedBuilder(
+          animation: _colorAnimation,
+          builder: (context, child) {
+            return Stack(
               children: [
-                for (int i = 0; i < 3; i++)
-                  Container(
-                    height: 140.0 / 9,
-                    width: MediaQuery.of(context).size.width - 160,
-                    decoration: BoxDecoration(
-                      color: _colorAnimation.value,
-                      borderRadius: BorderRadius.circular(2.0),
+                Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(left:6.0),
+                      height: 140.0,
+                      width: 100.0,
+                      decoration: BoxDecoration(
+                        color: _colorAnimation.value,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
                     ),
-                    margin: EdgeInsets.only(bottom:140.0/8),
-                    padding: EdgeInsets.only(right:6.0),
+                    SizedBox(width: 10.0), // 왼쪽 Container와 간격 추가
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (int i = 0; i < 3; i++)
+                          Container(
+                            height: 140.0 / 9,
+                            width: MediaQuery.of(context).size.width - 160,
+                            decoration: BoxDecoration(
+                              color: _colorAnimation.value,
+                              borderRadius: BorderRadius.circular(2.0),
+                            ),
+                            margin: EdgeInsets.only(bottom:140.0/8),
+                            padding: EdgeInsets.only(right:6.0),
 
-                  ),
+                          ),
 
-                // 마지막 줄
-                Container(
-                  alignment: Alignment.bottomLeft,
-                  height: 140.0 / 9,
-                  width: (MediaQuery.of(context).size.width-160) / 2,
-                  padding: EdgeInsets.zero,
-                  margin: EdgeInsets.zero,
-                  decoration: BoxDecoration(
-                    color: _colorAnimation.value,
-                    borderRadius: BorderRadius.circular(2.0),
-                  ),
+                        // 마지막 줄
+                        Container(
+                          alignment: Alignment.bottomLeft,
+                          height: 140.0 / 9,
+                          width: (MediaQuery.of(context).size.width-160) / 2,
+                          padding: EdgeInsets.zero,
+                          margin: EdgeInsets.zero,
+                          decoration: BoxDecoration(
+                            color: _colorAnimation.value,
+                            borderRadius: BorderRadius.circular(2.0),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ],
-            ),
-          ],
+            );
+          },
         ),
       ],
     );
+
   }
 }

@@ -116,7 +116,7 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'YouKids',
+          '',
           style: TextStyle(
             fontSize: 22,
             color: Colors.black,
@@ -141,7 +141,7 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
       
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -151,38 +151,7 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
                     onTap: () {},
                     child: const LoadingCardFrame11Widget(),
                   ),
-                  const SizedBox(
-                    height: 500,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {},
-                        child: const LoadingCardFrame11Widget(),
-                      ),
-                      GestureDetector(
-                        onTap: () {},
-                        child: const LoadingCardFrame11Widget(),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {},
-                        child: const LoadingCardFrame11Widget(),
-                      ),
-                      GestureDetector(
-                        onTap: () {},
-                        child: const LoadingCardFrame11Widget(),
-                      ),
-                    ],
-                  ),
+
                 ],
               ),
             ],
@@ -198,7 +167,7 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
 
   Widget _buildMainContent() {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         body:
         NestedScrollView(
@@ -594,7 +563,8 @@ class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
       duration: const Duration(
         milliseconds: 180,
       ),
-    )..repeat(reverse: true);
+    )
+      ..repeat(reverse: true);
 
     _colorAnimation = ColorTween(
       begin: const Color(0xffd0d0d0),
@@ -615,13 +585,43 @@ class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
         AnimatedBuilder(
           animation: _colorAnimation,
           builder: (context, child) {
-            return Container(
-              height: MediaQuery.of(context).size.width * 0.44,
-              width: MediaQuery.of(context).size.width * 0.44,
-              decoration: BoxDecoration(
-                color: _colorAnimation.value,
-                borderRadius: BorderRadius.circular(10),
-              ),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height * 0.30,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                  decoration: BoxDecoration(
+                    color: _colorAnimation.value,
+                  ),
+                ),
+                SizedBox(height: 25,),
+                Container(
+                  alignment: Alignment.bottomLeft,
+                  height: 20,
+                  width: MediaQuery.of(context).size.width/2-40,
+                  decoration: BoxDecoration(
+                    color: _colorAnimation.value,
+                    borderRadius: BorderRadius.circular(2.0),
+                  ),
+                  margin: EdgeInsets.only(bottom:140.0/8, left: 20.0),
+                ),
+                Container(
+                  height: 20,
+                  width: MediaQuery.of(context).size.width-40,
+                  decoration: BoxDecoration(
+                    color: _colorAnimation.value,
+                    borderRadius: BorderRadius.circular(2.0),
+                  ),
+                  margin: EdgeInsets.only(bottom:140.0/8, left: 20.0),
+                ),
+              ],
             );
           },
         ),

@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import random
 from scipy.sparse.linalg import svds
 from models.place_item import PlaceItem
 
@@ -42,7 +43,9 @@ def get_recommend_place(df_svd_preds: pd.DataFrame, user_id: str, place, click, 
     if end_idx > len(recommendations):
         end_idx = len(recommendations)
 
-    return dataframe_to_object_list(recommendations[start_idx:end_idx])
+    result_list = dataframe_to_object_list(recommendations[start_idx:end_idx])
+    random.shuffle(result_list)
+    return result_list
 
 def cal_preds_place(place_df, click_df):
     # place 데이터와 click 데이터를 조인함
@@ -60,8 +63,6 @@ def cal_preds_place(place_df, click_df):
     
     # R_user_mean은 사용자-장소에 대해 사용자 평균 평점을 뺀 것
     matrix_user_mean = matrix - user_click_mean.reshape(-1, 1)
-    
-    
     
     # scipy에서 제공해주는 svd
     # k는 함께 파라미터로 전달되는 배열 A의 row크기보다 작아야 함, 따라서 양수 중 최대 12로 조정

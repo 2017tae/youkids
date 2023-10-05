@@ -6,4 +6,5 @@ class PlaceItem(BaseModel):
     name: str
     address: str
     category: str
+    visited_review_num: int
     image_url: Optional[str]

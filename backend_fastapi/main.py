@@ -106,7 +106,7 @@ def startup_event():
     # Place 데이터 조회
     global region_data
     for i in range(1, 6):
-        sql = f"SELECT p.place_id, p.name, p.address, p.category, (SELECT pi.url FROM place_image pi WHERE pi.place_id = p.place_id LIMIT 1) AS image_url\
+        sql = f"SELECT p.place_id, p.name, p.address, p.category, p.visited_review_num, (SELECT pi.url FROM place_image pi WHERE pi.place_id = p.place_id LIMIT 1) AS image_url\
             FROM place p where visited_review_num = {i};"
         cursor.execute(sql)
         result = cursor.fetchall()

@@ -22,8 +22,6 @@ class _BookmarkedTotalListState extends State<BookmarkedTotalList> {
     // TODO: implement initState
     super.initState();
     bookmarkedList = PlaceServices.getAllBookmarks(userId: widget.userId);
-    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-    print(bookmarkedList);
   }
 
   @override
@@ -38,8 +36,7 @@ class _BookmarkedTotalListState extends State<BookmarkedTotalList> {
           }
           // 데이터가 준비된 경우 ListView 렌더링
           List<Map<String, dynamic>> data = snapshot.data!;
-          print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-          print(data[0]);
+
           if (data.isEmpty) {
             return const Text(
               '찜 목록이 비었습니다',

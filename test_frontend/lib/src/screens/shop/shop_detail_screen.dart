@@ -79,22 +79,25 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
   }
 
   _checkLoginStatus() async {
+    var response;
     String? userId = await getUserId();
     setState(() {});
-    final re = await http.put(
-      Uri.parse(
-          'https://j9a604.p.ssafy.io/fastapi/clicks/$userId/${widget.placeId}'),
-      headers: {'Content-Type': 'application/json'},
-    );
 
-    final response = await http.get(
-      Uri.parse(
-          'https://j9a604.p.ssafy.io/api/place/87dad60a-bfff-47e5-8e21-02cb49b23ba6/${widget
-              .placeId}'),
-      headers: {'Content-Type': 'application/json'},
-    );
+    if (userId == null) {
+      response = await http.get(
+        Uri.parse(
+            'https://j9a604.p.ssafy.io/api/place/87dad60a-bfff-47e5-8e21-02cb49b23ba6/${widget
+                .placeId}'),
+        headers: {'Content-Type': 'application/json'},
+      );
+    } else {
+      response = await http.get(
+        Uri.parse(
+            'https://j9a604.p.ssafy.io/api/place/$userId/${widget.placeId}'),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }
 
-    // 응답을 처리하는 코드 (예: 상태를 업데이트하는 등)를 여기에 추가합니다.
     if (response.statusCode == 200) {
       var jsonString = utf8.decode(response.bodyBytes);
       Map<String, dynamic> decodedJson = jsonDecode(jsonString);
@@ -105,6 +108,20 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
         latitude = double.tryParse(place.latitude!);
         longitude = double.tryParse(place.longitude!);
       });
+    }
+
+    if (userId != null) {
+      final re = await http.put(
+        Uri.parse(
+            'https://j9a604.p.ssafy.io/fastapi/clicks/${_place?.regionCode}/$userId/${widget.placeId}'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (re.statusCode == 200) {
+        print("success");
+      } else {
+        print("failed");
+      }
     }
   }
 
@@ -229,13 +246,15 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        _place?.name ?? 'Loading...',
-                        style: const TextStyle(
-                          fontSize: 23.0,
-                          fontWeight: FontWeight.bold,
+                      Expanded( // 추가
+                        child: Text(
+                          _place?.name ?? 'Loading...',
+                          style: const TextStyle(
+                            fontSize: 23.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.left,
                         ),
-                        textAlign: TextAlign.left,
                       ),
                       (userId != null)
                           ? BookmarkButtonWidget(
@@ -245,6 +264,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                           : Container(),
                     ],
                   ),
+
                   // Divider(thickness: 0.5, color: Colors.grey[300]),
                   // _detailInfo(title: "전화번호", info: _place != null ? _place!.phoneNumber : 'Loading...'),
                   // _detailInfo(title: "홈페이지", info: _place != null ? _place!.homepage : 'Loading...'),
@@ -556,6 +576,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
 
 class Place {
   final int placeId;
+  final int regionCode;
   final String name;
   final String address;
   final String? latitude;
@@ -573,6 +594,7 @@ class Place {
 
   Place({
     required this.placeId,
+    required this.regionCode,
     required this.name,
     required this.address,
     this.latitude,
@@ -592,6 +614,7 @@ class Place {
   factory Place.fromJson(Map<String, dynamic> json) {
     return Place(
       placeId: json['placeId'],
+      regionCode: json['regionCode'],
       name: json['name'],
       address: json['address'],
       latitude: json['latitude'].toString(),

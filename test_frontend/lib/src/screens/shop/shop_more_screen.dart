@@ -22,11 +22,16 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
   String? userId;
   Future? loadLoginDataFuture;
 
+
+  String selectedRegionName = '서울, 경기, 인천';
+  int selectedRegionCode = 1;
+
   bool _isLoggedIn = false;
 
   List? places;
   final int incrementCount = 10;
   Future? loadDataFuture;
+
 
   @override
   void initState() {
@@ -34,6 +39,9 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
     loadDataFuture = _getData();
     // loadLoginDataFuture = _checkLoginStatus();
   }
+
+  int currentPage = 0;  // 현재 페이지 번호
+  final int itemsPerPage = 10;  // 페이지당 아이템 수
 
   // Future<void> _checkLoginStatus() async {
   //   // userId = await getUserId();
@@ -65,16 +73,26 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
   String? selectedCategory;
 
   Future<void> _getData() async {
+    var response;
     userId = await getUserId();
     setState(() {
       _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
       userId = "c96c76ed-041d-4396-8efe-dcbd4f4827cd";
     });
 
-    final response = await http.get(
-      Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/1/c96c76ed-041d-4396-8efe-dcbd4f4827cd/0'),
-      headers: {'Content-Type': 'application/json'},
-    );
+    if(userId == null){
+      response = await http.get(
+        Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/1/c96c76ed-041d-4396-8efe-dcbd4f4827cd/0'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+    }else{
+      response = await http.get(
+        Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/1/$userId/0'),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }
+
 
     // 응답을 처리하는 코드 (예: 상태를 업데이트하는 등)를 여기에 추가합니다.
     if (response.statusCode == 200) {
@@ -111,6 +129,73 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
     '키즈카페',
     // 여기에 추가 카테고리를 넣을 수 있습니다.
   ];
+
+  void fetchPlaces(int regionCode) async {
+
+    var response;
+
+    if(userId == null){
+      response = await http.get(
+        Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/${regionCode}/c96c76ed-041d-4396-8efe-dcbd4f4827cd/0'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+    }else{
+      response = await http.get(
+        Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/${regionCode}/$userId/0'),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }
+
+    if (response.statusCode == 200) {
+      var jsonString = utf8.decode(response.bodyBytes);
+      Map<String, dynamic> decodedJson = jsonDecode(jsonString);
+
+      setState(() {
+        places = decodedJson['recommended_place'];
+        currentPage = 0;
+      });
+      print("success");
+    }else{
+      print("fail");
+    }
+  }
+
+  void fetchMorePlaces(int regionCode) async {
+    currentPage += 1;
+    var response;
+
+    if(userId == null){
+      response = await http.get(
+        Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/${regionCode}/c96c76ed-041d-4396-8efe-dcbd4f4827cd/${currentPage}'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+    }else{
+      response = await http.get(
+        Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/${regionCode}/$userId/${currentPage}'),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }
+
+
+    if (response.statusCode == 200) {
+      var jsonString = utf8.decode(response.bodyBytes);
+      Map<String, dynamic> decodedJson = jsonDecode(jsonString);
+
+      setState(() {
+        places?.addAll(decodedJson['recommended_place']);  // 새로 받아온 데이터를 기존 리스트에 추가
+      });
+      print("success");
+    }else{
+      print("fail");
+    }
+  }
+
+  void loadMoreItems() {
+    fetchMorePlaces(selectedRegionCode);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -257,6 +342,7 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
         centerTitle: true,
       ),
       body: CustomScrollView(
+
         slivers: <Widget>[
           const SliverToBoxAdapter(
             child: SizedBox(height: 15.0),
@@ -286,11 +372,11 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                         // 그림자를 없애기 위해
                         side: selectedCategory == categories[index]
                             ? const BorderSide(
-                                color: Colors.transparent,
-                                width: 1.0) // 선택되었을 때 테두리 없음
+                            color: Colors.transparent,
+                            width: 1.0) // 선택되었을 때 테두리 없음
                             : BorderSide(
-                                color: Colors.grey.withOpacity(0.4),
-                                width: 1.0),
+                            color: Colors.grey.withOpacity(0.4),
+                            width: 1.0),
                         // 선택되지 않았을 때 회색 테두리
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -321,11 +407,86 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
           const SliverToBoxAdapter(
             child: SizedBox(height: 15.0),
           ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  PopupMenuButton<int>(
+                    padding: EdgeInsets.zero,
+                    child: Row(
+                      children: [
+                        Text(
+                          selectedRegionName,  // 이 변수는 선택된 지역의 이름을 표시합니다.
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xffFF7E76), // 강조
+                          ),
+                        ),
+                        SizedBox(width: 2.0),
+                        Icon(Icons.arrow_drop_down, color: Color(0xffFF7E76)),
+                      ],
+                    ),
+                    itemBuilder: (context) => [
+                      for (var region in {
+                        '서울, 경기, 인천': 1,
+                        '강원, 충북, 충남, 대전': 2,
+                        '경남, 경북, 대구, 부산, 울산': 3,
+                        '전남, 전북, 광주': 4,
+                        '제주': 5
+                      }.entries)
+                        PopupMenuItem<int>(
+                          value: region.value,
+                          child: Container(
+                            color: Colors.white, // 배경색을 흰색으로 설정
+                            child: Text(
+                              region.key,
+                              style: TextStyle(
+                                color: selectedRegionName == region.key
+                                    ? Color(0xffFF7E76)
+                                    : Colors.grey,
+                              ),
+                            ),
+                          ),
+                        )
+                    ],
+                    onSelected: (selectedValue) {
+                      setState(() {
+                        selectedRegionCode = selectedValue;
+                        selectedRegionName = {
+                          1: '서울, 경기, 인천',
+                          2: '강원, 충북, 충남, 대전',
+                          3: '경남, 경북, 대구, 부산, 울산',
+                          4: '전남, 전북, 광주',
+                          5: '제주',
+                        }[selectedValue]!;
+                      });
+
+                      // 이 부분에서 API를 호출합니다.
+                      fetchPlaces(selectedRegionCode);
+                    },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      side: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    color: Colors.white, // 이 부분도 배경색을 흰색으로 설정
+                  ),
+
+                ],
+              ),
+            ),
+          ),
+
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 15.0),
+          ),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0), // 여기서 패딩을 추가
             sliver: SliverGrid(
               delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
+                    (BuildContext context, int index) {
                   var filteredPlaces = places!.where((place) {
                     if (selectedCategory == '전체') {
                       return true;
@@ -337,8 +498,7 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => ShopDetailScreen(
-                              placeId: filteredPlaces[index]
-                                  ['place_id']), // 여기에 원하는 화면 위젯을 넣으세요.
+                              placeId: filteredPlaces[index]['place_id']), // 여기에 원하는 화면 위젯을 넣으세요.
                         ),
                       );
                     },
@@ -346,7 +506,7 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                       place_id: filteredPlaces[index]['place_id'].toString(),
                       name: filteredPlaces[index]['name'],
                       address:
-                          getFirstTwoWords(filteredPlaces[index]['address']),
+                      getFirstTwoWords(filteredPlaces[index]['address']),
                       addressStyle: const TextStyle(color: Colors.grey),
                       // 여기에 추가
                       category: filteredPlaces[index]['category'],
@@ -356,7 +516,7 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                   );
                 },
                 childCount: places!.where(
-                  (place) {
+                      (place) {
                     if (selectedCategory == '전체') {
                       return true;
                     }
@@ -369,6 +529,35 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                 mainAxisSpacing: 2.0,
                 crossAxisSpacing: 8.0,
                 childAspectRatio: 1 / 1.8,  // 이 부분을 수정했습니다.
+              ),
+            ),
+          ),
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 15.0),
+          ),
+          SliverToBoxAdapter(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
+                child: ElevatedButton(
+                  child: Text(
+                    "더보기",
+                    style: TextStyle(color: Color(0xffFF7E76), fontWeight: FontWeight.bold),
+                  ),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.white), // 야놀자 주 색상인 코랄 색상
+                    padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0)), // 버튼 내부 패딩
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0), // 둥근 모서리
+                        side: BorderSide(color: Color(0xffFF7E76)), // 버튼 테두리 색상
+                      ),
+                    ),
+                    elevation: MaterialStateProperty.all(5.0), // 그림자 높이
+                    shadowColor: MaterialStateProperty.all(Colors.black.withOpacity(0.25)), // 그림자 색상
+                  ),
+                  onPressed: loadMoreItems,
+                ),
               ),
             ),
           ),

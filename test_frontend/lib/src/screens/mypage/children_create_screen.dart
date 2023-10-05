@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/screens/mypage/mypage_screen.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
@@ -22,8 +23,7 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
   String gender = '남';
   DateTime? birthday;
   File? childrenImage;
-  String uri = 'https://j9a604.p.ssafy.io/api';
-  // String uri = 'http://10.0.2.2:8080';
+  String uri = dotenv.get("api_key");
 
   bool dateChanged = false;
   Future<void> selectDate(BuildContext context) async {
@@ -188,64 +188,56 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
                         Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 10),
-                          child: Column(
+                          child: Row(
                             children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        // 아이 등록 요청을 보내고 응답이 오면 결과를 Dialog에 넣기
-                                        registChild().then((result) {
-                                          // 이전 dialog 닫고
-                                          Navigator.of(context).pop();
-                                          // 실패시
-                                          if (!result) {
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return const FailDialog();
-                                              },
-                                            );
-                                          } else {
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return const SuccessDialog();
-                                              },
-                                            );
-                                          }
-                                        });
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              const Color(0XFFF6766E),
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(5)),
-                                          padding: const EdgeInsets.all(2)),
-                                      child: const Text(
-                                        "등록하기",
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    // 아이 등록 요청을 보내고 응답이 오면 결과를 Dialog에 넣기
+                                    registChild().then((result) {
+                                      // 이전 dialog 닫고
                                       Navigator.of(context).pop();
-                                    },
-                                    child: const Text("닫기"),
-                                  )
-                                ],
+                                      // 실패시
+                                      if (!result) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return const FailDialog();
+                                          },
+                                        );
+                                      } else {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return const SuccessDialog();
+                                          },
+                                        );
+                                      }
+                                    });
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0XFFF6766E),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
+                                      padding: const EdgeInsets.all(2)),
+                                  child: const Text(
+                                    "등록하기",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
                               ),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text(
+                                    "닫기",
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              )
                             ],
                           ),
                         ),
@@ -270,7 +262,7 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(10),
           child: Column(
             children: [
               GestureDetector(
@@ -341,6 +333,7 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
                                   name = value;
                                 });
                               },
+                              maxLength: 20,
                               decoration: const InputDecoration(
                                 labelText: "이름",
                                 focusedBorder: OutlineInputBorder(

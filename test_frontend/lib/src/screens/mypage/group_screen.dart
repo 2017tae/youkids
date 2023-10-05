@@ -30,8 +30,7 @@ class GroupScreen extends StatefulWidget {
 class _GroupScreenState extends State<GroupScreen> {
   String? userId;
   String? newName;
-  // String uri = 'http://10.0.2.2:8080';
-  String uri = 'https://j9a604.p.ssafy.io/api';
+  String uri = dotenv.get("api_key");
   String groupName = ' ';
   String emailInput = '';
   PartnerModel? request;
@@ -223,6 +222,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                   newName = value;
                                 });
                               },
+                              maxLength: 20,
                               decoration: InputDecoration(
                                 labelText: newName,
                                 focusedBorder: const OutlineInputBorder(
@@ -245,68 +245,65 @@ class _GroupScreenState extends State<GroupScreen> {
                               )),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                          child: Column(
-                            children: [
-                              Row(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Expanded(
-                                      child: ElevatedButton(
-                                    onPressed: () {
-                                      // put요청 보내기
-                                      updateGroup().then((result) {
-                                        Navigator.of(context).pop();
-                                        if (result) {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return const SuccessDialog(
-                                                  message: "그룹명을 변경했습니다.");
-                                            },
-                                          );
-                                        } else {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return const FailDialog(
-                                                  message: "그룹명 변경에 실패했습니다.");
-                                            },
-                                          );
-                                        }
-                                      });
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            const Color(0XFFF6766E),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5)),
-                                        padding: const EdgeInsets.all(2)),
-                                    child: const Text(
-                                      "이름 변경하기",
-                                      style: TextStyle(color: Colors.white),
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        // put요청 보내기
+                                        updateGroup().then((result) {
+                                          Navigator.of(context).pop();
+                                          if (result) {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return const SuccessDialog(
+                                                    message: "그룹명을 변경했습니다.");
+                                              },
+                                            );
+                                          } else {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return const FailDialog(
+                                                    message: "그룹명 변경에 실패했습니다.");
+                                              },
+                                            );
+                                          }
+                                        });
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              const Color(0XFFF6766E),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5)),
+                                          padding: const EdgeInsets.all(2)),
+                                      child: const Text(
+                                        "이름 변경하기",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
                                     ),
-                                  )),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text("닫기"),
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
-                        )
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text(
+                                        "닫기",
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                ]))
                       ]);
                 },
               );
@@ -344,7 +341,7 @@ class _GroupScreenState extends State<GroupScreen> {
                       builder: (context) {
                         return SimpleDialog(
                             title: Text(
-                              '${widget.group.groupName}에서 탈퇴하시겠습니까?',
+                              '${widget.group.groupName}에서\n탈퇴하시겠습니까?',
                               textAlign: TextAlign.center,
                             ),
                             children: [
@@ -352,72 +349,68 @@ class _GroupScreenState extends State<GroupScreen> {
                                 height: 5,
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 10),
-                                child: Column(
-                                  children: [
-                                    Row(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
                                       children: [
                                         Expanded(
-                                            child: ElevatedButton(
-                                          onPressed: () {
-                                            // delete요청 보내기
-                                            deleteGroup().then((result) {
-                                              Navigator.of(context).pop();
-                                              if (result) {
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return const SuccessDialog(
-                                                        message: "탈퇴했습니다.");
-                                                  },
-                                                );
-                                              } else {
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return const FailDialog(
-                                                        message: "탈퇴에 실패했습니다.");
-                                                  },
-                                                );
-                                              }
-                                            });
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  const Color(0XFFF6766E),
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(5)),
-                                              padding: const EdgeInsets.all(2)),
-                                          child: const Text(
-                                            "탈퇴하기",
-                                            style:
-                                                TextStyle(color: Colors.white),
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              // delete요청 보내기
+                                              deleteGroup().then((result) {
+                                                Navigator.of(context).pop();
+                                                if (result) {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return const SuccessDialog(
+                                                          message: "탈퇴했습니다.");
+                                                    },
+                                                  );
+                                                } else {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return const FailDialog(
+                                                          message:
+                                                              "탈퇴에 실패했습니다.");
+                                                    },
+                                                  );
+                                                }
+                                              });
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    const Color(0XFFF6766E),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5)),
+                                                padding:
+                                                    const EdgeInsets.all(2)),
+                                            child: const Text(
+                                              "탈퇴하기",
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
                                           ),
-                                        )),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text("닫기"),
+                                        ),
+                                        Expanded(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text(
+                                              "닫기",
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
                                         )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              )
+                                      ]))
                             ]);
                       },
                     );
@@ -506,107 +499,98 @@ class _GroupScreenState extends State<GroupScreen> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            addMember().then((result) {
-                                              // Navigator.of(context).pop();
-                                              if (result == 'email') {
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return const FailDialog(
-                                                        message:
-                                                            "이메일 형식을 지켜주세요.");
-                                                  },
-                                                );
-                                              } else if (result == 'exists') {
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return const FailDialog(
-                                                        message:
-                                                            "해당 유저가 이미 그룹에 존재합니다.");
-                                                  },
-                                                );
-                                              } else if (result == 'success') {
-                                                addMemberRequest()
-                                                    .then((value) {
-                                                  if (value) {
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return const SuccessDialog(
-                                                              message:
-                                                                  "해당 유저에게 요청을 보냈습니다.");
-                                                        });
-                                                  } else {
-                                                    showDialog(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Expanded(
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          addMember().then((result) {
+                                            // Navigator.of(context).pop();
+                                            if (result == 'email') {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return const FailDialog(
+                                                      message:
+                                                          "이메일 형식을 지켜주세요.");
+                                                },
+                                              );
+                                            } else if (result == 'exists') {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return const FailDialog(
+                                                      message:
+                                                          "해당 유저가 이미 그룹에 존재합니다.");
+                                                },
+                                              );
+                                            } else if (result == 'success') {
+                                              addMemberRequest().then((value) {
+                                                if (value) {
+                                                  showDialog(
                                                       context: context,
                                                       builder: (BuildContext
                                                           context) {
-                                                        return const FailDialog(
+                                                        return const SuccessDialog(
                                                             message:
-                                                                "알 수 없는 오류입니다.");
-                                                      },
-                                                    );
-                                                  }
-                                                });
-                                              } else {
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return const FailDialog(
-                                                        message:
-                                                            "알 수 없는 오류입니다.");
-                                                  },
-                                                );
-                                              }
-                                            });
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  const Color(0XFFF6766E),
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(5)),
-                                              padding: const EdgeInsets.all(2)),
-                                          child: const Text(
-                                            "추가 요청 보내기",
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
+                                                                "해당 유저에게 요청을 보냈습니다.");
+                                                      });
+                                                } else {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return const FailDialog(
+                                                          message:
+                                                              "알 수 없는 오류입니다.");
+                                                    },
+                                                  );
+                                                }
+                                              });
+                                            } else {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return const FailDialog(
+                                                      message: "알 수 없는 오류입니다.");
+                                                },
+                                              );
+                                            }
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                const Color(0XFFF6766E),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(5)),
+                                            padding: const EdgeInsets.all(2)),
+                                        child: const Text(
+                                          "요청 보내기",
+                                          style: TextStyle(color: Colors.white),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      GestureDetector(
+                                    ),
+                                    Expanded(
+                                      child: GestureDetector(
                                         onTap: () {
                                           Navigator.of(context).pop();
                                         },
-                                        child: const Text("닫기"),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
+                                        child: const Text(
+                                          "닫기",
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                )),
                           ],
                         );
                       },

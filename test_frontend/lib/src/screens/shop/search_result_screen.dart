@@ -136,37 +136,40 @@ class _SearchResultPageState extends State<SearchResultPage> {
               ),
             ] else ...[
               Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.search_off_outlined,
-                      color: Colors.grey[400],
-                      size: 60.0,
-                    ),
-                    SizedBox(height: 20.0),
-                    Text(
-                      "검색결과가 없습니다!",
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[600],
+                child: Center(  // Center 위젯을 추가합니다.
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,  // 세로축 중앙 정렬
+                    crossAxisAlignment: CrossAxisAlignment.center, // 가로축 중앙 정렬
+                    children: [
+                      Icon(
+                        Icons.search_off_outlined,
+                        color: Colors.grey[400],
+                        size: 60.0,
                       ),
-                    ),
-                    SizedBox(height: 10.0),
-                    Text(
-                      "다른 검색어를 입력해보세요.",
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.grey[500],
+                      SizedBox(height: 20.0),
+                      Text(
+                        "검색결과가 없습니다!",
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[600],
+                        ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 10.0),
+                      Text(
+                        "다른 검색어를 입력해보세요.",
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          color: Colors.grey[500],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               )
             ]
 
-        ],
+          ],
         ),
       ),
     );

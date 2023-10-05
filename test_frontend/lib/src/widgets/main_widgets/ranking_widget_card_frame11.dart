@@ -11,7 +11,7 @@ class DiagonalBannerPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // 대각선 배너 그리기
-    final Paint paint = Paint()..color = Colors.red;
+    final Paint paint = Paint()..color = Color(0xffFF7E76);
     final Path path = Path()
       ..lineTo(size.width, 0)
       ..lineTo(0, size.width)

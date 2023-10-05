@@ -187,9 +187,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return const CircularProgressIndicator();
-    }
+    // if (isLoading) {
+    //   return const CircularProgressIndicator();
+    // }
     return Scaffold(
       drawer: const Drawer(),
       appBar: AppBar(

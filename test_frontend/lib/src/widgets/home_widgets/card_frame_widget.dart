@@ -130,8 +130,8 @@ class CardFrame11Widget extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          height: MediaQuery.of(context).size.width * 0.44,
-          width: MediaQuery.of(context).size.width * 0.44,
+          height: (MediaQuery.of(context).size.width-30) * 0.5,
+          width: (MediaQuery.of(context).size.width-30) * 0.5,
           decoration: BoxDecoration(
               color: const Color(0xffF5EEEC),
               borderRadius: BorderRadius.circular(10),

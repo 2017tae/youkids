@@ -31,7 +31,7 @@ class _ShowCarouselWidgetState extends State<ShowCarouselWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: MediaQuery.of(context).size.width - 40,
+      width: MediaQuery.of(context).size.width,
       height: (MediaQuery.of(context).size.width - 40) * 0.8, // 전체 높이 조절
       child: ListView.separated(
         scrollDirection: Axis.horizontal,

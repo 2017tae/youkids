@@ -366,9 +366,9 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
               ),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                mainAxisSpacing: 8.0,
+                mainAxisSpacing: 2.0,
                 crossAxisSpacing: 8.0,
-                childAspectRatio: 2 / 3,
+                childAspectRatio: 1 / 1.8,  // 이 부분을 수정했습니다.
               ),
             ),
           ),
@@ -473,8 +473,7 @@ class GridItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Expanded(
-          child: Stack(
+         Stack(
             children: [
               AspectRatio(
                 aspectRatio: 2 / 3,
@@ -482,10 +481,11 @@ class GridItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10.0),
                   child: Image.network(
                     image_url,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill, // 이 부분을 수정했습니다.
                   ),
                 ),
               ),
+
               Positioned(
                 top: 0,
                 right: 0,
@@ -498,9 +498,8 @@ class GridItem extends StatelessWidget {
               ),
             ],
           ),
-        ),
         const SizedBox(
-          height: 8.0,
+          height: 8.0,  // 여기의 값을 4.0으로 변경했습니다.
         ),
         Text(
           name,

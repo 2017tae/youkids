@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:youkids/src/screens/capsule/capsule_list_screen.dart';
 import 'package:youkids/src/screens/home/home_screen.dart';
 import 'package:youkids/src/services/posting_services.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
@@ -124,24 +123,21 @@ class _PostingScreenState extends State<PostingScreen> {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        content: Icon(
-                          Icons.check_circle_outline_rounded,
-                          color: Colors.green[400],
-                          size: 30,
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const HomeScreen(),
-                                ),
-                              );
-                            },
-                            child: const Text('Ok'),
+                        content: IconButton(
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const HomeScreen(),
+                              ),
+                            );
+                          },
+                          icon: Icon(
+                            Icons.check_circle_outline_rounded,
+                            color: Colors.green[400],
+                            size: 30,
                           ),
-                        ],
+                        ),
                       );
                     },
                   );

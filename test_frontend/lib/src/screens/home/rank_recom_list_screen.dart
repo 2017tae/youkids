@@ -74,17 +74,20 @@ class _RankRecomlistScreen extends State<RankRecomlistScreen> {
   Widget _buildLoadingMainContent() {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('여행 추천'),
+        title: const Text('저번 주 리뷰 많은 장소',
+          style: TextStyle(
+              fontSize: 20.0
+          ),),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              LoadingsetHomeMenu("저번 주 리뷰 많은 장소"),
               Column(
                 children: [
                   GestureDetector(
@@ -130,13 +133,17 @@ class _RankRecomlistScreen extends State<RankRecomlistScreen> {
   Widget _buildMainContent() {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('지난 주 리뷰 많은 장소'),
+        title: const Text('저번 주 리뷰 많은 장소',
+          style: TextStyle(
+              fontSize: 20.0
+          ),),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -173,7 +180,6 @@ class _RankRecomlistScreen extends State<RankRecomlistScreen> {
               //     ),
               //   ],
               // ),
-              setHomeMenu(context, '저번 주 리뷰 많은 장소'),
               Column(
                 children: List<Widget>.generate(10, (index) {
                   return Column(
@@ -275,7 +281,7 @@ class _LoadingCardFrame21WidgetState extends State<LoadingCardFrame21Widget>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 180),
+      duration: const Duration(milliseconds: 90),
     )..repeat(reverse: true);
 
     _colorAnimation = ColorTween(
@@ -328,7 +334,7 @@ class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 180),
+      duration: const Duration(milliseconds: 90),
     )..repeat(reverse: true);
 
     _colorAnimation = ColorTween(

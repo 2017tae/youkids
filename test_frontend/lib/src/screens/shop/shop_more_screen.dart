@@ -476,12 +476,12 @@ class GridItem extends StatelessWidget {
          Stack(
             children: [
               AspectRatio(
-                aspectRatio: 2 / 3,
+                aspectRatio: 1 / 1.5,  // 여기를 조절
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
                   child: Image.network(
                     image_url,
-                    fit: BoxFit.fill, // 이 부분을 수정했습니다.
+                    fit: BoxFit.cover,  // 여기를 변경
                   ),
                 ),
               ),

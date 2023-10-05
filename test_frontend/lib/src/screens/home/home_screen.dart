@@ -15,6 +15,7 @@ import 'package:http/http.dart' as http;
 import 'package:youkids/src/widgets/show_carousel_widget.dart';
 
 import '../../widgets/main_widgets/ranking_widget_card_frame11.dart';
+import '../../widgets/search_bar_widgets.dart';
 import '../login/login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -26,6 +27,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _isLoggedIn = false;
+
+  bool _showSearch = false; // 기본적으로 검색 화면은 보이지 않도록 설정
 
   List? places;
 
@@ -102,13 +105,23 @@ class _HomeScreenState extends State<HomeScreen> {
     // userId = await getUserId();
     userId = '87dad60a-bfff-47e5-8e21-02cb49b23ba6';
     setState(() {
-      _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
+       _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
+      // userId = "c96c76ed-041d-4396-8efe-dcbd4f4827cd";
     });
 
-    final response = await http.get(
-      Uri.parse('https://j9a604.p.ssafy.io/api/place/recomm'),
-      headers: {'Content-Type': 'application/json'},
-    );
+    var response;
+
+    if(userId !=null){
+      response = await http.get(
+        Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/' + userId!),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }else{
+      response = await http.get(
+        Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/c96c76ed-041d-4396-8efe-dcbd4f4827cd'),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }
 
     int? festivalId = await getFestivalId();
 
@@ -120,11 +133,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     // 응답을 처리하는 코드 (예: 상태를 업데이트하는 등)를 여기에 추가합니다.
+
     if (response.statusCode == 200) {
       var jsonString = utf8.decode(response.bodyBytes);
       Map<String, dynamic> decodedJson = jsonDecode(jsonString);
       setState(() {
-        places = decodedJson['result']['places'];
+        places = decodedJson['recommended_place'];
       });
 
       // print(places);
@@ -201,30 +215,6 @@ class _HomeScreenState extends State<HomeScreen> {
         iconTheme: const IconThemeData(
           color: Colors.black,
         ),
-        actions: [
-          // IconButton(
-          //   onPressed: () {},
-          //   icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
-          //       height: 24),
-          // ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      LoginScreen(),
-                  transitionDuration: Duration.zero,
-                  reverseTransitionDuration: Duration.zero,
-                ),
-              );
-            },
-            icon: const Icon(
-              Icons.account_circle_rounded,
-              size: 28,
-            ),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -337,32 +327,6 @@ class _HomeScreenState extends State<HomeScreen> {
         iconTheme: const IconThemeData(
           color: Colors.black,
         ),
-        actions: [
-          // IconButton(
-          //   onPressed: () {},
-          //   icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
-          //       height: 24),
-          // ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LoginScreen()),
-              );
-            },
-            icon: const Icon(
-              Icons.account_circle_rounded,
-              size: 28,
-            ),
-          ),
-          // IconButton(
-          //   icon: Icon(Icons.delete),  // 예시 아이콘. 원하는 아이콘으로 변경하세요.
-          //   onPressed: () async {
-          //     await removeData();
-          //     print('userId removed from SharedPreferences');
-          //   },
-          // )
-        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -370,6 +334,11 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Column(
+                children: <Widget>[
+                  SearchBarWidget(),
+                ],
+              ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 20.0),
                 child: GridView.count(
@@ -409,16 +378,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ShopDetailScreen(
-                              placeId: places?[0]['placeId'],
+                              placeId: places?[0]['place_id'],
                             ),
                           ),
                         );
                       },
                       child: CardFrame21Widget(
-                        placeId: places?[0]['placeId'],
+                        placeId: places?[0]['place_id'],
                         userId: userId,
                         imageUrl: (places?.isNotEmpty ?? false)
-                            ? places![0]['imageUrl']
+                            ? places![0]['image_url']
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
                         name: places![0]['name'],
                         address: places![0]['address'],
@@ -435,16 +404,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => ShopDetailScreen(
-                                placeId: places?[1]['placeId'],
+                                placeId: places?[1]['place_id'],
                               ),
                             ),
                           );
                         },
                         child: CardFrame11Widget(
-                          placeId: places?[1]['placeId'],
+                          placeId: places?[1]['place_id'],
                           userId: userId,
                           imageUrl: (places?.isNotEmpty ?? false)
-                              ? places![1]['imageUrl']
+                              ? places![1]['image_url']
                               : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
                           name: places![1]['name'],
                           address: places![1]['address'],
@@ -456,16 +425,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => ShopDetailScreen(
-                                placeId: places?[2]['placeId'],
+                                placeId: places?[2]['place_id'],
                               ),
                             ),
                           );
                         },
                         child: CardFrame11Widget(
-                          placeId: places?[2]['placeId'],
+                          placeId: places?[2]['place_id'],
                           userId: userId,
                           imageUrl: (places?.isNotEmpty ?? false)
-                              ? places![2]['imageUrl']
+                              ? places![2]['image_url']
                               : "https://picturepractice.s3.a p-northeast-2.amazonaws.com/Park/1514459962%233.png",
                           name: places![2]['name'],
                           address: places![2]['address'],
@@ -494,16 +463,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ShopDetailScreen(
-                              placeId: places?[3]['placeId'],
+                              placeId: places?[3]['place_id'],
                             ),
                           ),
                         );
                       },
                       child: RankingWidgetCardFrame11(
-                        placeId: places?[3]['placeId'],
+                        placeId: places?[3]['place_id'],
                         userId: userId,
                         imageUrl: (places?.isNotEmpty ?? false)
-                            ? places![3]['imageUrl']
+                            ? places![3]['image_url']
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
                         name: places![3]['name'],
                         address: places![3]['address'],
@@ -518,16 +487,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ShopDetailScreen(
-                              placeId: places?[4]['placeId'],
+                              placeId: places?[4]['place_id'],
                             ),
                           ),
                         );
                       },
                       child: RankingWidgetCardFrame11(
-                        placeId: places?[4]['placeId'],
+                        placeId: places?[4]['place_id'],
                         userId: userId,
                         imageUrl: (places?.isNotEmpty ?? false)
-                            ? places![4]['imageUrl']
+                            ? places![4]['image_url']
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
                         name: places![4]['name'],
                         address: places![4]['address'],
@@ -542,16 +511,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ShopDetailScreen(
-                              placeId: places?[5]['placeId'],
+                              placeId: places?[5]['place_id'],
                             ),
                           ),
                         );
                       },
                       child: RankingWidgetCardFrame11(
-                        placeId: places?[5]['placeId'],
+                        placeId: places?[5]['place_id'],
                         userId: userId,
                         imageUrl: (places?.isNotEmpty ?? false)
-                            ? places![5]['imageUrl']
+                            ? places![5]['image_url']
                             : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
                         name: places![5]['name'],
                         address: places![5]['address'],

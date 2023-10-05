@@ -103,7 +103,7 @@ class _MyGroupState extends State<MyGroup> {
                     },
                   ),
                   // 내 그룹이면
-                  widget.myGroup
+                  widget.myGroup || widget.partnerGroup
                       ? AddGroupMember(
                           nickname: widget.nickname,
                           leaderId: widget.group.groupId)
@@ -133,8 +133,7 @@ class AddGroupMember extends StatefulWidget {
 
 class _AddGroupMemberState extends State<AddGroupMember> {
   String email = '';
-  // String uri = 'http://10.0.2.2:8080';
-  String uri = 'https://j9a604.p.ssafy.io/api';
+  String uri = dotenv.get("api_key");
   PartnerModel? request;
 
   // 멤버 이메일을 보내서 추가 요청을 보내기
@@ -159,7 +158,7 @@ class _AddGroupMemberState extends State<AddGroupMember> {
                   profileImage: response2.data['profileImage'],
                   fcmToken: response2.data['fcmToken']);
             });
-          } else if (response.statusCode == 400) {
+          } else if (response2.statusCode == 400) {
             return 'exists';
           } else {
             return 'error';
@@ -271,94 +270,87 @@ class _AddGroupMemberState extends State<AddGroupMember> {
                   ),
                 ),
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                addMember().then((result) {
-                                  // Navigator.of(context).pop();
-                                  if (result == 'email') {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return const FailDialog(
-                                            message: "이메일 형식을 지켜주세요.");
-                                      },
-                                    );
-                                  } else if (result == 'exists') {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return const FailDialog(
-                                            message: "해당 유저가 이미 그룹에 존재합니다.");
-                                      },
-                                    );
-                                  } else if (result == 'success') {
-                                    addMemberRequest().then((value) {
-                                      if (value) {
-                                        showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return const SuccessDialog(
-                                                  message:
-                                                      "해당 유저에게 요청을 보냈습니다.");
-                                            });
-                                      } else {
-                                        showDialog(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              addMember().then((result) {
+                                // Navigator.of(context).pop();
+                                if (result == 'email') {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return const FailDialog(
+                                          message: "이메일 형식을 지켜주세요.");
+                                    },
+                                  );
+                                } else if (result == 'exists') {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return const FailDialog(
+                                          message: "해당 유저가 이미 그룹에 존재합니다.");
+                                    },
+                                  );
+                                } else if (result == 'success') {
+                                  addMemberRequest().then((value) {
+                                    if (value) {
+                                      showDialog(
                                           context: context,
                                           builder: (BuildContext context) {
-                                            return const FailDialog(
-                                                message: "알 수 없는 오류입니다.");
-                                          },
-                                        );
-                                      }
-                                    });
-                                  } else {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return const FailDialog(
-                                            message: "알 수 없는 오류입니다.");
-                                      },
-                                    );
-                                  }
-                                });
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0XFFF6766E),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5)),
-                                  padding: const EdgeInsets.all(2)),
-                              child: const Text(
-                                "추가 요청 보내기",
-                                style: TextStyle(color: Colors.white),
-                              ),
+                                            return const SuccessDialog(
+                                                message: "해당 유저에게 요청을 보냈습니다.");
+                                          });
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return const FailDialog(
+                                              message: "알 수 없는 오류입니다.");
+                                        },
+                                      );
+                                    }
+                                  });
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return const FailDialog(
+                                          message: "알 수 없는 오류입니다.");
+                                    },
+                                  );
+                                }
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                                minimumSize: const Size(90, 40),
+                                backgroundColor: const Color(0XFFF6766E),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5)),
+                                padding: const EdgeInsets.all(2)),
+                            child: const Text(
+                              "요청 보내기",
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          GestureDetector(
+                        ),
+                        Expanded(
+                          child: GestureDetector(
                             onTap: () {
                               Navigator.of(context).pop();
                             },
-                            child: const Text("닫기"),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+                            child: const Text(
+                              "닫기",
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        )
+                      ],
+                    )),
               ],
             );
           },

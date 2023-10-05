@@ -43,8 +43,9 @@ class _BannerWidgetState extends State<BannerWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300, // 원하는 높이로 설정
-      margin: const EdgeInsets.all(16.0),
+      height: 350, // 원하는 높이로 설정
+      margin: const EdgeInsets.all(10.0),
+      padding: EdgeInsets.only(bottom:30.0),
       child: PageView.builder(
         controller: _pageController,
         itemCount: null,

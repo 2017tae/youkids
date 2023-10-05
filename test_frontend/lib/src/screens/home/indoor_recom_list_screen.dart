@@ -10,19 +10,14 @@ import 'package:http/http.dart' as http;
 import '../shop/festival_detail_screen.dart';
 import 'banner_widget.dart';
 
-
 class IndoorRecomListScreen extends StatefulWidget {
-
-
   @override
   State<IndoorRecomListScreen> createState() => _IndoorRecomListScreenState();
 }
 
 class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
-
   List? festivals;
   Future? loadDataFuture;
-
 
   @override
   void initState() {
@@ -31,7 +26,6 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
   }
 
   Future<void> _checkLoginStatus() async {
-
     final response2 = await http.get(
         Uri.parse('https://j9a604.p.ssafy.io/api/festival/recommdiv'),
         headers: {'Content-Type': 'application/json'});
@@ -45,19 +39,20 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
       });
       print("abcd");
       print(festivals);
-
     } else {
       print("not");
     }
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return FutureBuilder(
       future: loadDataFuture,
       builder: (context, snapshot) {
         // if (snapshot.connectionState == ConnectionState.done) {
-        if (festivals != null && festivals!.isNotEmpty && festivals?[festivals!.length-1] != null) {
+        if (festivals != null &&
+            festivals!.isNotEmpty &&
+            festivals?[festivals!.length - 1] != null) {
           print(festivals);
           return _buildMainContent();
         } else {
@@ -65,31 +60,16 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
         }
       },
     );
-
   }
 
   Widget _buildLoadingMainContent() {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'YouKids',
-          style: TextStyle(
-            fontSize: 22,
-            color: Colors.black,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+        title: Text('공연 정보', style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(
-          color: Colors.black,
-        ),
-        // actions: [
-        //   IconButton(
-        //     onPressed: () {},
-        //     icon: SvgPicture.asset('lib/src/assets/icons/bell_white.svg',
-        //         height: 24),
-        //   ),
-        // ],
+        elevation: 0.5,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -101,48 +81,25 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
                 children: [
                   GestureDetector(
                     onTap: () {},
-                    child: const LoadingCardFrame21Widget(),
+                    child: const LoadingGridItem(),
                   ),
                   const SizedBox(
-                    height: 10,
+                    height: 50,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {},
-                        child: const LoadingCardFrame11Widget(),
-                      ),
-                      GestureDetector(
-                        onTap: () {},
-                        child: const LoadingCardFrame11Widget(),
-                      ),
-                    ],
+                  GestureDetector(
+                    onTap: () {},
+                    child: const LoadingGridItem2(),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {},
-                        child: const LoadingCardFrame11Widget(),
-                      ),
-                      GestureDetector(
-                        onTap: () {},
-                        child: const LoadingCardFrame11Widget(),
-                      ),
-                    ],
+                  SizedBox(height: 30.0),
+                  GestureDetector(
+                    onTap: () {},
+                    child: const LoadingGridItem2(),
                   ),
                 ],
               ),
             ],
           ),
         ),
-      ),
-      bottomNavigationBar: const FooterWidget(
-        currentIndex: 0,
       ),
     );
   }
@@ -167,14 +124,16 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
           int festivalIndex = index - 1;
 
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+            padding:
+                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
             child: GestureDetector(
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => FestivalDetailScreen(
-                        festivalId: festivals?[festivalIndex]['festivalChildId']),
+                        festivalId: festivals?[festivalIndex]
+                            ['festivalChildId']),
                   ),
                 );
               },
@@ -182,7 +141,7 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(5),
                     child: Image.network(
                       festivals?[festivalIndex]['poster'],
                       width: 100,
@@ -206,7 +165,11 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
                         ),
                         SizedBox(height: 10),
                         Text(
-                          '기간: ' + (festivals?[festivalIndex]['startDate'] + ' ~ ' + festivals?[festivalIndex]['endDate'] ?? '정보 없음'),
+                          '기간: ' +
+                              (festivals?[festivalIndex]['startDate'] +
+                                      ' ~ ' +
+                                      festivals?[festivalIndex]['endDate'] ??
+                                  '정보 없음'),
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 14,
@@ -214,7 +177,9 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
                         ),
                         SizedBox(height: 5),
                         Text(
-                          '장소: ' + (festivals?[festivalIndex]['placeName'] ?? '정보 없음'),
+                          '장소: ' +
+                              (festivals?[festivalIndex]['placeName'] ??
+                                  '정보 없음'),
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 14,
@@ -223,7 +188,8 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
                       ],
                     ),
                   ),
-                  Icon(Icons.arrow_forward_ios, color: Colors.grey[400], size: 18),
+                  Icon(Icons.arrow_forward_ios,
+                      color: Colors.grey[400], size: 18),
                 ],
               ),
             ),
@@ -232,23 +198,16 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
       ),
     );
   }
-
-
-
-
-
 }
 
-
-class LoadingCardFrame21Widget extends StatefulWidget {
-  const LoadingCardFrame21Widget({super.key});
+class LoadingGridItem extends StatefulWidget {
+  const LoadingGridItem({super.key});
 
   @override
-  State<LoadingCardFrame21Widget> createState() =>
-      _LoadingCardFrame21WidgetState();
+  State<LoadingGridItem> createState() => _LoadingGridItemState();
 }
 
-class _LoadingCardFrame21WidgetState extends State<LoadingCardFrame21Widget>
+class _LoadingGridItemState extends State<LoadingGridItem>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Color?> _colorAnimation;
@@ -259,79 +218,7 @@ class _LoadingCardFrame21WidgetState extends State<LoadingCardFrame21Widget>
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(
-        milliseconds: 180,
-      ),
-    )..repeat(reverse: true);
-
-    _colorAnimation = ColorTween(
-      begin: const Color(0xffd0d0d0),
-      end: const Color(0xffababab),
-    ).animate(_controller);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 2 / 1,
-      child: AnimatedBuilder(
-        animation: _colorAnimation,
-        builder: (context, child) {
-          return Container(
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: _colorAnimation.value,
-            ),
-          );
-        },
-      ),
-    );
-  }
-Padding loadingSetHomeMenu(String text) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 10),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          text,
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    ),
-  );
-}
-}
-
-class LoadingCardFrame11Widget extends StatefulWidget {
-  const LoadingCardFrame11Widget({super.key});
-
-  @override
-  State<LoadingCardFrame11Widget> createState() =>
-      _LoadingCardFrame11WidgetState();
-}
-
-class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<Color?> _colorAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(
-        milliseconds: 180,
+        milliseconds: 90,
       ),
     )..repeat(reverse: true);
 
@@ -355,14 +242,100 @@ class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
           animation: _colorAnimation,
           builder: (context, child) {
             return Container(
-              height: MediaQuery.of(context).size.width * 0.44,
-              width: MediaQuery.of(context).size.width * 0.44,
+              height: 320,
               decoration: BoxDecoration(
                 color: _colorAnimation.value,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(5),
               ),
             );
           },
+        ),
+      ],
+    );
+  }
+}
+
+class LoadingGridItem2 extends StatefulWidget {
+  const LoadingGridItem2({super.key});
+
+  @override
+  State<LoadingGridItem2> createState() => _LoadingGridItem2State();
+}
+
+class _LoadingGridItem2State extends State<LoadingGridItem2>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Color?> _colorAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(
+        milliseconds: 90,
+      ),
+    )..repeat(reverse: true);
+
+    _colorAnimation = ColorTween(
+      begin: const Color(0xffd0d0d0),
+      end: const Color(0xffababab),
+    ).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Row(
+          children: [
+            Container(
+              margin: EdgeInsets.only(left:6.0),
+              height: 140.0,
+              width: 100.0,
+              decoration: BoxDecoration(
+                color: _colorAnimation.value,
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
+            SizedBox(width: 10.0), // 왼쪽 Container와 간격 추가
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (int i = 0; i < 3; i++)
+                  Container(
+                    height: 140.0 / 9,
+                    width: MediaQuery.of(context).size.width - 160,
+                    decoration: BoxDecoration(
+                      color: _colorAnimation.value,
+                      borderRadius: BorderRadius.circular(2.0),
+                    ),
+                    margin: EdgeInsets.only(bottom:140.0/8),
+                    padding: EdgeInsets.only(right:6.0),
+
+                  ),
+
+                // 마지막 줄
+                Container(
+                  alignment: Alignment.bottomLeft,
+                  height: 140.0 / 9,
+                  width: (MediaQuery.of(context).size.width-160) / 2,
+                  padding: EdgeInsets.zero,
+                  margin: EdgeInsets.zero,
+                  decoration: BoxDecoration(
+                    color: _colorAnimation.value,
+                    borderRadius: BorderRadius.circular(2.0),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ],
     );

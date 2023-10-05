@@ -26,6 +26,7 @@ class _RankRecomlistScreen extends State<RankRecomlistScreen> {
   List? places;
 
   Future? loadDataFuture;
+  String? selectedCategory;
 
   String picture = "";
 
@@ -37,7 +38,7 @@ class _RankRecomlistScreen extends State<RankRecomlistScreen> {
 
   Future<void> _checkLoginStatus() async {
     final response = await http.get(
-      Uri.parse('https://j9a604.p.ssafy.io/api/place/recomm'),
+      Uri.parse('https://j9a604.p.ssafy.io/api/place/reviewtop'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -51,9 +52,21 @@ class _RankRecomlistScreen extends State<RankRecomlistScreen> {
         places = decodedJson['result']['places'];
       });
 
+      setState(() {
+        selectedCategory = "전체";
+      });
+
       // print(places);
     }
   }
+
+  List<String> categories = [
+    '전체',
+    '테마파크',
+    '박물관',
+    '키즈카페',
+    // 여기에 추가 카테고리를 넣을 수 있습니다.
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -141,84 +154,137 @@ class _RankRecomlistScreen extends State<RankRecomlistScreen> {
         foregroundColor: Colors.black,
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Column(
-              //   // 자녀 아이콘 + 자녀 이름 컬럼 정렬
-              //   crossAxisAlignment: CrossAxisAlignment.center,
-              //   children: [
-              //     Container(
-              //       padding: const EdgeInsets.all(7),
-              //       decoration: BoxDecoration(
-              //         gradient: const LinearGradient(
-              //           begin: Alignment.bottomRight,
-              //           end: Alignment.topLeft,
-              //           colors: [
-              //             Color(0xff4dabf7),
-              //             Color(0xffda77f2),
-              //             Color(0xfff783ac),
-              //           ],
-              //         ),
-              //         borderRadius: BorderRadius.circular(500),
-              //       ),
-              //       child: CircleAvatar(
-              //         radius: 40,
-              //         // backgroundImage: AssetImage(tmpChildStoryIcon[1].imgUrl),
-              //         backgroundColor: Colors.white,
-              //       ),
-              //     ),
-              //     Text(
-              //       "종합",
-              //       style: const TextStyle(
-              //         fontSize: 18,
-              //         fontWeight: FontWeight.w500,
-              //       ),
-              //     ),
-              //   ],
-              // ),
-              Column(
-                children: List<Widget>.generate(10, (index) {
-                  return Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ShopDetailScreen(
-                                placeId: places?[index]['placeId'],
-                              ),
-                            ),
-                          );
-                        },
-                        child: RankingWidgetCardFrame11(
-                          placeId: places?[index]['placeId'],
-                          userId: widget.userId,
-                          imageUrl: (places?.isNotEmpty ?? false)
-                              ? places![index]['imageUrl']
-                              : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
-                          name: places![index]['name'],
-                          address: places![index]['address'],
-                          rank: '${index + 1}',
+      body: CustomScrollView(
+        slivers: <Widget>[
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 15.0),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              padding: const EdgeInsets.only(left: 6.0, right: 6.0,),
+              height: 40.0,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: categories.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 1.0, horizontal: 8.0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: selectedCategory == categories[index]
+                            ? const Color(0xffFF7E76)
+                            : Colors.white,
+                        onSurface: Colors.white,
+                        elevation: 0,
+                        // 그림자를 없애기 위해
+                        side: selectedCategory == categories[index]
+                            ? BorderSide(
+                            color: Colors.transparent,
+                            width: 1.0) // 선택되었을 때 테두리 없음
+                            : BorderSide(
+                            color: Colors.grey.withOpacity(0.4),
+                            width: 1.0),
+                        // 선택되지 않았을 때 회색 테두리
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                            vertical: 0.0, horizontal: 16.0), // 버튼의 높이를 더 줄임
+                      ),
+                      child: Text(
+                        categories[index],
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: selectedCategory == categories[index]
+                              ? Colors.white
+                              : Colors.black,
                         ),
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                    ],
+                      onPressed: () {
+                        setState(() {
+                          selectedCategory = categories[index];
+                        });
+                      },
+                    ),
                   );
-                }),
-              )
-            ],
+                },
+              ),
+            ),
           ),
-        ),
-      ),
-      bottomNavigationBar: const FooterWidget(
-        currentIndex: 0,
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 15.0),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0), // 여기서 패딩을 추가
+            sliver: SliverGrid(
+              delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                  var filteredPlaces = places!.where((place) {
+                    if (selectedCategory == '전체') {
+                      return true;
+                    }
+                    return place['category'] == selectedCategory;
+                  }).toList();
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ShopDetailScreen(
+                              placeId: filteredPlaces[index]
+                              ['place_id']), // 여기에 원하는 화면 위젯을 넣으세요.
+                        ),
+                      );
+                    },
+                    child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ShopDetailScreen(
+                                    placeId: places?[index]['placeId'],
+                                  ),
+                                ),
+                              );
+                            },
+                            child: RankingWidgetCardFrame11(
+                              placeId: places?[index]['placeId'],
+                              userId: widget.userId,
+                              imageUrl: (places?.isNotEmpty ?? false)
+                                  ? places![index]['imageUrl']
+                                  : "https://picturepractice.s3.ap-northeast-2.amazonaws.com/Park/1514459962%233.png",
+                              name: places![index]['name'],
+                              address: places![index]['address'],
+                              rank: '${index + 1}',
+                            ),
+                          ),
+                        ],
+                    )
+                  );
+                },
+                childCount: places!.where(
+                      (place) {
+                        if (selectedCategory == '전체') {
+                      return true;
+                    }
+                    return place['category'] == selectedCategory;
+                  },
+                ).length,
+              ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 1,
+                mainAxisSpacing: 8.0,
+                crossAxisSpacing: 8.0,
+                childAspectRatio: 2 / 1,
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(height: 10.0), // 원하는 높이로 조정
+          ),
+        ],
       ),
     );
   }

@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/models/mypage_models/children_model.dart';
 import 'package:youkids/src/models/mypage_models/group_model.dart';
@@ -11,6 +10,7 @@ import 'package:youkids/src/models/mypage_models/partner_model.dart';
 import 'package:youkids/src/models/mypage_models/user_model.dart';
 import 'package:youkids/src/screens/login/login_screen.dart';
 import 'package:youkids/src/screens/mypage/myinfo_update_screen.dart';
+import 'package:youkids/src/screens/mypage/settings_screen.dart';
 import 'package:youkids/src/widgets/mypage_widgets/mychildren_widget.dart';
 import 'package:youkids/src/widgets/mypage_widgets/mygroup_widget.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
@@ -26,12 +26,12 @@ class MyPageScreen extends StatefulWidget {
 class _MyPageScreenState extends State<MyPageScreen> {
   // 모든 정보를 다 가지고 오고 false로 바꾸기
   bool isLoading = true;
-  // String uri = 'http://10.0.2.2:8080';
-  String uri = 'https://j9a604.p.ssafy.io/api';
+  String uri = dotenv.get("api_key");
   String? userId;
 
   MyinfoModel myInfo =
       MyinfoModel(email: ' ', nickname: ' ', leader: true, car: false);
+
   // leader == false이고 partnerInfo가 존재하면 partner 기준으로 정보 가져오기
   PartnerModel? partnerInfo;
   List<ChildrenModel> children = [];
@@ -47,8 +47,10 @@ class _MyPageScreenState extends State<MyPageScreen> {
     if (id == null) {
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => LoginScreen(),
+        PageRouteBuilder(
+          pageBuilder: (context, animation1, animation2) => LoginScreen(),
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
         ),
       );
     } else {
@@ -214,7 +216,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(10),
             child: Column(
               children: [
                 Padding(
@@ -228,6 +230,32 @@ class _MyPageScreenState extends State<MyPageScreen> {
                             onTap: () {
                               // settings 페이지로
                               print('settings');
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) {
+                                    var begin = const Offset(1.0, 0);
+                                    var end = Offset.zero;
+                                    var curve = Curves.ease;
+                                    var tween = Tween(
+                                      begin: begin,
+                                      end: end,
+                                    ).chain(
+                                      CurveTween(
+                                        curve: curve,
+                                      ),
+                                    );
+                                    return SlideTransition(
+                                      position: animation.drive(tween),
+                                      child: child,
+                                    );
+                                  },
+                                  pageBuilder:
+                                      (context, animation1, animation2) =>
+                                          SettingsScreen(),
+                                ),
+                              );
                             },
                             child: const Icon(
                               Icons.settings,
@@ -301,11 +329,15 @@ class _MyPageScreenState extends State<MyPageScreen> {
                               // 프로필 수정 페이지로
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) => MyinfoUpdateScreen(
+                                PageRouteBuilder(
+                                  pageBuilder:
+                                      (context, animation1, animation2) =>
+                                          MyinfoUpdateScreen(
                                     myInfo: myInfo,
                                     partnerInfo: partnerInfo,
                                   ),
+                                  transitionDuration: Duration.zero,
+                                  reverseTransitionDuration: Duration.zero,
                                 ),
                               );
                             },

@@ -25,6 +25,8 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
   String? userId;
   Future? loadLoginDataFuture;
 
+  bool _isLoggedIn = false;
+
   List? places;
   final int incrementCount = 10;
   Future? loadDataFuture;
@@ -43,14 +45,6 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
     ); // Returns 'john_doe' if it exists, otherwise returns null.
   }
 
-  Future<void> _checkLoginStatus() async {
-    // userId = await getUserId();
-    userId = '87dad60a-bfff-47e5-8e21-02cb49b23ba6';
-    setState(() {});
-    print('--------------------------');
-    print(userId);
-  }
-
   // _loadMoreData() {
   //   // 페이징(무한 스크롤)을 시뮬레이션하기 위한 코드
   //   List<List> newEntries = List.generate(incrementCount, (index) {
@@ -66,8 +60,15 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
   String? selectedCategory;
 
   Future<void> _getData() async {
+    userId = await getUserId();
+    setState(() {
+    userId = '87dad60a-bfff-47e5-8e21-02cb49b23ba6';
+      _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
+
+    });
+
     final response = await http.get(
-      Uri.parse('https://j9a604.p.ssafy.io/api/place/recomm'),
+      Uri.parse('https://j9a604.p.ssafy.io/fastapi/place/'+ userId!),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -76,7 +77,7 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
       var jsonString = utf8.decode(response.bodyBytes);
       Map<String, dynamic> decodedJson = jsonDecode(jsonString);
       setState(() {
-        places = decodedJson['result']['places'];
+        places = decodedJson['recommended_place'];
       });
       print("장소");
       print(places);
@@ -333,19 +334,19 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                         MaterialPageRoute(
                           builder: (context) => ShopDetailScreen(
                               placeId: filteredPlaces[index]
-                                  ['placeId']), // 여기에 원하는 화면 위젯을 넣으세요.
+                                  ['place_id']), // 여기에 원하는 화면 위젯을 넣으세요.
                         ),
                       );
                     },
                     child: GridItem(
-                      placeId: filteredPlaces[index]['placeId'].toString(),
+                      place_id: filteredPlaces[index]['place_id'].toString(),
                       name: filteredPlaces[index]['name'],
                       address:
                           getFirstTwoWords(filteredPlaces[index]['address']),
                       addressStyle: const TextStyle(color: Colors.grey),
                       // 여기에 추가
                       category: filteredPlaces[index]['category'],
-                      imageUrl: filteredPlaces[index]['imageUrl'],
+                      image_url: filteredPlaces[index]['image_url'],
                       userId: userId,
                     ),
                   );
@@ -449,18 +450,18 @@ class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
 }
 
 class GridItem extends StatelessWidget {
-  final String placeId, name, address, category, imageUrl;
+  final String place_id, name, address, category, image_url;
   final TextStyle addressStyle; // 여기에 추가
   final dynamic userId;
 
   const GridItem({
     super.key,
-    required this.placeId,
+    required this.place_id,
     required this.name,
     required this.address,
     this.addressStyle = const TextStyle(), // default value
     required this.category,
-    required this.imageUrl,
+    required this.image_url,
     required this.userId,
   });
 
@@ -486,7 +487,7 @@ class GridItem extends StatelessWidget {
                   right: 0,
                   child: (userId != null)
                       ? BookmarkButtonWidget(
-                          placeId: int.parse(placeId),
+                          placeId: int.parse(place_id),
                           userId: userId,
                         )
                       : Container(),

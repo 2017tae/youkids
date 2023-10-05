@@ -395,6 +395,13 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Override
     public PlaceRecommDto getSearchPlace(String request) {
-        return null;
+
+        List<PlaceRecommItemDto> response = placeRepository.findTop100ByNameContainingOrderByNaverReviewNumDesc(request);
+
+        Collections.shuffle(response);
+
+        return PlaceRecommDto.builder()
+                .places(response)
+                .build();
     }
 }

@@ -34,7 +34,6 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
     super.initState();
     loadDataFuture = _getData();
     loadLoginDataFuture = _checkLoginStatus();
-
   }
 
   Future<String?> getUserId() async {
@@ -155,7 +154,8 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                         backgroundColor: selectedCategory == categories[index]
                             ? const Color(0xffFF7E76)
                             : Colors.white,
-                        disabledForegroundColor: Colors.white.withOpacity(0.38), disabledBackgroundColor: Colors.white.withOpacity(0.12),
+                        disabledForegroundColor: Colors.white.withOpacity(0.38),
+                        disabledBackgroundColor: Colors.white.withOpacity(0.12),
                         elevation: 0,
                         // 그림자를 없애기 위해
                         side: selectedCategory == categories[index]
@@ -174,7 +174,8 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                       ),
                       child: Text(
                         categories[index],
-                        style: const TextStyle(fontSize: 14, color: Colors.white),
+                        style:
+                            const TextStyle(fontSize: 14, color: Colors.white),
                       ),
                       onPressed: () {},
                     ),
@@ -183,7 +184,8 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10.0, right:10.0, top:30.0),
+              padding:
+                  const EdgeInsets.only(left: 10.0, right: 10.0, top: 30.0),
               child: Column(
                 children: [
                   Row(
@@ -256,7 +258,10 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
           ),
           SliverToBoxAdapter(
             child: Container(
-              padding: const EdgeInsets.only(left: 6.0, right: 6.0,),
+              padding: const EdgeInsets.only(
+                left: 6.0,
+                right: 6.0,
+              ),
               height: 40.0,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
@@ -270,11 +275,12 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                         backgroundColor: selectedCategory == categories[index]
                             ? const Color(0xffFF7E76)
                             : Colors.white,
-                        onSurface: Colors.white,
+                        disabledForegroundColor: Colors.white.withOpacity(0.38),
+                        disabledBackgroundColor: Colors.white.withOpacity(0.12),
                         elevation: 0,
                         // 그림자를 없애기 위해
                         side: selectedCategory == categories[index]
-                            ? BorderSide(
+                            ? const BorderSide(
                                 color: Colors.transparent,
                                 width: 1.0) // 선택되었을 때 테두리 없음
                             : BorderSide(
@@ -284,7 +290,7 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                             vertical: 0.0, horizontal: 16.0), // 버튼의 높이를 더 줄임
                       ),
                       child: Text(
@@ -336,7 +342,7 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                       name: filteredPlaces[index]['name'],
                       address:
                           getFirstTwoWords(filteredPlaces[index]['address']),
-                      addressStyle: TextStyle(color: Colors.grey),
+                      addressStyle: const TextStyle(color: Colors.grey),
                       // 여기에 추가
                       category: filteredPlaces[index]['category'],
                       imageUrl: filteredPlaces[index]['imageUrl'],
@@ -463,13 +469,17 @@ class GridItem extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10.0),
             child: Stack(
               children: [
-                Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
+                AspectRatio(
+                  aspectRatio: 2 / 3,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
                 Positioned(
                   top: 0,
@@ -484,7 +494,6 @@ class GridItem extends StatelessWidget {
               ],
             ),
           ),
-        ),
         const SizedBox(
           height: 8.0,
         ),
@@ -544,7 +553,7 @@ class _LoadingGridItemState extends State<LoadingGridItem>
           animation: _colorAnimation,
           builder: (context, child) {
             return Container(
-              height:(MediaQuery.of(context).size.width - 30) * 0.6,
+              height: (MediaQuery.of(context).size.width - 30) * 0.6,
               width: (MediaQuery.of(context).size.width - 30) * 0.5,
               decoration: BoxDecoration(
                 color: _colorAnimation.value,

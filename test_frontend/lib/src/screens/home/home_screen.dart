@@ -8,6 +8,7 @@ import 'package:youkids/src/screens/home/indoor_recom_list_screen.dart';
 import 'package:youkids/src/screens/home/rank_recom_list_screen.dart';
 import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
 import 'package:youkids/src/screens/shop/shop_more_screen.dart';
+import 'package:youkids/src/widgets/bookmarked_total_list.dart';
 import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:youkids/src/widgets/home_widgets/card_frame_widget.dart';
 import 'package:http/http.dart' as http;
@@ -98,8 +99,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _checkLoginStatus() async {
-    userId = await getUserId();
-
+    // userId = await getUserId();
+    userId = '87dad60a-bfff-47e5-8e21-02cb49b23ba6';
     setState(() {
       _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
     });
@@ -578,6 +579,29 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+      floatingActionButton: (userId != null)
+          ? FloatingActionButton(
+              backgroundColor: const Color(0xffF6766E),
+              shape: const CircleBorder(),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation1, animation2) =>
+                        BookmarkedTotalList(
+                      userId: userId,
+                    ),
+                    transitionDuration: Duration.zero,
+                    reverseTransitionDuration: Duration.zero,
+                  ),
+                );
+              },
+              child: const Icon(
+                Icons.favorite_outline_rounded,
+                color: Colors.white,
+              ),
+            )
+          : Container(),
       bottomNavigationBar: const FooterWidget(
         currentIndex: 0,
       ),

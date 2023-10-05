@@ -14,15 +14,32 @@ class PlaceServices {
     if (response.statusCode == 200) {
       var jsonString = utf8.decode(response.bodyBytes);
       final bookmarks = jsonDecode(jsonString)['result']['bookmarks'];
+
       if (bookmarks != null) {
         for (var bookmark in bookmarks) {
           final instance = bookmark['placeId'].toString();
-
           bookmarkInstances.add(instance);
         }
       }
 
       return bookmarkInstances;
+    }
+    throw Error();
+  }
+
+  static Future<List<Map<String, dynamic>>> getAllBookmarks({
+    required String userId,
+  }) async {
+    final url = Uri.parse('$baseUrl/place/bookmark/$userId');
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      var jsonString = utf8.decode(response.bodyBytes);
+      final Map<String, dynamic> data = jsonDecode(jsonString);
+      final List<Map<String, dynamic>> bookmarks =
+          data['result']['bookmarks'] != null
+              ? List<Map<String, dynamic>>.from(data['result']['bookmarks'])
+              : [];
+      return bookmarks;
     }
     throw Error();
   }

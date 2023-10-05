@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _checkLoginStatus() async {
-    // userId = await getUserId();
+    userId = await getUserId();
     setState(() {
       _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
       // userId = "c96c76ed-041d-4396-8efe-dcbd4f4827cd";

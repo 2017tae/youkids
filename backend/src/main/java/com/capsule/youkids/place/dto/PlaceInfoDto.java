@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class PlaceInfoDto {
 
     private int placeId;
+    private int regionCode;
     private String name;
     private String address;
     private Double latitude;
@@ -29,6 +30,7 @@ public class PlaceInfoDto {
 
     public PlaceInfoDto(Place place) {
         this.placeId = place.getPlaceId();
+        this.regionCode = place.getVisitedReviewNum();
         this.name = place.getName();
         this.address = place.getAddress();
         this.latitude = place.getLatitude();

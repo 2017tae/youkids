@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 class GroupScreen extends StatefulWidget {
   final String nickname;
   final GroupModel group;
+  final String? partnerId;
   final bool myGroup;
   final bool partnerGroup;
 
@@ -20,6 +21,7 @@ class GroupScreen extends StatefulWidget {
       {super.key,
       required this.nickname,
       required this.group,
+      this.partnerId,
       required this.myGroup,
       required this.partnerGroup});
 
@@ -446,17 +448,24 @@ class _GroupScreenState extends State<GroupScreen> {
             scrollDirection: Axis.vertical,
             itemCount: widget.group.groupMember.length,
             itemBuilder: (context, index) {
-              if (widget.group.groupMember[index].userId != userId) {
+              // 내 정보는 띄우지 말기
+              if (widget.group.groupMember[index].userId == userId) {
+                return Container();
+                // 배우자 정보는 띄우되 삭제는 불가능
+              } else if (widget.group.groupMember[index].userId ==
+                  widget.partnerId) {
                 return GroupMember(
                   member: widget.group.groupMember[index],
-                  delete: widget.myGroup ||
-                      (widget.partnerGroup &&
-                          widget.group.groupMember[index].userId !=
-                              widget.group.groupId),
+                  delete: false,
                   leaderId: widget.group.leaderId,
                 );
               }
-              return Container();
+              // 나머지 멤버는 삭제 가능
+              return GroupMember(
+                member: widget.group.groupMember[index],
+                delete: true,
+                leaderId: widget.group.leaderId,
+              );
             },
           ),
           !widget.myGroup && !widget.partnerGroup

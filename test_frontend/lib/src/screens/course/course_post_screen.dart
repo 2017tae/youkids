@@ -60,7 +60,7 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('성공'),
+          title: Text('알림'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
@@ -96,11 +96,11 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('오류'),
+          title: Text('알림'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('코스 등록 중 오류가 발생했습니다.'),
+                Text('코스 등록 실패'),
               ],
             ),
           ),
@@ -272,37 +272,53 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
                             child: Container(
                               margin: EdgeInsets.symmetric(horizontal: 10),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.center,
                                     children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 10.0),
+                                        child: Image.asset(
+                                          "lib/src/assets/icons/mark" +
+                                              (index+1)
+                                                  .toString() +
+                                              ".png",
+                                          height: 35,
+                                          alignment:
+                                          AlignmentDirectional
+                                              .center,
+                                        ),
+                                      ),
+                                      SizedBox(width: 12.0),
                                       Expanded(
-                                        child: ListTile(
-                                          title: Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 8.0, bottom: 8.0),
-                                            child: Row(
-                                              children: [
-                                                Image.asset(
-                                                  "lib/src/assets/icons/mark" +
-                                                      (index + 1).toString() +
-                                                      ".png",
-                                                  height: 35,
-                                                ),
-                                                SizedBox(width: 12.0),
-                                                Flexible(
-                                                  child: Text(
-                                                    coursePlace['name'] ?? '',
-                                                    style: TextStyle(
-                                                      fontSize: 20,
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                              ],
+                                        child: Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment
+                                              .start,
+                                          children: [
+                                            SizedBox(height: 10.0),
+                                            Text(
+                                              coursePlace['name'],
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                              ),
+                                              overflow: TextOverflow
+                                                  .ellipsis,
                                             ),
-                                          ),
+                                            Text(
+                                              coursePlace['address'],
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors
+                                                    .grey[700],
+                                              ),
+                                              overflow: TextOverflow
+                                                  .ellipsis,
+                                            ),
+                                            SizedBox(height: 10.0)
+                                          ],
                                         ),
                                       ),
                                     ],
@@ -346,7 +362,7 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
                       child: Container(
                         height: 40,
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 20.0, right:10.0),
+                          padding: const EdgeInsets.only(left: 10.0, right:10.0),
                           child: TextFormField(
                             controller: _courseNameController,
                             decoration: InputDecoration(
@@ -380,7 +396,7 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
                     Container(
                       height: 40,
                       child: Padding(
-                        padding: const EdgeInsets.only(right: 20.0),
+                        padding: const EdgeInsets.only(right: 10.0),
                         child: TextButton(
                           onPressed: () {
                             String courseName = _courseNameController.text;
@@ -389,8 +405,8 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    title: Text("오류"),
-                                    content: Text("코스 명을 입력해주세요"),
+                                    title: Text("알림"),
+                                    content: Text("코스 명을 입력해주세요."),
                                     actions: [
                                       TextButton(
                                         onPressed: () {
@@ -402,8 +418,28 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
                                   );
                                 },
                               );
-                            } else {
+                            }
+                            if(courseName.isNotEmpty && courseName.length<= 10){
                               postCourse(courseName);
+                            }
+                            if(courseName.isNotEmpty && courseName.length> 10){
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("알림"),
+                                    content: Text("코스 명은 10자 이내로 입력해주세요."),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text("확인"),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
                             }
                           },
                           style: ButtonStyle(

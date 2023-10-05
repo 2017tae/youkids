@@ -131,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
     festivalId ??= 2;
 
     final response2 = await http.get(
-      Uri.parse('https://j9a604.p.ssafy.io/fastapi/festival/9'),
+      Uri.parse('https://j9a604.p.ssafy.io/fastapi/festival/${festivalId}'),
       headers: {'Content-Type': 'application/json'},
     );
 

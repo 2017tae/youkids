@@ -3,19 +3,27 @@ import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:youkids/src/widgets/bookmark_button_widget.dart';
 
 import '../../widgets/footer_widget.dart';
 
 class ShopMoreScreen extends StatefulWidget {
-  final String? PushselectedCategory;
+  final String? pushselectedCategory;
 
-  const ShopMoreScreen({super.key, required this.PushselectedCategory});
+  const ShopMoreScreen({
+    super.key,
+    required this.pushselectedCategory,
+  });
 
   @override
   State<ShopMoreScreen> createState() => _ShopMoreScreenState();
 }
 
 class _ShopMoreScreenState extends State<ShopMoreScreen> {
+  // 로그인
+  String? userId;
+  Future? loadLoginDataFuture;
 
   List? places;
   final int incrementCount = 10;
@@ -24,8 +32,25 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
   @override
   void initState() {
     super.initState();
-    loadDataFuture=_getData();
+    loadDataFuture = _getData();
+    loadLoginDataFuture = _checkLoginStatus();
+
     // _loadMoreData();
+  }
+
+  Future<String?> getUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(
+      'userId',
+    ); // Returns 'john_doe' if it exists, otherwise returns null.
+  }
+
+  Future<void> _checkLoginStatus() async {
+    // userId = await getUserId();
+    userId = '87dad60a-bfff-47e5-8e21-02cb49b23ba6';
+    setState(() {});
+    print('--------------------------');
+    print(userId);
   }
 
   // _loadMoreData() {
@@ -42,9 +67,7 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
 
   String? selectedCategory;
 
-
   Future<void> _getData() async {
-
     final response = await http.get(
       Uri.parse('https://j9a604.p.ssafy.io/api/place/recomm'),
       headers: {'Content-Type': 'application/json'},
@@ -60,15 +83,12 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
       print("장소");
       print(places);
       setState(() {
-          selectedCategory = widget.PushselectedCategory;
+        selectedCategory = widget.pushselectedCategory;
       });
-
-    }else{
+    } else {
       print("failfail");
     }
-
   }
-
 
   String getFirstTwoWords(String text) {
     List<String> words = text.split(' ');
@@ -90,7 +110,7 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
   ];
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return FutureBuilder(
       future: loadDataFuture,
       builder: (context, snapshot) {
@@ -103,7 +123,6 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
         }
       },
     );
-
   }
 
   Widget _buildLoadingMainContent() {
@@ -186,46 +205,52 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
     );
   }
 
-
   Widget _buildMainContent() {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('여행 추천',
-        style: TextStyle(
-          fontSize: 20.0
-        ),),
+        title: const Text(
+          '여행 추천',
+          style: TextStyle(fontSize: 20.0),
+        ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         centerTitle: true,
       ),
       body: CustomScrollView(
         slivers: <Widget>[
-          SliverToBoxAdapter(
+          const SliverToBoxAdapter(
             child: SizedBox(height: 15.0),
           ),
           SliverToBoxAdapter(
-            child: Container(
+            child: SizedBox(
               height: 40.0,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: categories.length,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 1.0 , horizontal: 8.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 1.0, horizontal: 8.0),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: selectedCategory == categories[index]
-                            ? Color(0xffFF7E76)
+                        backgroundColor: selectedCategory == categories[index]
+                            ? const Color(0xffFF7E76)
                             : Colors.white,
-                        onSurface: Colors.white,
+                        disabledForegroundColor: Colors.white.withOpacity(0.38),
+                        disabledBackgroundColor: Colors.white.withOpacity(0.12),
                         elevation: 0, // 그림자를 없애기 위해
                         side: selectedCategory == categories[index]
-                            ? BorderSide(color: Colors.transparent, width: 1.0) // 선택되었을 때 테두리 없음
-                            : BorderSide(color: Colors.grey.withOpacity(0.4), width: 1.0), // 선택되지 않았을 때 회색 테두리
+                            ? const BorderSide(
+                                color: Colors.transparent,
+                                width: 1.0) // 선택되었을 때 테두리 없음
+                            : BorderSide(
+                                color: Colors.grey.withOpacity(0.4),
+                                width: 1.0), // 선택되지 않았을 때 회색 테두리
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0), // 버튼의 높이를 더 줄임
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 0.0, horizontal: 16.0), // 버튼의 높이를 더 줄임
                       ),
                       child: Text(
                         categories[index],
@@ -247,14 +272,14 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
               ),
             ),
           ),
-          SliverToBoxAdapter(
+          const SliverToBoxAdapter(
             child: SizedBox(height: 15.0),
           ),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0), // 여기서 패딩을 추가
             sliver: SliverGrid(
               delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
+                (BuildContext context, int index) {
                   var filteredPlaces = places!.where((place) {
                     if (selectedCategory == '전체') {
                       return true;
@@ -265,28 +290,35 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => ShopDetailScreen(placeId: filteredPlaces[index]['placeId']), // 여기에 원하는 화면 위젯을 넣으세요.
+                          builder: (context) => ShopDetailScreen(
+                              placeId: filteredPlaces[index]
+                                  ['placeId']), // 여기에 원하는 화면 위젯을 넣으세요.
                         ),
                       );
                     },
                     child: GridItem(
                       placeId: filteredPlaces[index]['placeId'].toString(),
                       name: filteredPlaces[index]['name'],
-                      address: getFirstTwoWords(filteredPlaces[index]['address']),
-                      addressStyle: TextStyle(color: Colors.grey),  // 여기에 추가
+                      address:
+                          getFirstTwoWords(filteredPlaces[index]['address']),
+                      addressStyle:
+                          const TextStyle(color: Colors.grey), // 여기에 추가
                       category: filteredPlaces[index]['category'],
                       imageUrl: filteredPlaces[index]['imageUrl'],
+                      userId: userId,
                     ),
                   );
                 },
-                childCount: places!.where((place) {
-                  if (selectedCategory == '전체') {
-                    return true;
-                  }
-                  return place['category'] == selectedCategory;
-                }).length,
+                childCount: places!.where(
+                  (place) {
+                    if (selectedCategory == '전체') {
+                      return true;
+                    }
+                    return place['category'] == selectedCategory;
+                  },
+                ).length,
               ),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 mainAxisSpacing: 8.0,
                 crossAxisSpacing: 8.0,
@@ -298,6 +330,7 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
       ),
     );
   }
+
   Padding loadingSetHomeMenu(String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -374,22 +407,20 @@ class _LoadingCardFrame11WidgetState extends State<LoadingCardFrame11Widget>
   }
 }
 
-
 class GridItem extends StatelessWidget {
-  final String placeId;
-  final String name;
-  final String address;
-  final TextStyle addressStyle;  // 여기에 추가
-  final String category;
-  final String imageUrl;
+  final String placeId, name, address, category, imageUrl;
+  final TextStyle addressStyle; // 여기에 추가
+  final dynamic userId;
 
-  GridItem({
+  const GridItem({
+    super.key,
     required this.placeId,
     required this.name,
     required this.address,
-    this.addressStyle = const TextStyle(),  // default value
+    this.addressStyle = const TextStyle(), // default value
     required this.category,
-    required this.imageUrl
+    required this.imageUrl,
+    required this.userId,
   });
 
   @override
@@ -399,20 +430,37 @@ class GridItem extends StatelessWidget {
         Expanded(
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10.0),
-            child: Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
+            child: Stack(
+              children: [
+                Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: (userId != null)
+                      ? BookmarkButtonWidget(
+                          placeId: int.parse(placeId),
+                          userId: userId,
+                        )
+                      : Container(),
+                ),
+              ],
             ),
           ),
         ),
-        SizedBox(height: 8.0),
+        const SizedBox(
+          height: 8.0,
+        ),
         Text(
           name,
-          overflow: TextOverflow.ellipsis,  // 내용이 넘칠 때 '...'로 표시
-          maxLines: 1,  // 최대 표시 줄 수
+          overflow: TextOverflow.ellipsis, // 내용이 넘칠 때 '...'로 표시
+          maxLines: 1, // 최대 표시 줄 수
         ),
-        Text(address,
-          style: TextStyle(color: Colors.grey),  // 여기에 추가
+        Text(
+          address,
+          style: const TextStyle(color: Colors.grey), // 여기에 추가
         ),
       ],
     );

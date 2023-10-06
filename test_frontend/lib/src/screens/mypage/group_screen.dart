@@ -463,7 +463,7 @@ class _GroupScreenState extends State<GroupScreen> {
               // 나머지 멤버는 삭제 가능
               return GroupMember(
                 member: widget.group.groupMember[index],
-                delete: true,
+                delete: widget.myGroup || widget.partnerGroup ? true : false,
                 leaderId: widget.group.leaderId,
               );
             },

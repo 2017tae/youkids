@@ -41,6 +41,8 @@ class _CapsuleCarouselWidgetState extends State<CapsuleCarouselWidget> {
                 _current = index;
               });
             },
+            enableInfiniteScroll: false,
+            autoPlay: false,
           ),
         ),
         Padding(

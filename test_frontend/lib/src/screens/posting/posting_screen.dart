@@ -76,115 +76,134 @@ class _PostingScreenState extends State<PostingScreen> {
           color: Colors.black,
         ),
         actions: [
-          IconButton(
-            onPressed: () {
-              if (_postingContent.trim().isEmpty) {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      content: const Text('내용을 입력해 주세요'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text('Ok'),
-                        ),
-                      ],
+          Container(
+            height: 35,
+            width: 65,
+            margin: EdgeInsets.zero,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 0, bottom: 0),
+              child: TextButton(
+                onPressed: () {
+                  if (_postingContent.trim().isEmpty) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: const Text('내용을 입력해 주세요'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Ok'),
+                            ),
+                          ],
+                        );
+                      },
                     );
-                  },
-                );
-              } else if (_postingLocation.trim().isEmpty) {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      content: const Text('장소를 입력해 주세요'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text('Ok'),
-                        ),
-                      ],
+                  } else if (_postingLocation.trim().isEmpty) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: const Text('장소를 입력해 주세요'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Ok'),
+                            ),
+                          ],
+                        );
+                      },
                     );
-                  },
-                );
-              } else if (_postingImgs.isEmpty) {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      content: const Text('사진을 넣어주세요'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text('Ok'),
-                        ),
-                      ],
+                  } else if (_postingImgs.isEmpty) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: const Text('사진을 넣어주세요'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Ok'),
+                            ),
+                          ],
+                        );
+                      },
                     );
-                  },
-                );
-              } else {
-                try {
-                  PostingServices.postingCapsuleImgsContents(
-                    description: _postingContent,
-                    fileList: _postingImgs,
-                    childrenList: _childrenList,
-                    location: _postingLocation,
-                    userId: userId,
-                  );
-                  showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        content: IconButton(
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const CapsuleScreen(),
+                  } else {
+                    try {
+                      PostingServices.postingCapsuleImgsContents(
+                        description: _postingContent,
+                        fileList: _postingImgs,
+                        childrenList: _childrenList,
+                        location: _postingLocation,
+                        userId: userId,
+                      );
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            content: IconButton(
+                              onPressed: () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const CapsuleScreen(),
+                                  ),
+                                );
+                              },
+                              icon: Icon(
+                                Icons.check_circle_outline_rounded,
+                                color: Colors.green[400],
+                                size: 30,
                               ),
-                            );
-                          },
-                          icon: Icon(
-                            Icons.check_circle_outline_rounded,
-                            color: Colors.green[400],
-                            size: 30,
-                          ),
-                        ),
+                            ),
+                          );
+                        },
                       );
-                    },
-                  );
-                } catch (e) {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        content: const Text('다시 시도해 주십시오'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('Ok'),
-                          ),
-                        ],
+                    } catch (e) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            content: const Text('다시 시도해 주십시오'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Ok'),
+                              ),
+                            ],
+                          );
+                        },
                       );
-                    },
-                  );
-                }
-              }
-            },
-            icon: const Icon(
-              Icons.create_outlined,
-              color: Color(0xffF6766E),
-              size: 30,
+                    }
+                  }
+                },
+                style: ButtonStyle(
+                  padding: MaterialStatePropertyAll(EdgeInsets.zero),
+                  shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                  ),
+                ),
+                child: Text(
+                  '등록',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFFF6766E)),
+                ),
+              ),
             ),
           ),
         ],

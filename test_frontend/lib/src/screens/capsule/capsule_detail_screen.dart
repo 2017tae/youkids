@@ -70,6 +70,7 @@ class _CapsuleDetailScreenState extends State<CapsuleDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         centerTitle: true,
         title: Text(
           "사진첩",
@@ -113,8 +114,11 @@ class _CapsuleDetailScreenState extends State<CapsuleDetailScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => CapsuleBigDetailScreen(memoryItem["memoryId"]),
+                          PageRouteBuilder(
+                            pageBuilder: (context, animation1, animation2) =>
+                                CapsuleBigDetailScreen(memoryItem["memoryId"]),
+                            transitionDuration: Duration.zero,
+                            reverseTransitionDuration: Duration.zero,
                           ),
                         );
                       },

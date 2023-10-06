@@ -73,15 +73,14 @@ class _PostingImgsWidgetState extends State<PostingImgsWidget> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  const Positioned(
+                  Positioned(
                     top: 0,
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    child: Icon(
-                      Icons.add_photo_alternate_outlined,
-                      color: Colors.white,
-                      size: 100,
+                    child: Image.asset(
+                      "lib/src/assets/icons/camera.png",
+                      width: 140,
                     ),
                   )
                 ],

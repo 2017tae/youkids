@@ -58,6 +58,7 @@ class _CapsuleBigDetailScreen extends State<CapsuleBigDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          scrolledUnderElevation: 0,
           centerTitle: true,
           title: Text(
             "사진첩",

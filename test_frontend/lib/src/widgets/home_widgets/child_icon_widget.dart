@@ -49,7 +49,7 @@ class ChildIconWidget extends StatelessWidget {
               ),
             ),
             Text(
-              "아이 1",
+              num == 1 ? "내 그룹" : "그룹 "+ num.toString(),
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,

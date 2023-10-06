@@ -291,7 +291,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 6),
-                child: loadingSetHomeMenu("저번 주 리뷰 많은 장소"),
+                child: loadingSetHomeMenu("저번 주 인기 많은 장소"),
               ),
               Column(
                 children: [
@@ -473,7 +473,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.only(left: 6),
                 child: setHomeMenu(
                   context,
-                  '저번 주 리뷰 많은 장소',
+                  '저번 주 인기 많은 장소',
                   RankRecomlistScreen(
                     userId: userId,
                   ),

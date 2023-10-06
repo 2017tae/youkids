@@ -83,7 +83,7 @@ class _RankRecomlistScreen extends State<RankRecomlistScreen> {
   Widget _buildLoadingMainContent() {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('저번 주 리뷰 많은 장소',
+        title: const Text('저번 주 인기 많은 장소',
           style: TextStyle(
               fontSize: 20.0
           ),),
@@ -143,7 +143,7 @@ class _RankRecomlistScreen extends State<RankRecomlistScreen> {
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
-        title: const Text('저번 주 리뷰 많은 장소',
+        title: const Text('저번 주 인기 많은 장소',
           style: TextStyle(
               fontSize: 20.0
           ),),

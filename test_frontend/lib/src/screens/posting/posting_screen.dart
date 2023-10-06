@@ -62,6 +62,7 @@ class _PostingScreenState extends State<PostingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: const Text(
           '기억 작성',
           style: TextStyle(

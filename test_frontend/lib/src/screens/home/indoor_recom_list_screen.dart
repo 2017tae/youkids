@@ -131,6 +131,7 @@ class _IndoorRecomListScreenState extends State<IndoorRecomListScreen> {
   Widget _buildMainContent() {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: Text('공연 정보', style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
         elevation: 0.5,

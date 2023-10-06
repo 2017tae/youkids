@@ -196,6 +196,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
+        scrolledUnderElevation: 0,
         title: Text(
           _place!.name,
           style: const TextStyle(

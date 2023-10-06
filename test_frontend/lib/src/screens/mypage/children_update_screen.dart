@@ -180,6 +180,7 @@ class _ChildrenUpdateScreenState extends State<ChildrenUpdateScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: const Text(
           '내 아이 수정하기',
           style: TextStyle(

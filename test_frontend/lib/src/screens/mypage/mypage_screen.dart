@@ -212,6 +212,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
     // }
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: const Text(
           '마이페이지',
           style: TextStyle(

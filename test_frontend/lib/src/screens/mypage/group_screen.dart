@@ -209,6 +209,7 @@ class _GroupScreenState extends State<GroupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: GestureDetector(
           onTap: () {
             if (!widget.partnerGroup) {

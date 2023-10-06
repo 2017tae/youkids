@@ -158,6 +158,7 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: const Text(
           "아이 등록",
           style: TextStyle(
@@ -459,7 +460,6 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: const FooterWidget(currentIndex: 4),
     );
   }
 }

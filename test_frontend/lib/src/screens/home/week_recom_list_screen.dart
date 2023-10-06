@@ -20,6 +20,7 @@ class WeekRecomListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
+        scrolledUnderElevation: 0,
         title: const Text(
           '이번 주 추천 장소',
           style: TextStyle(

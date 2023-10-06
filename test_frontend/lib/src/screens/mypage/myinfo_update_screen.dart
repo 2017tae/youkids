@@ -285,8 +285,7 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                               height: 5,
                             ),
                             Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 10),
+                                padding: const EdgeInsets.symmetric(vertical: 10),
                                 child: Row(
                                   mainAxisAlignment:
                                   MainAxisAlignment.spaceEvenly,
@@ -499,122 +498,141 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                                 ),
                               ),
                               const SizedBox(width: 10), // TextField와 버튼 사이의 간격
-                              ElevatedButton(
-                                onPressed: () {
-                                  partnerRequest().then((result) {
-                                    if (!result) {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return FailDialog(
-                                              text: "배우자 검색에 실패했습니다. $errMsg");
-                                        },
-                                      );
-                                    } else {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return SimpleDialog(
-                                              title: Text(
-                                                '${requestPartner!.nickname ?? partnerEmail}님에게 \n요청을 보내시겠습니까?',
-                                                textAlign: TextAlign.center,
-                                                style: const TextStyle(
-                                                    fontSize: 20),
-                                              ),
-                                              children: [
-                                                const SizedBox(
-                                                  height: 5,
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 20,
-                                                      vertical: 10),
-                                                  child: Row(
-                                                    children: [
-                                                      Expanded(
-                                                          child: ElevatedButton(
-                                                        onPressed: () {
-                                                          sendPartnerRequest()
-                                                              .then((result) {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                            if (result) {
-                                                              showDialog(
-                                                                  context:
-                                                                      context,
-                                                                  builder:
-                                                                      (BuildContext
-                                                                          context) {
-                                                                    return const FailDialog(
-                                                                        text:
-                                                                            "요청을 보냈습니다");
-                                                                  });
-                                                            } else {
-                                                              showDialog(
-                                                                  context:
-                                                                      context,
-                                                                  builder:
-                                                                      (BuildContext
-                                                                          context) {
-                                                                    return const FailDialog(
-                                                                        text:
-                                                                            "실패했습니다");
-                                                                  });
-                                                            }
-                                                          });
-                                                        },
-                                                        style: ElevatedButton.styleFrom(
-                                                            backgroundColor:
-                                                                const Color(
-                                                                    0XFFF6766E),
-                                                            shape: RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5)),
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(2)),
-                                                        child: const Text(
-                                                          "요청 보내기",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white),
-                                                        ),
-                                                      )),
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                          child: const Text(
-                                                            "닫기",
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                          ),
-                                                        ),
-                                                      )
-                                                    ],
+                              Container(
+                                height: 40,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 10.0),
+                                  child: TextButton(
+                                    onPressed: () {
+                                      partnerRequest().then((result) {
+                                        if (!result) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return FailDialog(
+                                                  text: "배우자 검색에 실패했습니다. $errMsg");
+                                            },
+                                          );
+                                        } else {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return SimpleDialog(
+                                                  title: Text(
+                                                    '${requestPartner!.nickname ?? partnerEmail}님에게 \n요청을 보내시겠습니까?',
+                                                    textAlign: TextAlign.center,
+                                                    style: const TextStyle(
+                                                        fontSize: 20),
                                                   ),
-                                                )
-                                              ]);
-                                        },
-                                      );
-                                    }
-                                  });
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0XFFF6766E),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(5)),
-                                    padding: const EdgeInsets.all(5)),
-                                child: const Text(
-                                  "등록",
-                                  style: TextStyle(color: Colors.white),
+                                                  children: [
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 20,
+                                                          vertical: 10),
+                                                      child: Row(
+                                                        children: [
+                                                          Expanded(
+                                                              child: ElevatedButton(
+                                                                onPressed: () {
+                                                                  sendPartnerRequest()
+                                                                      .then((result) {
+                                                                    Navigator.of(
+                                                                        context)
+                                                                        .pop();
+                                                                    if (result) {
+                                                                      showDialog(
+                                                                          context:
+                                                                          context,
+                                                                          builder:
+                                                                              (BuildContext
+                                                                          context) {
+                                                                            return const FailDialog(
+                                                                                text:
+                                                                                "요청을 보냈습니다");
+                                                                          });
+                                                                    } else {
+                                                                      showDialog(
+                                                                          context:
+                                                                          context,
+                                                                          builder:
+                                                                              (BuildContext
+                                                                          context) {
+                                                                            return const FailDialog(
+                                                                                text:
+                                                                                "실패했습니다");
+                                                                          });
+                                                                    }
+                                                                  });
+                                                                },
+                                                                style: ElevatedButton.styleFrom(
+                                                                    backgroundColor:
+                                                                    const Color(
+                                                                        0XFFF6766E),
+                                                                    shape: RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                            5)),
+                                                                    padding:
+                                                                    const EdgeInsets
+                                                                        .all(2)),
+                                                                child: const Text(
+                                                                  "요청 보내기",
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                      Colors.white),
+                                                                ),
+                                                              )),
+                                                          Expanded(
+                                                            child: GestureDetector(
+                                                              onTap: () {
+                                                                Navigator.of(
+                                                                    context)
+                                                                    .pop();
+                                                              },
+                                                              child: const Text(
+                                                                "닫기",
+                                                                textAlign: TextAlign
+                                                                    .center,
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    )
+                                                  ]);
+                                            },
+                                          );
+                                        }
+                                      });
+                                    },
+                                    style: ButtonStyle(
+                                      side: MaterialStateProperty.all(
+                                        BorderSide(
+                                          color: Color(0xFFF6766E),
+                                          width: 2.0,
+                                        ),
+                                      ),
+                                      shape: MaterialStateProperty.all(
+                                        RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10.0),
+                                        ),
+                                      ),
+                                      backgroundColor:
+                                      MaterialStatePropertyAll(Color(0xFFF6766E)),
+                                    ),
+                                    child: Text(
+                                      '등록',
+                                      style: TextStyle(
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
@@ -807,7 +825,6 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: const FooterWidget(currentIndex: 4),
     );
   }
 }

@@ -471,6 +471,7 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: const Text(
           '코스',
           style: TextStyle(

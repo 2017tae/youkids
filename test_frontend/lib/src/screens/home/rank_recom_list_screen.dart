@@ -142,6 +142,7 @@ class _RankRecomlistScreen extends State<RankRecomlistScreen> {
   Widget _buildMainContent() {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: const Text('저번 주 리뷰 많은 장소',
           style: TextStyle(
               fontSize: 20.0

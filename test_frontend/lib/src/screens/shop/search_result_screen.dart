@@ -65,6 +65,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
       child: Scaffold(
 
         appBar: AppBar(
+          scrolledUnderElevation: 0,
           title: Text("검색 결과"),
         ),
         body: Column(

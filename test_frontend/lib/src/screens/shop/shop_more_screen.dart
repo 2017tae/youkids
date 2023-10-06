@@ -333,6 +333,7 @@ class _ShopMoreScreenState extends State<ShopMoreScreen> {
   Widget _buildMainContent() {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: const Text(
           '여행 추천',
           style: TextStyle(fontSize: 20.0),

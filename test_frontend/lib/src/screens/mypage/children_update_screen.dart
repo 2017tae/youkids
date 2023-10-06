@@ -440,7 +440,6 @@ class _ChildrenUpdateScreenState extends State<ChildrenUpdateScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: const FooterWidget(currentIndex: 4),
     );
   }
 }

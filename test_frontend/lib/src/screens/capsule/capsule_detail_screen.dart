@@ -70,8 +70,8 @@ class _CapsuleDetailScreenState extends State<CapsuleDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        scrolledUnderElevation: 0,
         centerTitle: true,
+        scrolledUnderElevation: 0,
         title: Text(
           "사진첩",
           style: TextStyle(
@@ -81,7 +81,6 @@ class _CapsuleDetailScreenState extends State<CapsuleDetailScreen> {
           ),
         ),
         backgroundColor: Colors.white,  // AppBar 색상 변경
-        elevation: 1,  // AppBar 밑에 약간의 그림자 추가
         iconTheme: const IconThemeData(
           color: Colors.black,
         ),

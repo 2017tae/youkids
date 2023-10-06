@@ -258,7 +258,7 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
     return Scaffold(
       appBar: AppBar(
           title: const Text(
-            '내 정보 수정하기',
+            '내 정보 수정',
             style: TextStyle(
               fontSize: 22,
               color: Colors.black,
@@ -266,95 +266,115 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
             ),
           ),
           actions: [
-            ElevatedButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return SimpleDialog(
-                        title: const Text(
-                          '내 정보를 수정하시겠습니까?',
-                          textAlign: TextAlign.center,
-                        ),
-                        children: <Widget>[
-                          const SizedBox(
-                            height: 5,
+            Container(
+              height: 40,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 10.0),
+                child: TextButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return SimpleDialog(
+                          title: const Text(
+                            '내 정보를 수정하시겠습니까?',
+                            textAlign: TextAlign.center,
                           ),
-                          Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        updateMyinfo().then((result) {
-                                          // 이전 dialog 닫고
-                                          Navigator.of(context).pop();
+                          children: <Widget>[
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Expanded(
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          updateMyinfo().then((result) {
+                                            // 이전 dialog 닫고
+                                            Navigator.of(context).pop();
 
-                                          if (!result) {
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return FailDialog(
-                                                    text:
-                                                        "정보 수정에 실패했습니다. $errMsg");
-                                              },
-                                            );
-                                          } else {
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return const SuccessDialog(
-                                                    text: "정보 수정에 성공했습니다.");
-                                              },
-                                            );
-                                          }
-                                        });
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                          minimumSize: const Size(90, 40),
-                                          backgroundColor:
-                                              const Color(0XFFF6766E),
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(5)),
-                                          padding: const EdgeInsets.all(2)),
-                                      child: const Text(
-                                        "수정하기",
-                                        style: TextStyle(color: Colors.white),
+                                            if (!result) {
+                                              showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return FailDialog(
+                                                      text:
+                                                      "정보 수정에 실패했습니다. $errMsg");
+                                                },
+                                              );
+                                            } else {
+                                              showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return const SuccessDialog(
+                                                      text: "정보 수정에 성공했습니다.");
+                                                },
+                                              );
+                                            }
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            minimumSize: const Size(90, 40),
+                                            backgroundColor:
+                                            const Color(0XFFF6766E),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius.circular(5)),
+                                            padding: const EdgeInsets.all(2)),
+                                        child: const Text(
+                                          "확인",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text(
-                                        "닫기",
-                                        textAlign: TextAlign.center,
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text(
+                                          "취소",
+                                          textAlign: TextAlign.center,
+                                        ),
                                       ),
-                                    ),
-                                  )
-                                ],
-                              )),
-                        ],
-                      );
-                    },
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0XFFF6766E),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5)),
-                    padding: const EdgeInsets.all(2)),
-                child: const Text(
-                  "수정",
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                )),
+                                    )
+                                  ],
+                                )),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  style: ButtonStyle(
+                    side: MaterialStateProperty.all(
+                      BorderSide(
+                        color: Color(0xFFF6766E),
+                        width: 2.0,
+                      ),
+                    ),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    backgroundColor:
+                    MaterialStatePropertyAll(Color(0xFFF6766E)),
+                  ),
+                  child: Text(
+                    '수정',
+                    style: TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
             const SizedBox(
               width: 20,
             ),
@@ -593,7 +613,7 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                                         borderRadius: BorderRadius.circular(5)),
                                     padding: const EdgeInsets.all(5)),
                                 child: const Text(
-                                  "등록하기",
+                                  "등록",
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),

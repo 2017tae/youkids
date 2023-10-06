@@ -155,7 +155,7 @@ class _GroupMemberState extends State<GroupMember> {
                                                   BorderRadius.circular(5)),
                                           padding: const EdgeInsets.all(2)),
                                       child: const Text(
-                                        "삭제하기",
+                                        "삭제",
                                         style: TextStyle(color: Colors.white),
                                       ),
                                     ),

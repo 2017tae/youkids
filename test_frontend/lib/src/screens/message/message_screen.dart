@@ -124,7 +124,7 @@ class _MessageScreenState extends State<MessageScreen> {
                         backgroundColor: const Color(0XFFF6766E),
                       ),
                       child: const Text(
-                        '수락하기',
+                        '수락',
                         style: TextStyle(color: Colors.white, fontSize: 20),
                       )),
                   const SizedBox(
@@ -140,7 +140,7 @@ class _MessageScreenState extends State<MessageScreen> {
                         );
                       },
                       child: const Text(
-                        '거절하기',
+                        '거절',
                         style: TextStyle(color: Colors.black, fontSize: 20),
                       ))
                 ],

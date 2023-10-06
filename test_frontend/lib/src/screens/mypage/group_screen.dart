@@ -294,7 +294,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                                   BorderRadius.circular(5)),
                                           padding: const EdgeInsets.all(2)),
                                       child: const Text(
-                                        "이름 변경하기",
+                                        "이름 변경",
                                         style: TextStyle(color: Colors.white),
                                       ),
                                     ),
@@ -344,96 +344,116 @@ class _GroupScreenState extends State<GroupScreen> {
         ),
         actions: [
           !widget.myGroup && !widget.partnerGroup
-              ? ElevatedButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return SimpleDialog(
-                            title: Text(
-                              '${widget.group.groupName}에서\n탈퇴하시겠습니까?',
-                              textAlign: TextAlign.center,
+              ? Container(
+            height: 40,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: TextButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return SimpleDialog(
+                          title: Text(
+                            '${widget.group.groupName}에서\n탈퇴하시겠습니까?',
+                            textAlign: TextAlign.center,
+                          ),
+                          children: [
+                            const SizedBox(
+                              height: 5,
                             ),
-                            children: [
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 10),
-                                  child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Expanded(
-                                          child: ElevatedButton(
-                                            onPressed: () {
-                                              // delete요청 보내기
-                                              deleteGroup().then((result) {
-                                                Navigator.of(context).pop();
-                                                if (result) {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return const SuccessDialog(
-                                                          message: "탈퇴했습니다.");
-                                                    },
-                                                  );
-                                                } else {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return const FailDialog(
-                                                          message:
-                                                              "탈퇴에 실패했습니다.");
-                                                    },
-                                                  );
-                                                }
-                                              });
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    const Color(0XFFF6766E),
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5)),
-                                                padding:
-                                                    const EdgeInsets.all(2)),
-                                            child: const Text(
-                                              "탈퇴하기",
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            ),
+                            Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                                child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            // delete요청 보내기
+                                            deleteGroup().then((result) {
+                                              Navigator.of(context).pop();
+                                              if (result) {
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return const SuccessDialog(
+                                                        message: "탈퇴했습니다.");
+                                                  },
+                                                );
+                                              } else {
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return const FailDialog(
+                                                        message:
+                                                        "탈퇴에 실패했습니다.");
+                                                  },
+                                                );
+                                              }
+                                            });
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                              const Color(0XFFF6766E),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                  BorderRadius.circular(
+                                                      5)),
+                                              padding:
+                                              const EdgeInsets.all(2)),
+                                          child: const Text(
+                                            "탈퇴",
+                                            style: TextStyle(
+                                                color: Colors.white),
                                           ),
                                         ),
-                                        Expanded(
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text(
-                                              "닫기",
-                                              textAlign: TextAlign.center,
-                                            ),
+                                      ),
+                                      Expanded(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text(
+                                            "닫기",
+                                            textAlign: TextAlign.center,
                                           ),
-                                        )
-                                      ]))
-                            ]);
-                      },
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0XFFF6766E),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5)),
-                      padding: const EdgeInsets.all(2)),
-                  child: const Text(
-                    "탈퇴",
-                    style: TextStyle(fontSize: 20, color: Colors.white),
-                  ))
+                                        ),
+                                      )
+                                    ]))
+                          ]);
+                    },
+                  );
+                },
+                style: ButtonStyle(
+                  side: MaterialStateProperty.all(
+                    BorderSide(
+                      color: Color(0xFFF6766E),
+                      width: 2.0,
+                    ),
+                  ),
+                  shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  backgroundColor:
+                  MaterialStatePropertyAll(Color(0xFFF6766E)),
+                ),
+                child: Text(
+                  '탈퇴',
+                  style: TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white),
+                ),
+              ),
+            ),
+          )
               : Container(),
           const SizedBox(
             width: 20,
@@ -463,7 +483,7 @@ class _GroupScreenState extends State<GroupScreen> {
               // 나머지 멤버는 삭제 가능
               return GroupMember(
                 member: widget.group.groupMember[index],
-                delete: true,
+                delete: widget.myGroup || widget.partnerGroup ? true : false,
                 leaderId: widget.group.leaderId,
               );
             },
@@ -477,7 +497,7 @@ class _GroupScreenState extends State<GroupScreen> {
                       builder: (BuildContext context) {
                         return SimpleDialog(
                           title: const Text(
-                            '그룹원 추가하기',
+                            '그룹원 추가',
                             textAlign: TextAlign.center,
                           ),
                           children: <Widget>[
@@ -636,7 +656,7 @@ class _GroupScreenState extends State<GroupScreen> {
                       SizedBox(
                         height: 20,
                       ),
-                      Text("그룹원 추가하기",
+                      Text("그룹원 추가",
                           style: TextStyle(
                             fontSize: 20,
                           )),

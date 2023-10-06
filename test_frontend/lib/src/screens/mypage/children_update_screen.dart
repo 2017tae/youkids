@@ -193,90 +193,110 @@ class _ChildrenUpdateScreenState extends State<ChildrenUpdateScreen> {
           color: Colors.black,
         ),
         actions: [
-          ElevatedButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return SimpleDialog(
-                      title: const Text(
-                        '아이를 수정하시겠습니까?',
-                        textAlign: TextAlign.center,
-                      ),
-                      children: <Widget>[
-                        const SizedBox(
-                          height: 5,
+          Container(
+            height: 40,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: TextButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return SimpleDialog(
+                        title: const Text(
+                          '아이를 수정하시겠습니까?',
+                          textAlign: TextAlign.center,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    // 아이 수정 요청을 보내고 응답이 오면 결과를 Dialog에 넣기
-                                    updateChild().then((result) {
-                                      // 이전 dialog 닫고
-                                      Navigator.of(context).pop();
-                                      // 실패시
-                                      if (!result) {
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return const FailDialog();
-                                          },
-                                        );
-                                      } else {
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return const SuccessDialog();
-                                          },
-                                        );
-                                      }
-                                    });
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0XFFF6766E),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5)),
-                                      padding: const EdgeInsets.all(2)),
-                                  child: const Text(
-                                    "수정하기",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text(
-                                    "닫기",
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                            ],
+                        children: <Widget>[
+                          const SizedBox(
+                            height: 5,
                           ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0XFFF6766E),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5)),
-                  padding: const EdgeInsets.all(2)),
-              child: const Text(
-                "수정",
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              )),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      // 아이 수정 요청을 보내고 응답이 오면 결과를 Dialog에 넣기
+                                      updateChild().then((result) {
+                                        // 이전 dialog 닫고
+                                        Navigator.of(context).pop();
+                                        // 실패시
+                                        if (!result) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return const FailDialog();
+                                            },
+                                          );
+                                        } else {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return const SuccessDialog();
+                                            },
+                                          );
+                                        }
+                                      });
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(0XFFF6766E),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(5)),
+                                        padding: const EdgeInsets.all(2)),
+                                    child: const Text(
+                                      "확인",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text(
+                                      "취소",
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                style: ButtonStyle(
+                  side: MaterialStateProperty.all(
+                    BorderSide(
+                      color: Color(0xFFF6766E),
+                      width: 2.0,
+                    ),
+                  ),
+                  shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  backgroundColor:
+                  MaterialStatePropertyAll(Color(0xFFF6766E)),
+                ),
+                child: Text(
+                  '수정',
+                  style: TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white),
+                ),
+              ),
+            ),
+          ),
           const SizedBox(
             width: 20,
           ),

@@ -7,7 +7,7 @@ def dataframe_to_object_list(df):
         object_list.append(festival_item)
     return object_list
 
-def recomm_festival(cos_sim, festival, id, top=10):
+def recomm_festival(cos_sim, festival, id, top=30):
 
     if cos_sim is None or festival is None:
         return {"error": "Initialization not complete"}

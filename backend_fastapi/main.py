@@ -9,7 +9,7 @@ from sklearn.preprocessing import MinMaxScaler
 from scipy.sparse import hstack
 from sklearn.metrics.pairwise import cosine_similarity
 from services.festival_recommendation_service import recomm_festival
-from services.place_recommendation_service import cal_preds_place, get_recommend_place, dataframe_to_object_list
+from services.place_recommendation_service import cal_preds_place, get_recommend_place, dataframe_to_object_list, get_recommendations_by_category
 from models.region_data import RegionData
 from fastapi import FastAPI, HTTPException
 from decouple import config
@@ -153,18 +153,12 @@ def recommend_place(region_code: int, user_id: str, count: int):
         sorted_places = total_users_clicks.sort_values(by='total_users_clicks', ascending=False)
         merged_places = sorted_places.merge(place, on='place_id', how='right').fillna(0).sort_values(['total_users_clicks'], ascending=False)
         
-        start_idx = count * 40
-        end_idx = (count + 1) * 40
+        kids_cafe_recommendations = get_recommendations_by_category(merged_places, '키즈카페', count, 40, 0.5)
+        theme_park_recommendations = get_recommendations_by_category(merged_places, '테마파크', count, 40, 0.25)
+        museum_recommendations = get_recommendations_by_category(merged_places, '박물관', count, 40, 0.25)
         
-        if start_idx >= len(merged_places):
-            recommended_place = []
-        
-        else:
-            if end_idx > len(merged_places):
-                end_idx = len(merged_places)
-            
-            recommended_place = dataframe_to_object_list(merged_places[start_idx:end_idx])
-            random.shuffle(recommended_place)
+        recommended_place = kids_cafe_recommendations + theme_park_recommendations + museum_recommendations
+        random.shuffle(recommended_place)
     
     return {"recommended_place": recommended_place}
 

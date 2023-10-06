@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -70,6 +71,7 @@ class _CapsuleDetailScreenState extends State<CapsuleDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
+        scrolledUnderElevation: 0,
         title: Text(
           "사진첩",
           style: TextStyle(
@@ -79,7 +81,6 @@ class _CapsuleDetailScreenState extends State<CapsuleDetailScreen> {
           ),
         ),
         backgroundColor: Colors.white,  // AppBar 색상 변경
-        elevation: 1,  // AppBar 밑에 약간의 그림자 추가
         iconTheme: const IconThemeData(
           color: Colors.black,
         ),
@@ -112,14 +113,17 @@ class _CapsuleDetailScreenState extends State<CapsuleDetailScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => CapsuleBigDetailScreen(memoryItem["memoryId"]),
+                          PageRouteBuilder(
+                            pageBuilder: (context, animation1, animation2) =>
+                                CapsuleBigDetailScreen(memoryItem["memoryId"]),
+                            transitionDuration: Duration.zero,
+                            reverseTransitionDuration: Duration.zero,
                           ),
                         );
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(2.0),
-                        child: Image.network(memoryItem["memoryImageDtoList"][imageIndex]["url"]),
+                        child:Image(image: CachedNetworkImageProvider(memoryItem["memoryImageDtoList"][imageIndex]["url"])),
                       ),
                     );
                   },

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -119,7 +120,7 @@ class _CapsuleDetailScreenState extends State<CapsuleDetailScreen> {
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(2.0),
-                        child: Image.network(memoryItem["memoryImageDtoList"][imageIndex]["url"]),
+                        child:Image(image: CachedNetworkImageProvider(memoryItem["memoryImageDtoList"][imageIndex]["url"])),
                       ),
                     );
                   },

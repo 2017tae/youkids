@@ -209,7 +209,7 @@ class RegistScreen extends StatefulWidget {
                       onPressed: () {
                         // '등록하기' 버튼이 눌렸을 때 수행할 로직
                       },
-                      text: '등록하기',
+                      text: '등록',
                     ),
                   ],
                 ),
@@ -320,7 +320,7 @@ class RegistScreen extends StatefulWidget {
 
                     // '등록하기' 버튼이 눌렸을 때 수행할 로직
                   },
-                  text: '등록하기',
+                  text: '등록',
                 ),
               ],
             ),

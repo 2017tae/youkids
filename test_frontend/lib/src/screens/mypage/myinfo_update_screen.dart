@@ -267,9 +267,11 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
           ),
           actions: [
             Container(
-              height: 40,
+              height: 35,
+              width: 65,
+              margin: EdgeInsets.zero,
               child: Padding(
-                padding: const EdgeInsets.only(right: 10.0),
+                padding: const EdgeInsets.only(right: 10.0, top: 0, bottom: 0),
                 child: TextButton(
                   onPressed: () {
                     showDialog(
@@ -350,26 +352,20 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                     );
                   },
                   style: ButtonStyle(
-                    side: MaterialStateProperty.all(
-                      BorderSide(
-                        color: Color(0xFFF6766E),
-                        width: 2.0,
-                      ),
-                    ),
+                    padding: MaterialStatePropertyAll(EdgeInsets.zero),
                     shape: MaterialStateProperty.all(
                       RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(15.0),
                       ),
                     ),
-                    backgroundColor:
-                    MaterialStatePropertyAll(Color(0xFFF6766E)),
                   ),
                   child: Text(
                     '수정',
+                    textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white),
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xFFF6766E)),
                   ),
                 ),
               ),
@@ -499,9 +495,9 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                               ),
                               const SizedBox(width: 10), // TextField와 버튼 사이의 간격
                               Container(
-                                height: 40,
+                                height: 50,
                                 child: Padding(
-                                  padding: const EdgeInsets.only(right: 10.0),
+                                  padding: const EdgeInsets.only(right: 0.0),
                                   child: TextButton(
                                     onPressed: () {
                                       partnerRequest().then((result) {

@@ -195,9 +195,11 @@ class _ChildrenUpdateScreenState extends State<ChildrenUpdateScreen> {
         ),
         actions: [
           Container(
-            height: 40,
+            height: 35,
+            width: 65,
+            margin: EdgeInsets.zero,
             child: Padding(
-              padding: const EdgeInsets.only(right: 10.0),
+              padding: const EdgeInsets.only(right: 10.0, top: 0, bottom: 0),
               child: TextButton(
                 onPressed: () {
                   showDialog(
@@ -274,26 +276,20 @@ class _ChildrenUpdateScreenState extends State<ChildrenUpdateScreen> {
                   );
                 },
                 style: ButtonStyle(
-                  side: MaterialStateProperty.all(
-                    BorderSide(
-                      color: Color(0xFFF6766E),
-                      width: 2.0,
-                    ),
-                  ),
+                  padding: MaterialStatePropertyAll(EdgeInsets.zero),
                   shape: MaterialStateProperty.all(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+                      borderRadius: BorderRadius.circular(15.0),
                     ),
                   ),
-                  backgroundColor:
-                  MaterialStatePropertyAll(Color(0xFFF6766E)),
                 ),
                 child: Text(
                   '수정',
+                  textAlign: TextAlign.center,
                   style: TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white),
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFFF6766E)),
                 ),
               ),
             ),

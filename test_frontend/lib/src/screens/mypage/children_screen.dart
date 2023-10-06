@@ -26,9 +26,11 @@ class ChildrenScreen extends StatelessWidget {
         ),
         actions: [
           Container(
-            height: 40,
+            height: 35,
+            width: 65,
+            margin: EdgeInsets.zero,
             child: Padding(
-              padding: const EdgeInsets.only(right: 10.0),
+              padding: const EdgeInsets.only(right: 10.0, top: 0, bottom: 0),
               child: TextButton(
                 onPressed: () {
                   Navigator.push(

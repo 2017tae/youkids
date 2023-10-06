@@ -1,0 +1,80 @@
+import 'dart:convert';
+
+class PlaceResponse {
+  final Place place;
+  final bool bookmarked;
+  final List<dynamic> reviews;
+  final List<String> recentImages;
+
+  PlaceResponse({
+    required this.place,
+    required this.bookmarked,
+    required this.reviews,
+    required this.recentImages,
+  });
+
+  factory PlaceResponse.fromJson(Map<String, dynamic> json) {
+    return PlaceResponse(
+      place: Place.fromJson(json['place']),
+      bookmarked: json['bookmarked'],
+      reviews: json['reviews'],
+      recentImages: List<String>.from(json['recentImages']),
+    );
+  }
+}
+
+class Place {
+  final int placeId;
+  final String name;
+  final String address;
+  final String? latitude;
+  final String? longitude;
+  final String phoneNumber;
+  final String category;
+  final String homepage;
+  final String description;
+  final int reviewSum;
+  final int reviewNum;
+  final bool subwayFlag;
+  final int? subwayId;
+  final String? subwayDistance;
+  final List<String> images;
+
+  Place({
+    required this.placeId,
+    required this.name,
+    required this.address,
+    this.latitude,
+    this.longitude,
+    required this.phoneNumber,
+    required this.category,
+    required this.homepage,
+    required this.description,
+    required this.reviewSum,
+    required this.reviewNum,
+    required this.subwayFlag,
+    this.subwayId,
+    this.subwayDistance,
+    required this.images,
+  });
+
+  factory Place.fromJson(Map<String, dynamic> json) {
+    return Place(
+      placeId: json['placeId'],
+      name: json['name'],
+      address: json['address'],
+      latitude: json['latitude'],
+      longitude: json['longitude'],
+      phoneNumber: json['phoneNumber'],
+      category: json['category'],
+      homepage: json['homepage'],
+      description: json['description'],
+      reviewSum: json['reviewSum'],
+      reviewNum: json['reviewNum'],
+      subwayFlag: json['subwayFlag'],
+      subwayId: json['subwayId'],
+      subwayDistance: json['subwayDistance'],
+      images: List<String>.from(json['images']),
+    );
+  }
+}

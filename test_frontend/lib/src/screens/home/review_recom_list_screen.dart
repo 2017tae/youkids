@@ -1,0 +1,71 @@
+import 'package:flutter/material.dart';
+import 'package:youkids/src/widgets/footer_widget.dart';
+import 'package:youkids/src/widgets/home_widgets/card_frame_widget.dart';
+import 'package:youkids/src/widgets/home_widgets/child_icon_widget.dart';
+
+class ReviewRecomlistScreen extends StatelessWidget {
+  const ReviewRecomlistScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> dummy = [
+      // const CardFrame21Widget(),
+      // const CardFrame21Widget(),
+      // const CardFrame21Widget(),
+      // const CardFrame21Widget(),
+      // const CardFrame21Widget(),
+      // const CardFrame21Widget(),
+      // const CardFrame21Widget(),
+      // const CardFrame21Widget(),
+    ];
+    return Scaffold(
+      appBar: AppBar(
+        scrolledUnderElevation: 0,
+        title: const Text('저번 주 리뷰 많은 장소'),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              child: Text(
+                '아이 맞춤 형 장소',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            // const ChildIconWidget(),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              child: Text(
+                '추천 장소',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Expanded(
+              child: ListView.separated(
+                itemCount: dummy.length,
+                itemBuilder: (context, index) => dummy[index],
+                separatorBuilder: (context, index) => const SizedBox(
+                  height: 20,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: const FooterWidget(
+        currentIndex: 0,
+      ),
+    );
+  }
+}

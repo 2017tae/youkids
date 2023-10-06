@@ -48,8 +48,6 @@ class _CapsuleDetailScreenState extends State<CapsuleDetailScreen> {
       _isLoggedIn = userId != null; // 이메일이 null이 아니면 로그인된 것으로 판단
     });
 
-    userId = "87dad60a-bfff-47e5-8e21-02cb49b23ba6";
-
     final response = await http.get(
       Uri.parse('https://j9a604.p.ssafy.io/api/capsule/images/' + widget.capsuleId),
       headers: {'Content-Type': 'application/json'},

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
 import 'package:youkids/src/services/place_services.dart';
 import 'package:youkids/src/widgets/bookmark_button_widget.dart';
 
@@ -14,12 +15,10 @@ class BookmarkedTotalList extends StatefulWidget {
 }
 
 class _BookmarkedTotalListState extends State<BookmarkedTotalList> {
-  late Future<List<Map<String, dynamic>>>
-      bookmarkedList; // placeId가 String으로 들어가있다.
+  late Future<List<Map<String, dynamic>>> bookmarkedList;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     bookmarkedList = PlaceServices.getAllBookmarks(userId: widget.userId);
   }
@@ -27,35 +26,36 @@ class _BookmarkedTotalListState extends State<BookmarkedTotalList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder(
+      appBar: AppBar(
+        title: const Text('찜 목록'),
+        centerTitle: true,
+      ),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
         future: bookmarkedList,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // 데이터를 기다리는 중이라면 로딩 표시
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           }
-          // 데이터가 준비된 경우 ListView 렌더링
-          List<Map<String, dynamic>> data = snapshot.data!;
+
+          List<Map<String, dynamic>> data = snapshot.data ?? [];
 
           if (data.isEmpty) {
-            return const Text(
-              '찜 목록이 비었습니다',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
+            return const Center(
+              child: Text(
+                '찜 목록이 비었습니다',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             );
           } else {
             return Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 20,
-                horizontal: 10,
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
               child: ListView.separated(
                 shrinkWrap: true,
-                separatorBuilder: (context, index) => const SizedBox(
-                  height: 5,
-                ),
+                separatorBuilder: (context, index) => const SizedBox(height: 5),
                 itemCount: data.length,
                 itemBuilder: (context, index) {
                   final bookmark = data[index];
@@ -64,16 +64,28 @@ class _BookmarkedTotalListState extends State<BookmarkedTotalList> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
-                          width: 150,
-                          height: 150,
-                          child: AspectRatio(
-                            aspectRatio: 1.0 / 1.0,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.network(
-                                bookmark['imageUrl'],
-                                fit: BoxFit.cover,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ShopDetailScreen(
+                                  placeId: bookmark['placeId'],
+                                ),
+                              ),
+                            );
+                          },
+                          child: SizedBox(
+                            width: 150,
+                            height: 150,
+                            child: AspectRatio(
+                              aspectRatio: 1.0,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.network(
+                                  bookmark['imageUrl'],
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           ),
@@ -114,12 +126,7 @@ class _BookmarkDescription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        5.0,
-        0.0,
-        0.0,
-        0.0,
-      ),
+      padding: const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -131,11 +138,7 @@ class _BookmarkDescription extends StatelessWidget {
             ),
             overflow: TextOverflow.ellipsis,
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: 5.0,
-            ),
-          ),
+          const Padding(padding: EdgeInsets.symmetric(vertical: 5.0)),
           Text(
             category,
             style: const TextStyle(
@@ -143,11 +146,7 @@ class _BookmarkDescription extends StatelessWidget {
             ),
             overflow: TextOverflow.ellipsis,
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: 1.0,
-            ),
-          ),
+          const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
           Text(
             address,
             style: const TextStyle(

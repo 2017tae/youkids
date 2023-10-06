@@ -242,7 +242,7 @@ class _AddGroupMemberState extends State<AddGroupMember> {
           builder: (BuildContext context) {
             return SimpleDialog(
               title: const Text(
-                '그룹원 추가하기',
+                '그룹원 추가',
                 textAlign: TextAlign.center,
               ),
               children: <Widget>[

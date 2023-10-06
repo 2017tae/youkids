@@ -24,24 +24,44 @@ class ChildrenScreen extends StatelessWidget {
           color: Colors.black,
         ),
         actions: [
-          ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          ChildrenUpdateScreen(children: children),
-                    ));
-              },
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0XFFF6766E),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5)),
-                  padding: const EdgeInsets.all(2)),
-              child: const Text(
-                "수정",
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              )),
+          Container(
+            height: 40,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ChildrenUpdateScreen(children: children),
+                      ));
+                },
+                style: ButtonStyle(
+                  side: MaterialStateProperty.all(
+                    BorderSide(
+                      color: Color(0xFFF6766E),
+                      width: 2.0,
+                    ),
+                  ),
+                  shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  backgroundColor:
+                  MaterialStatePropertyAll(Color(0xFFF6766E)),
+                ),
+                child: Text(
+                  '수정',
+                  style: TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white),
+                ),
+              ),
+            ),
+          ),
           const SizedBox(
             width: 20,
           ),

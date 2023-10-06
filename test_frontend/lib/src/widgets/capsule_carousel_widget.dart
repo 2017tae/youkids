@@ -1,8 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class CapsuleCarouselWidget extends StatefulWidget {
   final List<String> imgUrls;
+
   const CapsuleCarouselWidget({
     super.key,
     required this.imgUrls,
@@ -15,12 +17,15 @@ class CapsuleCarouselWidget extends StatefulWidget {
 class _CapsuleCarouselWidgetState extends State<CapsuleCarouselWidget> {
   int _current = 0;
   final CarouselController _controller = CarouselController();
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> imageSliders = widget.imgUrls
         .map(
-          (item) => Image.network(item,
-              fit: BoxFit.cover, width: MediaQuery.of(context).size.width),
+          (item) => Image(
+              image: CachedNetworkImageProvider(item),
+              fit: BoxFit.cover,
+              width: MediaQuery.of(context).size.width),
         )
         .toList();
     return Column(

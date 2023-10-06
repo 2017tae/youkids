@@ -279,7 +279,7 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                       builder: (BuildContext context) {
                         return SimpleDialog(
                           title: const Text(
-                            '내 정보를 수정하시겠습니까?',
+                            '정보를 수정하시겠습니까?',
                             textAlign: TextAlign.center,
                           ),
                           children: <Widget>[
@@ -287,7 +287,7 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                               height: 5,
                             ),
                             Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 10),
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                 child: Row(
                                   mainAxisAlignment:
                                   MainAxisAlignment.spaceEvenly,
@@ -369,9 +369,6 @@ class _MyinfoUpdateScreenState extends State<MyinfoUpdateScreen> {
                   ),
                 ),
               ),
-            ),
-            const SizedBox(
-              width: 20,
             ),
           ]),
       body: SingleChildScrollView(

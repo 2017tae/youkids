@@ -272,9 +272,6 @@ class _ChildrenCreateScreenState extends State<ChildrenCreateScreen> {
               ),
             ),
           ),
-          const SizedBox(
-            width: 20,
-          ),
         ],
       ),
       body: SingleChildScrollView(

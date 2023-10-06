@@ -207,7 +207,7 @@ class _ChildrenUpdateScreenState extends State<ChildrenUpdateScreen> {
                     builder: (BuildContext context) {
                       return SimpleDialog(
                         title: const Text(
-                          '아이를 수정하시겠습니까?',
+                          '정보를 수정하시겠습니까?',
                           textAlign: TextAlign.center,
                         ),
                         children: <Widget>[
@@ -293,9 +293,6 @@ class _ChildrenUpdateScreenState extends State<ChildrenUpdateScreen> {
                 ),
               ),
             ),
-          ),
-          const SizedBox(
-            width: 20,
           ),
         ],
       ),

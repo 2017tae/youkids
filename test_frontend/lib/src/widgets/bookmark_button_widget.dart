@@ -31,25 +31,23 @@ class _BookmarkButtonWidgetState extends State<BookmarkButtonWidget> {
   }
 
   void onClick() async {
-    if (bookmarks.isNotEmpty) {
-      if (isBookmarked) {
-        // bookmark 눌러져있는데 누른 것 == bookmark 취소
-        bookmarks.remove(widget.placeId.toString());
-      } else {
-        // bookmark 안 눌러져있는데 누른 것 == bookmark 추가
-        bookmarks.add(widget.placeId.toString());
-      }
-
-      await PlaceServices.bookmarkAddCancel(
-        userId: widget.userId,
-        placeId: widget.placeId,
-        flag: !isBookmarked,
-      );
-
-      setState(() {
-        isBookmarked = !isBookmarked;
-      });
+    if (isBookmarked) {
+      // bookmark 눌러져있는데 누른 것 == bookmark 취소
+      bookmarks.remove(widget.placeId.toString());
+    } else {
+      // bookmark 안 눌러져있는데 누른 것 == bookmark 추가
+      bookmarks.add(widget.placeId.toString());
     }
+
+    await PlaceServices.bookmarkAddCancel(
+      userId: widget.userId,
+      placeId: widget.placeId,
+      flag: !isBookmarked,
+    );
+
+    setState(() {
+      isBookmarked = !isBookmarked;
+    });
   }
 
   @override

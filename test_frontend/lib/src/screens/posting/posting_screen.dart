@@ -36,8 +36,7 @@ class _PostingScreenState extends State<PostingScreen> {
   }
 
   Future<void> _checkLoginStatus() async {
-    // userId = await getUserId();
-    userId = '87dad60a-bfff-47e5-8e21-02cb49b23ba6';
+    userId = await getUserId();
     setState(() {});
   }
 

@@ -6,7 +6,6 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/screens/course/course_screen.dart';
 import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
-import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:http/http.dart' as http;
 
 class CoursePostScreen extends StatefulWidget {
@@ -471,9 +470,6 @@ class _CoursePostScreenState extends State<CoursePostScreen> {
                 )),
           ),
         ],
-      ),
-      bottomNavigationBar: const FooterWidget(
-        currentIndex: 1,
       ),
     );
   }

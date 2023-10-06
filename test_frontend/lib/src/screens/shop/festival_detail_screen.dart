@@ -158,9 +158,6 @@ class _FestivalDetailScreen extends State<FestivalDetailScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: const FooterWidget(
-        currentIndex: 0,
-      ),
     );
   }
 

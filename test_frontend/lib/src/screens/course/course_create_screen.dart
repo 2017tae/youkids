@@ -8,7 +8,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youkids/src/screens/course/course_post_screen.dart';
 import 'package:youkids/src/screens/shop/shop_detail_screen.dart';
-import 'package:youkids/src/widgets/footer_widget.dart';
 import 'package:youkids/src/providers/course_providers.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
@@ -744,9 +743,6 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
             },
           ),
         ],
-      ),
-      bottomNavigationBar: const FooterWidget(
-        currentIndex: 1,
       ),
       floatingActionButton: Container(
         height: 45,

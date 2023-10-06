@@ -8,7 +8,6 @@ import 'package:http/http.dart' as http;
 
 import '../../widgets/capsule_carousel_widget.dart';
 
-
 class CapsuleBigDetailScreen extends StatefulWidget {
   final int memoryId;
 
@@ -18,9 +17,7 @@ class CapsuleBigDetailScreen extends StatefulWidget {
   State<CapsuleBigDetailScreen> createState() => _CapsuleBigDetailScreen();
 }
 
-
 class _CapsuleBigDetailScreen extends State<CapsuleBigDetailScreen> {
-
   Future? loadDataFuture;
   String? userId;
   bool _isLoggedIn = false;
@@ -31,7 +28,6 @@ class _CapsuleBigDetailScreen extends State<CapsuleBigDetailScreen> {
     super.initState();
     loadDataFuture = _getMemory();
   }
-
 
   Future<void> _getMemory() async {
     final response = await http.get(
@@ -49,78 +45,80 @@ class _CapsuleBigDetailScreen extends State<CapsuleBigDetailScreen> {
         memory = memoryData;
       });
 
-      print(memory?.description);
-
+      print(memory!.nickname);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          scrolledUnderElevation: 0,
-          centerTitle: true,
-          title: Text(
-            "사진첩",
-            style: TextStyle(
-              fontSize: 22,
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          backgroundColor: Colors.white,
-          // AppBar 색상 변경
-          elevation: 1,
-          // AppBar 밑에 약간의 그림자 추가
-          iconTheme: const IconThemeData(
+      appBar: AppBar(
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+        title: Text(
+          "사진첩",
+          style: TextStyle(
+            fontSize: 22,
             color: Colors.black,
+            fontWeight: FontWeight.bold,
           ),
-          // actions: [
-          //   IconButton(
-          //     onPressed: () {},
-          //     icon: SvgPicture.asset(
-          //         'lib/src/assets/icons/bell_white.svg', height: 24,
-          //         color: Colors.black),
-          //   ),
-          // ],
         ),
-        body:
-        Column(
+        backgroundColor: Colors.white,
+        // AppBar 색상 변경
+        elevation: 1,
+        // AppBar 밑에 약간의 그림자 추가
+        iconTheme: const IconThemeData(
+          color: Colors.black,
+        ),
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {},
+        //     icon: SvgPicture.asset(
+        //         'lib/src/assets/icons/bell_white.svg', height: 24,
+        //         color: Colors.black),
+        //   ),
+        // ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween, // 추가: 양 끝으로 항목 분배
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // 추가: 양 끝으로 항목 분배
                 children: [
                   // 프로필 사진 및 닉네임 및 날짜
                   Row(
                     children: [
                       ClipOval(
-                        child: (memory?.userImage != null)
+                        child: (memory != null && memory!.userImage != null)
                             ? Image.network(
-                          memory!.userImage!,
-                          width: 48.0,
-                          height: 48.0,
-                          fit: BoxFit.cover,
-                        )
+                                memory!.userImage!,
+                                width: 48.0,
+                                height: 48.0,
+                                fit: BoxFit.cover,
+                              )
                             : Image.network(
-                          'https://youkids.s3.ap-northeast-2.amazonaws.com/image/c1d3f954-a735-470e-ab2d-c4e170f8a82b.jpeg',
-                          width: 48.0,
-                          height: 48.0,
-                          fit: BoxFit.cover,
-                        ),
+                                'https://youkids.s3.ap-northeast-2.amazonaws.com/image/c1d3f954-a735-470e-ab2d-c4e170f8a82b.jpeg',
+                                width: 48.0,
+                                height: 48.0,
+                                fit: BoxFit.cover,
+                              ),
                       ),
                       SizedBox(width: 12),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            memory!.nickname,  // 닉네임을 입력하세요.
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            memory?.nickname ?? '',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                           Text(
-                            '${memory?.year}.${memory?.month?.toString().padLeft(2, '0')}.${memory?.day?.toString().padLeft(2, '0')}',
-                            style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                            '${memory?.year ?? ''}.${memory?.month?.toString().padLeft(2, '0') ?? ''}.${memory?.day?.toString().padLeft(2, '0') ?? ''}',
+                            style: TextStyle(
+                                color: Colors.grey[600], fontSize: 14),
                           ),
                         ],
                       ),
@@ -130,11 +128,13 @@ class _CapsuleBigDetailScreen extends State<CapsuleBigDetailScreen> {
                   // 위치와 이모티콘 추가
                   Row(
                     children: [
-                      Icon(Icons.location_pin, size: 18, color: Color(0xffFF7E76)),  // 위치 이모티콘
+                      Icon(Icons.location_pin,
+                          size: 18, color: Color(0xffFF7E76)), // 위치 이모티콘
                       SizedBox(width: 4),
                       Text(
                         memory?.location ?? '',
-                        style: TextStyle(color: Color(0xffFF7E76), fontSize: 16),
+                        style:
+                            TextStyle(color: Color(0xffFF7E76), fontSize: 16),
                       ),
                     ],
                   ),
@@ -166,17 +166,19 @@ class _CapsuleBigDetailScreen extends State<CapsuleBigDetailScreen> {
             SizedBox(height: 16), // 위치와 날짜와 이미지 사이의 간격 조정
             // 이미지 슬라이더
             Container(
-              height: 450.0,  // 원하는 높이로 조정
+              height: MediaQuery.of(context).size.height * 0.8, // 원하는 높이로 조정
               child: CapsuleCarouselWidget(
-                imgUrls: memory!.images,
+                imgUrls: memory?.images ?? [],
               ),
             ),
             // 나머지 내용들
           ],
-        )
+        ),
+      ),
     );
   }
 }
+
 class Memory {
   final String nickname;
   final String? userImage;

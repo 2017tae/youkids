@@ -163,8 +163,11 @@ class _CapsuleListScreenState extends State<CapsuleListScreen> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => CapsuleDetailScreen(capsule!['capsuleId'].toString()),
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation1, animation2) =>
+                          CapsuleDetailScreen(capsule!['capsuleId'].toString()),
+                      transitionDuration: Duration.zero,
+                      reverseTransitionDuration: Duration.zero,
                     ),
                   );
                 },

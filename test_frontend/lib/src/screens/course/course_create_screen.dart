@@ -490,7 +490,7 @@ class _CourseCreateScreenState extends State<CourseCreateScreen> {
             width: 65,
             margin: EdgeInsets.zero,
             child: Padding(
-              padding: const EdgeInsets.only(right: 10.0, top: 0, bottom: 0),
+              padding: const EdgeInsets.only(top: 0, bottom: 0),
               child: TextButton(
                 onPressed: () {
                   if(coursePlaces.isEmpty){
